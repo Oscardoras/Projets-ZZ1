@@ -2,14 +2,15 @@
 #include <stdio.h>
 #include <math.h>
 #define RAYON 0.6
-#define WINDOWS_COUNT 200
-#define ROTATION_PER_TICK 1
-void rotate (SDL_Window** windows, unsigned int count, float * rotations, float rayon)
+#define WINDOWS_COUNT 100
+#define ROTATION_PER_TICK 0.2
+#define DURATION 10000
+void rotate (SDL_Window** windows, unsigned int count, float * rotations, unsigned int width, unsigned int height)
 {
 	for(unsigned int it = 0; it < count; ++it)
 	{
 		rotations[it] += ROTATION_PER_TICK;
-		SDL_SetWindowPosition(windows[it], cos(rotations[it] * rayon), sin(rotations[it] * rayon));
+		SDL_SetWindowPosition(windows[it], (width/2.0)+(cos(rotations[it]) * (float)width * RAYON), (height/2)+(sin(rotations[it]) * (float)height * RAYON));
 	}
 }
 int main(int argc, char **argv)
@@ -18,7 +19,7 @@ int main(int argc, char **argv)
 	(void) argv;
 	if(SDL_Init(SDL_INIT_VIDEO) != 0)
         {
-                SDL_Log("Error : SDL initialisation - %s\n", SDL_GetError());
+                SDL_Log("erreur initialisation SDL\n");
                 exit(EXIT_FAILURE);
         }
 	SDL_Window* windows[WINDOWS_COUNT];
@@ -33,26 +34,27 @@ int main(int argc, char **argv)
 	SDL_GetCurrentDisplayMode(0, &DM);
 	unsigned int Width = DM.w;
 	unsigned int Height = DM.h;
-	while(SDL_GetTicks() - begin <= 1000000)
+	while(SDL_GetTicks() - begin <= DURATION)
 	{
-		SDL_Log("Error : SDL initialisation - %d\n", SDL_GetTicks() - begin);
-		if(openedWindowsCount <= (SDL_GetTicks() - begin) / 1000)
+		if(openedWindowsCount <= (SDL_GetTicks() - begin) / 1000 && openedWindowsCount < WINDOWS_COUNT)
 		{
 			++openedWindowsCount;
 			windows[openedWindowsCount-1] = SDL_CreateWindow(
-                	"Fenêtre à gauche",
-                	0, 0,    
-                	100, 10,
+                	"Rotation",
+                	0, 0,
+                	100, 100,
                 	SDL_WINDOW_RESIZABLE);
 			}
 			if(windows[openedWindowsCount-1] == NULL)
         		{
-                	SDL_Log("Error : SDL window 1 creation - %s\n)",
-                        SDL_GetError());
-                	SDL_Quit();   
+                	SDL_Log("Erreur creation de fenetre\n");
+                	SDL_Quit();
                 	exit(EXIT_FAILURE);
         	}
 		SDL_Delay(100);
-		rotate(windows, openedWindowsCount, rotations, Height * RAYON);
+		rotate(windows, openedWindowsCount, rotations, Width, Height);
 	}
+	for(unsigned int it = 0; it < openedWindowsCount; ++it)
+		SDL_DestroyWindow(windows[it]);
+	SDL_Quit();
 }
