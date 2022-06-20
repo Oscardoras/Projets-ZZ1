@@ -29,6 +29,8 @@ int main() {
     
     while (running) {
         if (SDL_PollEvent(&event)) {
+            mouse_x = 0;
+            mouse_y = 0;
             switch (event.type) {
             case SDL_QUIT:
                 running = SDL_FALSE;
@@ -37,15 +39,14 @@ int main() {
                 if (event.key.keysym.sym == SDLK_ESCAPE)
                     running = SDL_FALSE;
                 break;
-            case SDL_MOUSEBUTTONDOWN:
-                if (SDL_GetMouseState(NULL, NULL) && SDL_BUTTON(SDL_BUTTON_LEFT))
-                    window_size = 600;
-                else
-                    window_size = 300;
-                break;
             default:
                 break;
             }
+            
+            if (SDL_GetMouseState(NULL, NULL) && SDL_BUTTON(SDL_BUTTON_LEFT))
+                window_size = 600;
+            else
+                window_size = 300;
             
             SDL_SetWindowSize(window, window_size, window_size);
             SDL_GetWindowPosition(window, &window_x, &window_y);
