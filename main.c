@@ -134,7 +134,7 @@ int main() {
         compute_position(window_size, logo_size, &logo_position, &logo_velocity);
         draw(renderer, texture, logo_size, logo_position);
         SDL_RenderPresent(renderer);
-        SDL_Delay(1);
+        SDL_Delay(10);
     }
     
     
