@@ -4,8 +4,9 @@
 #define GRAVITY 5
 #define LONGUEUR 30
 #define LARGEUR 20
-#define VX_INIT 100
-#define PI 3.14  
+#define VX_INIT 12
+#define PI 3.14 
+#define BOUNCINESS 0.85
 
 
 
@@ -36,20 +37,20 @@ void newRectangle(rect_t * rectangle, int xnew, int ynew) {
 
 
 void physiqueRectangle(rect_t * rectangle, int ymax) {
-  if((rectangle->y + rectangle->diag)/2 > ymax) {
-    rectangle->vy *= -0.5;
-    rectangle->y = ymax-(LONGUEUR/2);
-  }
   rectangle->vy += GRAVITY;
   rectangle->y += rectangle->vy;
   rectangle->x += rectangle->vx;
-  rectangle->angle = atan((rectangle->vy)/(rectangle->vx));
+  if (rectangle->y>ymax) {
+    rectangle->vy *= -0.75;
+    rectangle->y = 2*ymax - rectangle->y;
+  }
+  rectangle->angle = atan((float) (rectangle->vy)/(rectangle->vx));
 }
 
 
 
 void drawRectangle(SDL_Renderer *renderer, rect_t * rectangle) {
-  SDL_SetRenderDrawColor(renderer, 200, 0, 0, 255);
+  SDL_SetRenderDrawColor(renderer, 255, 15, 15, 255);
   double angle1 = rectangle->angle_base + rectangle->angle;
   double angle2 = (PI - rectangle->angle_base) + rectangle->angle;
   double angle3 = -(PI - rectangle->angle_base) + rectangle->angle;
@@ -67,7 +68,7 @@ void drawRectangle(SDL_Renderer *renderer, rect_t * rectangle) {
   int x4 = rectangle->x + cos(angle4)*rectangle->diag/2;
   int y4 = rectangle->y + sin(angle4)*rectangle->diag/2;
 
-  printf("%i, %i\n%i, %i\n%i, %i\n%i, %i\n\n\n", x1, y1, x2, y2, x3, y3, x4, y4);
+  printf("%f, %f\n\n", rectangle->angle_base, rectangle->angle);
 
   SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
   SDL_RenderDrawLine(renderer, x2, y2, x3, y3);
@@ -88,8 +89,8 @@ int main(int argc, char **argv) {
 
 
   int xnew = 0, ynew = 0;
-  SDL_bool prog_on = SDL_TRUE;
-  SDL_bool premierClic = SDL_FALSE;
+  int prog_on = 1;
+  int premierClic = 0;
   SDL_Event event;
   SDL_Window *window = NULL;
   SDL_Renderer *renderer = NULL;
@@ -97,10 +98,10 @@ int main(int argc, char **argv) {
 
   rectangle->x = 0;
   rectangle->y = 0;
-  rectangle->vx = 1;
+  rectangle->vx = VX_INIT;
   rectangle->vy = 0;
-  rectangle->angle_base = -atan(LARGEUR/LONGUEUR);
-  rectangle->diag = (int) sqrt(LONGUEUR*LONGUEUR + LARGEUR*LARGEUR);
+  rectangle->angle_base = -atanf((float)LARGEUR/LONGUEUR);
+  rectangle->diag = sqrt(LONGUEUR*LONGUEUR + LARGEUR*LARGEUR);
   
 
   //-----------------------------------
@@ -137,35 +138,36 @@ int main(int argc, char **argv) {
 
       switch(event.type) {
         case(SDL_QUIT) :
-          prog_on = SDL_FALSE;
+          prog_on = 0;
           break;
 
         case(SDL_MOUSEBUTTONDOWN) :
           if(SDL_GetMouseState(&xnew, &ynew) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
             newRectangle(rectangle, xnew, ynew);
-            premierClic = SDL_TRUE;
+            premierClic = 1;
           }
       }
+      if (!premierClic) printf("Ready\n");
+
     }
+
+    if((rectangle->x < -10) | (rectangle->x > 810)) premierClic = 0;
 
 
     SDL_SetRenderDrawColor(renderer, 50, 50, 70, 255);
     SDL_RenderClear(renderer);
 
     if (premierClic) {
-      physiqueRectangle(rectangle, 500);
-
       SDL_SetRenderDrawColor(renderer, 200, 0, 0, 255);
       drawRectangle(renderer, rectangle);
+
+      physiqueRectangle(rectangle, 500);
     }
 
     SDL_RenderPresent(renderer);
 
-    SDL_Delay(100);
+    SDL_Delay(50);
   }
-
-
-  SDL_Delay(50);
 
   free(rectangle);
   SDL_DestroyRenderer(renderer);
