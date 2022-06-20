@@ -53,8 +53,8 @@ int main() {
     logo_size.x = 512;
     logo_size.y = 261;
     Vec2 logo_position;
-    logo_position.x = 1;
-    logo_position.y = 1;
+    logo_position.x = 2;
+    logo_position.y = 2;
     Vec2 logo_velocity;
     logo_velocity.x = 2;
     logo_velocity.y = 2;
