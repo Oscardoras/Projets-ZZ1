@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
 
   SDL_Delay(3000);
 
-  for(i=0; i<4; i++) {
+  for(i=0; i<nb_fenetres; i++) {
     SDL_DestroyWindow(windows[i]);
   }
 
