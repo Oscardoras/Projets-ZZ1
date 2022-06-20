@@ -1,34 +1,82 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <stdio.h>
 
 
-void draw(SDL_Renderer* renderer) {
-    SDL_SetRenderDrawColor(renderer, 50, 0, 0, 255);
+typedef struct {
+    int x;
+    int y;
+} Vec2;
+
+void compute_position(Vec2 window_size, Vec2 logo_size, Vec2* logo_position, Vec2* logo_velocity) {
+    if (logo_position->x <= 0) logo_velocity->x *=-1;
+    if (logo_position->y <= 0) logo_velocity->y *=-1;
+    if (logo_position->x + logo_size.x >= window_size.x-1) logo_velocity->x *= -1;
+    if (logo_position->y + logo_size.y >= window_size.y-1) logo_velocity->y *= -1;
+    
+    logo_position->x += logo_velocity->x;
+    logo_position->y += logo_velocity->y;
+}
+
+void draw(SDL_Renderer* renderer, SDL_Texture* texture, Vec2 logo_size, Vec2 logo_position) {
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
+    
+    SDL_Rect rectangle;
+    rectangle.x = logo_position.x;
+    rectangle.y = logo_position.y;
+    rectangle.w = logo_size.x;
+    rectangle.h = logo_size.y;
+    SDL_RenderCopy(renderer, texture, NULL, &rectangle);
+}
+
+void quit_sdl(int code, SDL_Window* window, SDL_Renderer* renderer, SDL_Texture* texture) {
+    if (texture != NULL) SDL_DestroyTexture(texture); 
+    IMG_Quit();
+    if (renderer != NULL) SDL_DestroyRenderer(renderer);
+    if (window != NULL) SDL_DestroyWindow(window);
+    SDL_Quit();
+    
+    if (code != EXIT_SUCCESS)
+        exit(code);
 }
 
 int main() {
-    int window_size = 300, window_x = 0, window_y = 0, mouse_x, mouse_y;
+    SDL_Window* window = NULL;
+    SDL_Renderer* renderer = NULL;
+    SDL_Texture* texture = NULL;
+    
+    Vec2 window_size;
+    window_size.x = 1080;
+    window_size.y = 720;
+    Vec2 logo_size;
+    logo_size.x = 512;
+    logo_size.y = 261;
+    Vec2 logo_position;
+    logo_position.x = 1;
+    logo_position.y = 1;
+    Vec2 logo_velocity;
+    logo_velocity.x = 2;
+    logo_velocity.y = 2;
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         SDL_Log("Error : SDL initialisation - %s\n", SDL_GetError());
-        exit(EXIT_FAILURE);
+        quit_sdl(EXIT_FAILURE, window, renderer, texture);
     }
     
-    SDL_Window* window = SDL_CreateWindow(
+    window = SDL_CreateWindow(
         "Test de fenêtre",
-        window_x, window_y,
-        window_size, window_size,
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        window_size.x, window_size.y,
         SDL_WINDOW_RESIZABLE
     );
     
     if (window == NULL) {
         SDL_Log("Error : SDL window creation - %s\n", SDL_GetError());
-        SDL_Quit();
-        exit(EXIT_FAILURE);
+        quit_sdl(EXIT_FAILURE, window, renderer, texture);
     }
     
-    SDL_Renderer* renderer = SDL_CreateRenderer(
+    renderer = SDL_CreateRenderer(
         window,
         -1,
         SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
@@ -36,21 +84,34 @@ int main() {
     
     if (renderer == NULL) {
         SDL_Log("Error : SDL renderer creation - %s\n", SDL_GetError());
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        exit(EXIT_FAILURE);
+        quit_sdl(EXIT_FAILURE, window, renderer, texture);
+    }
+    
+    int flags = IMG_INIT_PNG;
+    if ((IMG_Init(flags) & flags) != flags) {
+        SDL_Log("Error : SDL image loader\n");
+        quit_sdl(EXIT_FAILURE, window, renderer, texture);
+    }
+    
+    SDL_Surface* surface = IMG_Load("DVD_logo.png");
+    if (surface == NULL) {
+        SDL_Log("Error : image loading failed - %s\n", IMG_GetError());
+        quit_sdl(EXIT_FAILURE, window, renderer, texture);
     }
     
     
-    draw(renderer);
-    SDL_RenderPresent(renderer);
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+    if (texture == NULL) {
+        SDL_Log("Error : texture loading failed\n");
+        quit_sdl(EXIT_FAILURE, window, renderer, texture);
+    }
+    
+    
     SDL_bool running = SDL_TRUE;
     SDL_Event event;
-    
     while (running) {
         if (SDL_PollEvent(&event)) {
-            mouse_x = 0;
-            mouse_y = 0;
             switch (event.type) {
             case SDL_QUIT:
                 running = SDL_FALSE;
@@ -59,30 +120,24 @@ int main() {
                 if (event.key.keysym.sym == SDLK_ESCAPE)
                     running = SDL_FALSE;
                 break;
+            case SDL_WINDOWEVENT:
+                if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+                    window_size.x = event.window.data1;
+                    window_size.y = event.window.data2;
+                }
+                break;
             default:
                 break;
             }
-            
-            if (SDL_GetMouseState(NULL, NULL) && SDL_BUTTON(SDL_BUTTON_LEFT))
-                window_size = 600;
-            else
-                window_size = 300;
-            
-            SDL_SetWindowSize(window, window_size, window_size);
-            SDL_GetWindowPosition(window, &window_x, &window_y);
-            SDL_GetMouseState(&mouse_x, &mouse_y);
-            SDL_SetWindowPosition(window, window_x + mouse_x-(window_size/2), window_y + mouse_y-(window_size/2));
-            draw(renderer);
         }
         
+        compute_position(window_size, logo_size, &logo_position, &logo_velocity);
+        draw(renderer, texture, logo_size, logo_position);
         SDL_RenderPresent(renderer);
-        SDL_Delay(10);
+        SDL_Delay(1);
     }
     
     
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-    
+    quit_sdl(EXIT_SUCCESS, window, renderer, texture);
     return EXIT_SUCCESS;
 }
