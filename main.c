@@ -1,4 +1,3 @@
-
 #include <SDL2/SDL.h>
 #include <math.h>
 #include <stdio.h>
@@ -20,7 +19,11 @@ typedef struct snake
 	unsigned int X2;
 	unsigned int X1;
 } snake_t;
-
+float toRad(unsigned int degres)
+{
+	degres = degres%360;
+	return (float)degres / 360.0 * 6.28;
+}
 void updateSerpent(snake_t* snake_ptr)
 {
 	if(snake_ptr->next)
@@ -33,12 +36,12 @@ void updateSerpent(snake_t* snake_ptr)
 	}
 	else
 	{
-		snake_ptr->angle = (int)(pow(snake_ptr->X3*((SDL_GetTicks()/100)%100), 3) + pow(snake_ptr->X2*((SDL_GetTicks()/100)%100), 2) + pow(snake_ptr->X1*((SDL_GetTicks()/100)%100), 1))%360;
-		snake_ptr->x = snake_ptr->x + cos(snake_ptr->angle) * DISTANCE_PER_TICK;
-		snake_ptr->y = snake_ptr->y + sin(snake_ptr->angle) * DISTANCE_PER_TICK;
+		snake_ptr->angle = (int)(pow(snake_ptr->X3*(time(0)%50), 3) + pow(snake_ptr->X2*(time(0)%50), 2) + pow(snake_ptr->X1*(time(0)%50), 1))%360;
+		snake_ptr->x = snake_ptr->x + cos(toRad(snake_ptr->angle)) * DISTANCE_PER_TICK;
+		snake_ptr->y = snake_ptr->y + sin(toRad(snake_ptr->angle)) * DISTANCE_PER_TICK;
 	}
 	snake_ptr->x = snake_ptr->x%800;
-	snake_ptr->y = snake_ptr->y%800;
+	snake_ptr->y = snake_ptr->y%600;
 }
 void creationSerpent(snake_t** snake_ptr)
 {
@@ -80,10 +83,10 @@ void drawSnake(snake_t * snake_ptr, SDL_Renderer * renderer)
         if(snake_ptr->next)
                 drawSnake(snake_ptr->next, renderer);
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0,255);
-	float angle4 = (snake_ptr->angle + 90.0) / 360.0 * 6.28;
-	float angle3 = (snake_ptr->angle - 10.0) / 360.0 * 6.28;
-	float angle1 = (snake_ptr->angle + 180-10.0) / 360.0 * 6.28;
-        float angle2 = (snake_ptr->angle + 180+90.0) / 360.0 * 6.28;
+	float angle4 = toRad(snake_ptr->angle+10);
+	float angle3 = toRad(snake_ptr->angle-10);
+	float angle1 = toRad(snake_ptr->angle+170);
+        float angle2 = toRad(snake_ptr->angle+190);
 	SDL_RenderDrawLine(renderer,10*cos(angle1) + snake_ptr->x, 10*sin(angle1) + snake_ptr->y, 10*cos(angle2) + snake_ptr->x, 10*sin(angle2) + snake_ptr->y);
 	SDL_RenderDrawLine(renderer,10*cos(angle2) + snake_ptr->x, 10*sin(angle2) + snake_ptr->y, 10*cos(angle3) + snake_ptr->x, 10*sin(angle3) + snake_ptr->y);
 	SDL_RenderDrawLine(renderer,10*cos(angle3) + snake_ptr->x, 10*sin(angle3) + snake_ptr->y, 10*cos(angle4) + snake_ptr->x, 10*sin(angle4) + snake_ptr->y);
