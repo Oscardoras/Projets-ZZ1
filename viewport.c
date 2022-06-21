@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "viewport.h"
+#include "world_update.h"
 
 
 Viewport *initViewport(World *world, unsigned int width, unsigned int height) {
@@ -96,6 +97,7 @@ int configInit(Viewport* viewport) {
 void eventLoop(Viewport *viewport) {
     SDL_Event event;
     bool continuer = true;
+    bool modified = false;
     while (continuer) {
         while(SDL_PollEvent(&event)) {
             switch (event.type) {
@@ -107,8 +109,8 @@ void eventLoop(Viewport *viewport) {
                     viewport->height = event.window.data2;
             }
         }
-        update_world(viewport->world, "B3/S23");
-        drawCells(viewport);
+        modified = !update_world(viewport->world, "B3/S23");
+        if (modified) drawCells(viewport);
         SDL_Delay(60);
         
     }
@@ -130,11 +132,11 @@ void drawCells(Viewport *viewport) {
             rect.y = y*rect.h;
             SDL_RenderFillRect(viewport->renderer, &rect);
         }
-        SDL_SetRenderDrawColor(viewport->renderer, 100, 100, 100, 255);
-        for(int x = 0; x < viewport->world->width; ++x)
-                SDL_RenderDrawLine(viewport->renderer, x*(viewport->width/viewport->world->width), 0, x*(viewport->width/viewport->world->width), viewport->height);
-        for(int y = 0; y < viewport->world->width; ++y)
-                SDL_RenderDrawLine(viewport->renderer, 0, y*(viewport->height/viewport->world->height), viewport->width, y*(viewport->height/viewport->world->height));
+    SDL_SetRenderDrawColor(viewport->renderer, 100, 100, 100, 255);
+    for(int x = 0; x < viewport->world->width; ++x)
+        SDL_RenderDrawLine(viewport->renderer, x*(viewport->width/viewport->world->width), 0, x*(viewport->width/viewport->world->width), viewport->height);
+    for(int y = 0; y < viewport->world->width; ++y)
+        SDL_RenderDrawLine(viewport->renderer, 0, y*(viewport->height/viewport->world->height), viewport->width, y*(viewport->height/viewport->world->height));
     
     SDL_RenderPresent(viewport->renderer);
 }
