@@ -26,27 +26,57 @@ World new_world(bool borders, int width, int height) {
 
 World load_world(FILE* file) {
     World world;
-    char line[8];
     
-    fgets(line, 8, file);
-    world.borders = atoi(line);
+    {
+        char header[64];
+        fgets(header, 64, file);
+        
+        char value[64];
+        int k = 0;
+        
+        int a = 0;
+        for (; header[k] != ' '; k++) {
+            value[a] = header[k];
+            a++;
+        }
+        value[a] = '\0';
+        world.borders = atoi(value);
+        k++;
+        
+        int b = 0;
+        for (; header[k] != ' '; k++) {
+            value[b] = header[k];
+            b++;
+        }
+        value[b] = '\0';
+        world.width = atoi(value);
+        k++;
+        
+        int c = 0;
+        for (; header[k] != '\n'; k++) {
+            value[c] = header[k];
+            c++;
+        }
+        value[c] = '\0';
+        world.height = atoi(value);
+    }
     
-    fgets(line, 8, file);
-    world.width = atoi(line);
-    
-    fgets(line, 8, file);
-    world.height = atoi(line);
-    
-    world.table = malloc(sizeof(bool) * world.width * world.height);
+    world.table = malloc(sizeof(bool) * world.width*world.height);
+    char line[16];
     int k = 0;
-    while (fgets(line, 8, file)) {
-        world.table[k] = atoi(line);
+    while (fgets(line, 16, file)) {
+        char number[16];
+        for (char* c = line; !(*c == '\n' || *c == '\0'); c++)
+        *c = '\0';
+        world.table[k] = atoi(number);
         k++;
     }
+    
+    return world;
 }
 
 void save_world(World* world, FILE* file) {
-    fprintf(file, "%d\n%d\n%d\n", world->borders, world->width, world->height);
+    fprintf(file, "%d %d %d\n", world->borders, world->width, world->height);
     
     for (int k = 0; k < world->width * world->height; k++)
         fprintf(file, "%d\n", world->table[k]);
@@ -98,7 +128,7 @@ bool* get_world_cell(World* world, int x, int y) {
             x = x % world->width;
             if (x < 0) x += world->width;
             y = y % world->height;
-            if (y < 0) x += world->height;
+            if (y < 0) y += world->height;
             
             return &world->table[y*world->width + x];
         }

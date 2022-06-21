@@ -1,4 +1,6 @@
 #include "viewport.h"
+
+
 Viewport *initViewport(World *world, unsigned int width, unsigned int height)
 {
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -21,6 +23,8 @@ Viewport *initViewport(World *world, unsigned int width, unsigned int height)
     viewport->renderer = SDL_CreateRenderer(viewport->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     viewport->width = width;
     viewport->height = height;
+    
+    return viewport;
 }
 
 void closeViewport(Viewport *viewport)
@@ -53,8 +57,8 @@ void eventLoop(Viewport *viewport)
 
 void drawCells(Viewport *viewport)
 {
-    for(unsigned int x = 0; x < viewport->world->width; ++x)
-        for(unsigned int y = 0; y < viewport->world->height; ++y)
+    for(int x = 0; x < viewport->world->width; ++x)
+        for(int y = 0; y < viewport->world->height; ++y)
         {
             if(get_world_cell(viewport->world, x, y))
                 SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
@@ -71,9 +75,9 @@ void drawCells(Viewport *viewport)
     if(viewport->world->borders)
     {
         SDL_SetRenderDrawColor(viewport->renderer, 100, 100, 100, 255);
-        for(unsigned int x = 0; x < viewport->world->width; ++x)
+        for(int x = 0; x < viewport->world->width; ++x)
                 SDL_RenderDrawLine(viewport->renderer, x*(viewport->width/viewport->world->width), 0, x*(viewport->width/viewport->world->width), viewport->height);
-        for(unsigned int y = 0; y < viewport->world->width; ++y)
+        for(int y = 0; y < viewport->world->width; ++y)
                 SDL_RenderDrawLine(viewport->renderer, 0, y*(viewport->height/viewport->world->height), viewport->width, y*(viewport->height/viewport->world->height));
 
     }

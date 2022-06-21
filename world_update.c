@@ -16,7 +16,7 @@ void update_world_cell(World* world, int x, int y, bool *table, Rulestring rule)
                     neighbours++;
             }
     
-    bool cell = *get_world_cell(world, j, i);
+    bool cell = *get_world_cell(world, x, y);
     bool alive = false;
     char state;
     for (char* c = rule; *c != '\0'; c++) {
@@ -32,16 +32,15 @@ void update_world_cell(World* world, int x, int y, bool *table, Rulestring rule)
         }
     }
     
-    *get_world_cell(&world_tmp, j, i) = alive;
+    *get_world_cell(&world_tmp, x, y) = alive;
 }
 
 void update_world(World* world, Rulestring rule) {
-    bool *newtable = malloc(sizeof(bool) * world->width * world->height);
+    bool *table = malloc(sizeof(bool) * world->width*world->height);
     int i, j;
-    for(i=0; i<world->width; i++) {
-        for(j=0; j<world->height; j++) {
-            update_world_cell(world, i, j, newtable, rule);
-        }
-    }
-    world->table = newtable;
+    for(i = 0; i<world->width; i++)
+        for(j = 0; j<world->height; j++)
+            update_world_cell(world, i, j, table, rule);
+    
+    world->table = table;
 }
