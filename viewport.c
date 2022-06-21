@@ -1,8 +1,10 @@
+#include <SDL2/SDL.h>
+#include <stdio.h>
+
 #include "viewport.h"
 
 
-Viewport *initViewport(World *world, unsigned int width, unsigned int height)
-{
+Viewport *initViewport(World *world, unsigned int width, unsigned int height) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
     SDL_Log("Erreur initialisation SDL");
@@ -27,15 +29,69 @@ Viewport *initViewport(World *world, unsigned int width, unsigned int height)
     return viewport;
 }
 
-void closeViewport(Viewport *viewport)
-{
+void closeViewport(Viewport *viewport) {   
+    SDL_DestroyRenderer(viewport->renderer);
     SDL_DestroyWindow(viewport->window);
     SDL_Quit();
     free(viewport);
 }
 
-void eventLoop(Viewport *viewport)
-{
+int configInit(Viewport* viewport) {
+    int initState = 1;
+    int quitState = 0;
+
+    SDL_Event event;
+
+    int xcell, ycell;
+    int icell, jcell;
+    bool* cell = NULL;
+
+    while(initState & !quitState) {
+        if(SDL_PollEvent(&event)) {
+            switch(event.type) {
+
+                case SDL_QUIT:
+                    quitState = 1;
+                    break;
+                
+                case SDL_MOUSEBUTTONDOWN:
+                    if(SDL_GetMouseState(&xcell, &ycell) & SDL_BUTTON(SDL_BUTTON_LEFT))
+                        icell = xcell * viewport->world->width / viewport->width;
+                        jcell = ycell * viewport->world->height / viewport->height;
+                        cell = get_world_cell(viewport->world, icell, jcell);
+                        *cell = !(*cell);
+                    break;
+                
+                case SDL_KEYDOWN:
+                    switch (event.key.keysym.sym) {
+                        case SDLK_ENTER:
+                            initState = 0;
+                            break;
+                        
+                        case SDLK_s:
+                            file = fopen("save.txt", "w");
+                            save_world(viewport->world, file);
+                            fclose(file);
+                            break;
+
+                        case SDLK_l:
+                            file = fopen("save.txt", "r");
+                            *(viewport->world) = load_world(file);
+                            fclose(file);
+                            break;
+                    }
+                    break;
+
+            }
+        }
+        
+        drawCells(viewport);
+        SDL_RenderPresent(viewport->renderer);
+        SDL_Delay(60);
+    }
+}
+
+void eventLoop(Viewport *viewport) {
     SDL_Event event;
     bool continuer = true;
     while (continuer) {
@@ -49,14 +105,15 @@ void eventLoop(Viewport *viewport)
                     viewport->height = event.window.data2;
             }
         }
+
+        drawCells(viewport);
         SDL_RenderPresent(viewport->renderer);
         SDL_Delay(60);
-        drawCells(viewport);
+        
    }
 }
 
-void drawCells(Viewport *viewport)
-{
+void drawCells(Viewport *viewport) {
     for(int x = 0; x < viewport->world->width; ++x)
         for(int y = 0; y < viewport->world->height; ++y)
         {

@@ -24,6 +24,13 @@ typedef struct {
 Viewport* initViewport(World* world, unsigned int width, unsigned int height);
 
 /**
+ * @brief Let the user make the starting configuration.
+ * 
+ * @param viewport the current viewport.
+ */
+int configInit(Viewport* viewport);
+
+/**
  * @brief The event loop.
  * 
  * @param viewport the wiewport.
