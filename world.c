@@ -65,10 +65,10 @@ World load_world(FILE* file) {
     char line[16];
     int k = 0;
     while (fgets(line, 16, file)) {
-        char number[16];
-        for (char* c = line; !(*c == '\n' || *c == '\0'); c++)
+        char* c;
+        for (c = line; !(*c == '\n' || *c == '\0'); c++);
         *c = '\0';
-        world.table[k] = atoi(number);
+        world.table[k] = atoi(line);
         k++;
     }
     

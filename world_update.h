@@ -2,10 +2,12 @@
 #define __WORLD_UPDATE_H__
 
 #include "world.h"
+
+
 typedef char Rulestring[32];
 
 /**
- * @brief Evoluates the state of a cell.
+ * @brief Updates the state of a cell.
  * 
  * @param world a pointer to the world.
  * @param x the x coordinates of the cell to evoluate.
@@ -16,7 +18,7 @@ typedef char Rulestring[32];
 void update_world_cell(World* world, int x, int y, bool *table, Rulestring rule);
 
 /**
- * @brief Evoluates the state of all the cells of a world..
+ * @brief Updates the states of all the cells of a world.
  * 
  * @param world a pointer to the world.
  * @param rule a rule string.
