@@ -2,8 +2,6 @@
 #define __WORLD_UPDATE_H__
 
 #include "world.h"
-
-
 typedef char Rulestring[32];
 
 /**
