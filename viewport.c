@@ -21,7 +21,7 @@ Viewport *initViewport(World *world, unsigned int width, unsigned int height) {
                                                   SDL_WINDOWPOS_CENTERED,
                                                   SDL_WINDOWPOS_CENTERED, width,
                                                   height,
-                                                  SDL_WINDOW_OPENGL);
+                                                  SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     viewport->world = world;
     viewport->renderer = SDL_CreateRenderer(viewport->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     viewport->width = width;
@@ -97,7 +97,7 @@ int configInit(Viewport* viewport) {
 void eventLoop(Viewport *viewport) {
     SDL_Event event;
     bool continuer = true;
-    bool modified = false;
+    bool modified = true;
     while (continuer) {
         while(SDL_PollEvent(&event)) {
             switch (event.type) {
@@ -105,6 +105,7 @@ void eventLoop(Viewport *viewport) {
                     continuer = false;
                 break;
                 case SDL_WINDOWEVENT_RESIZED:
+                    printf("Resized");
                     viewport->width = event.window.data1;
                     viewport->height = event.window.data2;
             }

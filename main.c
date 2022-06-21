@@ -18,7 +18,6 @@ int main() {
 
     if(!configInit(viewport)) {
         eventLoop(viewport);
-        
     }  
     closeViewport(viewport);
     free_world(&world);
