@@ -44,9 +44,9 @@ int configInit(Viewport* viewport);
  * @brief The event loop.
  * 
  * @param viewport the wiewport.
- * @param delay pointer to int "delay".
+ * @param delay the delay.
  */
-void eventLoop(Viewport* viewport, int* delay);
+void eventLoop(Viewport* viewport, int delay);
 
 /**
  * @brief draws the cells.

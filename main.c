@@ -19,7 +19,7 @@ int main() {
     Viewport* viewport = initViewport(&world, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     if(!configInit(viewport)) {
-        eventLoop(viewport, &delay);
+        eventLoop(viewport, delay);
     }  
     closeViewport(viewport);
     free_world(&world);
