@@ -74,7 +74,6 @@ int configInit(Viewport* viewport) {
                     break;
                 case SDL_WINDOWEVENT:
                     if(event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                        SDL_Log("resized");
                         viewport->width = event.window.data1;
                         viewport->height = event.window.data2;
                         drawCells(viewport);
