@@ -3,10 +3,7 @@
 #include "world_update.h"
 
 
-void update_world_cell(World* world, int x, int y, bool *table, Rulestring rule) {
-    World world_tmp = *world;
-    world_tmp.table = table;
-    
+bool update_world_cell(World* world, int x, int y, World* world2, Rulestring rule) {
     int neighbours = 0;
     for (int i = y-1; i <= y+1; i++)
         for (int j = x-1; j <= x+1; j++)
@@ -23,7 +20,7 @@ void update_world_cell(World* world, int x, int y, bool *table, Rulestring rule)
         if (*c == 'B') state = 'B';
         else if (*c == 'S') state = 'S';
         else if ('0' <= *c && *c <= '9') {
-            int v = *c-48;
+            int v = *c - '0';
             if (v == neighbours) {
                 if ((!cell && state == 'B') || (cell && state == 'S'))
                     alive = true;
@@ -32,15 +29,25 @@ void update_world_cell(World* world, int x, int y, bool *table, Rulestring rule)
         }
     }
     
-    *get_world_cell(&world_tmp, x, y) = alive;
+    *get_world_cell(&world2, x, y) = alive;
+    return alive;
 }
 
 void update_world(World* world, Rulestring rule) {
-    bool *table = malloc(sizeof(bool) * world->width*world->height);
-    int i, j;
-    for(i = 0; i<world->width; i++)
-        for(j = 0; j<world->height; j++)
-            update_world_cell(world, i, j, table, rule);
+    bool modified = false;
     
-    world->table = table;
+    World world2 = new_world(world->borders, world->width, world->height);
+    for (int i = 0; i < world->width; i++)
+        for (int j = 0; j < world->height; j++) {
+            bool state1 = *get_world_cell(&world, i, j);
+            update_world_cell(world, i, j, table, rule);
+            bool state2 = *get_world_cell(&world2, i, j);
+            if (state1 != state2)
+                modified = true;
+        }
+    
+    free(world->table);
+    world->table = world2.table;
+    
+    return modified;
 }

@@ -1,5 +1,5 @@
-#ifndef VIEWPORT_H
-#define VIEWPORT_H
+#ifndef __VIEWPORT_H__
+#define __VIEWPORT_H__
 
 #include <SDL2/SDL.h>
 
@@ -17,14 +17,22 @@ typedef struct {
 /**
  * @brief Creates a new viewport.
  * 
- * @param world the world.
+ * @param world a pointer to the world.
  * @param width the width of the viewport.
  * @param height the height of the viewport.
+ * @return the created viewport.
  */
 Viewport* initViewport(World* world, unsigned int width, unsigned int height);
 
 /**
- * @brief Let the user make the starting configuration.
+ * @brief closes the viewport.
+ *
+ * @param viewport the viewport.
+ */
+void closeViewport(Viewport* viewport);
+
+/**
+ * @brief Lets the user make the starting configuration.
  * 
  * @param viewport the current viewport.
  */
@@ -38,16 +46,9 @@ int configInit(Viewport* viewport);
 void eventLoop(Viewport* viewport);
 
 /**
- * @brief close the viewport.
+ * @brief draws the cells.
  *
- * @param viewport if the world has borders.
- */
-void closeViewport(Viewport* viewport);
-
-/**
- * @brief draw the cells
- *
- * @param viewport if the world has borders.
+ * @param viewport the viewport.
  */
 void drawCells(Viewport* viewport);
 

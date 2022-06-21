@@ -110,7 +110,7 @@ void eventLoop(Viewport *viewport) {
         SDL_RenderPresent(viewport->renderer);
         SDL_Delay(60);
         
-   }
+    }
 }
 
 void drawCells(Viewport *viewport) {
