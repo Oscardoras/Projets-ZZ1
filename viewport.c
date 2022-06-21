@@ -94,7 +94,7 @@ int configInit(Viewport* viewport) {
     return quitState;
 }
 
-void eventLoop(Viewport *viewport) {
+void eventLoop(Viewport *viewport, int *delay) {
     SDL_Event event;
     bool continuer = true;
     bool modified = true;
@@ -103,16 +103,33 @@ void eventLoop(Viewport *viewport) {
             switch (event.type) {
                 case SDL_QUIT:
                     continuer = false;
-                break;
+                    break;
+
                 case SDL_WINDOWEVENT_RESIZED:
-                    printf("Resized");
                     viewport->width = event.window.data1;
                     viewport->height = event.window.data2;
+                    break;
+
+                case SDL_KEYDOWN:
+                    switch(event.key.keysym.sym) {
+                        case SDLK_RETURN:
+                            continuer = false;
+                            break;
+
+                        case SDLK_LEFT:
+                            *delay = (*delay>10)?*delay-1:10;
+                            break;
+
+                        case SDLK_RIGHT:
+                            *delay = (*delay<500)?*delay+1:500;
+                            break;
+                    }
+                    break;
             }
         }
         modified = update_world(viewport->world, "B3/S23");
         if (modified) drawCells(viewport);
-        SDL_Delay(60);
+        SDL_Delay(*delay);
         
     }
 }
@@ -124,7 +141,7 @@ void drawCells(Viewport *viewport) {
             if(!(*get_world_cell(viewport->world, x, y)))
                 SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
             else
-                SDL_SetRenderDrawColor(viewport->renderer, 220, 220, 220, 255);
+                SDL_SetRenderDrawColor(viewport->renderer, 200, 200, 200, 255);
 
             SDL_Rect rect;
             rect.w = viewport->width/viewport->world->width;

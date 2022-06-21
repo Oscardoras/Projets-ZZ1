@@ -39,11 +39,14 @@ void closeViewport(Viewport* viewport);
 int configInit(Viewport* viewport);
 
 /**
+ * @brief 
+ * 
  * @brief The event loop.
  * 
  * @param viewport the wiewport.
+ * @param delay pointer to int "delay".
  */
-void eventLoop(Viewport* viewport);
+void eventLoop(Viewport* viewport, int* delay);
 
 /**
  * @brief draws the cells.
