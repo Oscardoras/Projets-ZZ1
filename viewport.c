@@ -5,36 +5,53 @@
 #include "world_update.h"
 
 
-Viewport *initViewport(World *world, unsigned int width, unsigned int height) {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
-    {
-    SDL_Log("Erreur initialisation SDL");
-    exit(EXIT_FAILURE);
-    }
-    Viewport* viewport = (Viewport*)malloc(sizeof(Viewport));
-    if(!viewport)
-    {
-        SDL_Log("Erreur creation viewport");
+Viewport* initViewport(World* world, int width, int height) {
+    Viewport* viewport = malloc(sizeof(Viewport));
+    if (viewport == NULL) {
+        SDL_Log("Error : viewport creation");
         exit(EXIT_FAILURE);
     }
-    viewport->window = SDL_CreateWindow("Game of life",
-                                                  SDL_WINDOWPOS_CENTERED,
-                                                  SDL_WINDOWPOS_CENTERED, width,
-                                                  height,
-                                                  SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        SDL_Log("Error : SDL initialisation - %s", SDL_GetError());
+        exit(EXIT_FAILURE);
+    }
+    
     viewport->world = world;
-    viewport->renderer = SDL_CreateRenderer(viewport->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     viewport->width = width;
     viewport->height = height;
+    
+    viewport->window = SDL_CreateWindow(
+        "Game of life",
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        width, height,
+        SDL_WINDOW_RESIZABLE
+    );
+    if (viewport->window == NULL) {
+        SDL_Log("Error : SDL window creation - %s", SDL_GetError());
+        closeViewport(viewport);
+    }
+    
+    viewport->renderer = SDL_CreateRenderer(
+        viewport->window,
+        -1,
+        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+    );
+    if (viewport->renderer == NULL) {
+        SDL_Log("Error : SDL renderer creation - %s", SDL_GetError());
+        closeViewport(viewport);
+    }
     
     return viewport;
 }
 
-void closeViewport(Viewport *viewport) {   
-    SDL_DestroyRenderer(viewport->renderer);
-    SDL_DestroyWindow(viewport->window);
-    SDL_Quit();
-    free(viewport);
+void closeViewport(Viewport* viewport) {   
+    if (viewport != NULL) {
+        if (viewport->renderer != NULL) SDL_DestroyRenderer(viewport->renderer);
+        if (viewport->window != NULL) SDL_DestroyWindow(viewport->window);
+        SDL_Quit();
+        free(viewport);
+    }
 }
 
 int configInit(Viewport* viewport) {
@@ -55,7 +72,14 @@ int configInit(Viewport* viewport) {
                 case SDL_QUIT:
                     quitState = 1;
                     break;
-                
+                case SDL_WINDOWEVENT:
+                    if(event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+                        SDL_Log("resized");
+                        viewport->width = event.window.data1;
+                        viewport->height = event.window.data2;
+                        drawCells(viewport);
+                        }
+                    break;
                 case SDL_MOUSEBUTTONDOWN:
                     if(SDL_GetMouseState(&xcell, &ycell) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
                         icell = xcell * viewport->world->width / viewport->width;
@@ -64,15 +88,7 @@ int configInit(Viewport* viewport) {
                         *cell = !(*cell);
                     }
                     break;
-                case SDL_WINDOWEVENT:
-                    if(event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                        SDL_Log("resized");
-                        viewport->width = event.window.data1;
-                        viewport->height = event.window.data2;
-                        drawCells(viewport);
-                        }
-
-                break;
+                
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym) {
                         case SDLK_RETURN:
@@ -102,47 +118,44 @@ int configInit(Viewport* viewport) {
     return quitState;
 }
 
-void eventLoop(Viewport *viewport, int *delay) {
+void eventLoop(Viewport* viewport, int delay) {
     SDL_Event event;
-    bool continuer = true;
+    bool running = true;
     bool modified = true;
-    while (continuer) {
+    while (running) {
         while(SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_QUIT:
-                    continuer = false;
+                    running = false;
                     break;
-
                 case SDL_WINDOWEVENT:
                     if(event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                        SDL_Log("resized");
                         viewport->width = event.window.data1;
                         viewport->height = event.window.data2;
                         drawCells(viewport);
                         }
                 break;
-
                 case SDL_KEYDOWN:
                     switch(event.key.keysym.sym) {
                         case SDLK_RETURN:
-                            continuer = false;
+                            running = false;
                             break;
-
                         case SDLK_LEFT:
-                            *delay = (*delay>10)?*delay-1:10;
+                            delay = (delay > 10) ? delay-1 : 10;
                             break;
-
                         case SDLK_RIGHT:
-                            *delay = (*delay<500)?*delay+1:500;
+                            delay = (delay < 500) ? delay+1 : 500;
                             break;
                     }
                     break;
             }
         }
-        modified = update_world(viewport->world, "B3/S23");
-        if (modified) drawCells(viewport);
-        SDL_Delay(*delay);
+
+        if (modified)
+            modified = update_world(viewport->world, "B3/S23");
         
+        drawCells(viewport);
+        SDL_Delay(delay);
     }
 }
 
@@ -150,8 +163,7 @@ void drawCells(Viewport *viewport) {
     for(int x = 0; x < viewport->world->width; ++x)
         for(int y = 0; y < viewport->world->height; ++y)
         {
-            //if(!(*get_world_cell(viewport->world, x, y)))
-            if(rand()%2)
+            if(!(*get_world_cell(viewport->world, x, y)))
                 SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
             else
                 SDL_SetRenderDrawColor(viewport->renderer, 220, 220, 220, 255);
