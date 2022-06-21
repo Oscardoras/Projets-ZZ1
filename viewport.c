@@ -110,7 +110,7 @@ void eventLoop(Viewport *viewport) {
                     viewport->height = event.window.data2;
             }
         }
-        modified = !update_world(viewport->world, "B3/S23");
+        modified = update_world(viewport->world, "B3/S23");
         if (modified) drawCells(viewport);
         SDL_Delay(60);
         
