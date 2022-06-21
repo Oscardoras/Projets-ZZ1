@@ -12,7 +12,7 @@ Viewport *initViewport(World *world, unsigned int width, unsigned int height)
         SDL_Log("Erreur creation viewport");
         exit(EXIT_FAILURE);
     }
-    viewport->window = window = SDL_CreateWindow("Game of life",
+    viewport->window = SDL_CreateWindow("Game of life",
                                                   SDL_WINDOWPOS_CENTERED,
                                                   SDL_WINDOWPOS_CENTERED, width,
                                                   height,

@@ -12,6 +12,6 @@ int main() {
     Viewport* viewport= initViewport(&world, WINDOW_WIDTH, WINDOW_HEIGHT);
     eventLoop(viewport);
     closeViewport(viewport);
-    free_world(world);
+    free_world(&world);
     return EXIT_SUCCESS;
 }

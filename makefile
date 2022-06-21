@@ -1,2 +1,4 @@
-sdlmake: main.c
-	gcc -g -Wall -Wextra main.c world.c -o dvd -lSDL2
+sdlmake: main.c viewport.o
+	gcc -g -Wall -Wextra main.c world.c viewport.o -o dvd -lSDL2
+viewport.o: viewport.h viewport.c
+	gcc viewport.c viewport.h -c  viewport.o
