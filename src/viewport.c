@@ -163,7 +163,7 @@ void event_loop(Viewport* viewport, Rulestring rule) {
     }
 }
 
-void draw(Viewport *viewport) {
+void draw(Viewport* viewport) {
     for(int x = 0; x < viewport->world->width; ++x)
         for(int y = 0; y < viewport->world->height; ++y)
         {
