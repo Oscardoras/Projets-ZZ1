@@ -10,7 +10,7 @@
 #define WINDOW_HEIGHT 600
 #define CELL_COUNT_X 80
 #define CELL_COUNT_Y 60
-#define BORDER false
+#define BORDER true
 #define DEFAULT_DELAY 60
 
 
@@ -24,8 +24,10 @@ int main() {
 
     while(reset) {
         reset = false;
+
         for(i=0; i<viewport->world->width * viewport->world->height; i++)
             viewport->world->table[i] = false;
+        
         if(!configInit(viewport)) {
             reset = eventLoop(viewport, delay);
         }

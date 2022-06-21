@@ -39,14 +39,13 @@ void closeViewport(Viewport* viewport);
 int configInit(Viewport* viewport);
 
 /**
- * @brief 
- * 
  * @brief The event loop.
  * 
  * @param viewport the wiewport.
  * @param delay the delay.
+ * @return if the simulation will be resetted or not
  */
-void eventLoop(Viewport* viewport, int delay);
+bool eventLoop(Viewport* viewport, int delay);
 
 /**
  * @brief draws the cells.
