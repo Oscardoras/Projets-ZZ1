@@ -68,13 +68,13 @@ int configInit(Viewport* viewport) {
                             break;
                         
                         case SDLK_s:
-                            file = fopen("save.txt");
+                            file = fopen("save.txt", "w");
                             save_world(viewport->world, file);
                             fclose(file);
                             break;
 
                         case SDLK_l:
-                            file = fopen("save.txt");
+                            file = fopen("save.txt", "r");
                             *(viewport->world) = load_world(file);
                             fclose(file);
                             break;
