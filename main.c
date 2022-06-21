@@ -10,15 +10,16 @@
 #define CELL_COUNT_X 80
 #define CELL_COUNT_Y 60
 #define BORDER true
+#define DEFAULT_DELAY 60
 
 
 int main() {
+    int delay = DEFAULT_DELAY;
     World world = new_world(BORDER, CELL_COUNT_X, CELL_COUNT_Y);
     Viewport* viewport = initViewport(&world, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     if(!configInit(viewport)) {
-        eventLoop(viewport);
-        
+        eventLoop(viewport, &delay);
     }  
     closeViewport(viewport);
     free_world(&world);
