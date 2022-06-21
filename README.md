@@ -15,7 +15,7 @@ L'écutable se nomme gameoflife.
 - Pause/reprendre (pause par défaut) : P ou Entrer
 - Accélérer : Flèche droite
 - Décélérer : Flèche gauche
-- Reset : r
+- Reset : R
 - Sauvegarder (fichier 'save.txt') : S
 - Charger (fichier 'save.txt') : L
 - Activer/désactiver le monde délimité (délimité par défaut) : B
