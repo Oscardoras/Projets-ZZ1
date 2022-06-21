@@ -23,7 +23,7 @@ void update_world_cell(World* world, int x, int y, bool *table, Rulestring rule)
         if (*c == 'B') state = 'B';
         else if (*c == 'S') state = 'S';
         else if ('0' <= *c && *c <= '9') {
-            int v = atoi(*c);
+            int v = *c-48;
             if (v == neighbours) {
                 if ((!*cell && state == 'B') || (*cell && state == 'S'))
                     alive = true;
