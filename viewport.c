@@ -41,6 +41,7 @@ int configInit(Viewport* viewport) {
     int quitState = 0;
 
     SDL_Event event;
+    FILE * file = NULL;
 
     int xcell, ycell;
     int icell, jcell;
@@ -55,16 +56,17 @@ int configInit(Viewport* viewport) {
                     break;
                 
                 case SDL_MOUSEBUTTONDOWN:
-                    if(SDL_GetMouseState(&xcell, &ycell) & SDL_BUTTON(SDL_BUTTON_LEFT))
+                    if(SDL_GetMouseState(&xcell, &ycell) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
                         icell = xcell * viewport->world->width / viewport->width;
                         jcell = ycell * viewport->world->height / viewport->height;
                         cell = get_world_cell(viewport->world, icell, jcell);
                         *cell = !(*cell);
+                    }
                     break;
                 
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym) {
-                        case SDLK_ENTER:
+                        case SDLK_RETURN:
                             initState = 0;
                             break;
                         
