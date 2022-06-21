@@ -22,6 +22,12 @@ float toRad(unsigned int degres)
 	degres = degres%360;
 	return ((float)degres) / 360.0 * 6.28;
 }
+void freeSerpents(snake_t* snake_ptr)
+{
+	if(snake_ptr->next)
+		freeSerpents(snake_ptr->next);
+	free(snake_ptr);
+}
 void updateSerpent(snake_t* snake_ptr)
 {
 	if(snake_ptr->next)
@@ -125,6 +131,8 @@ void eventWhile(SDL_Renderer* renderer)
 		for(unsigned int it = 0; it < SNAKE_COUNT; ++it)
 			updateSerpent(snakes[it]);
  	}
+	for(unsigned int it = 0; it < SNAKE_COUNT; ++it)
+		freeSerpents(snakes[it]);
 }
 int main (int argc, char **argv)
 {
