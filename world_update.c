@@ -7,7 +7,7 @@ bool update_world_cell(World* world, int x, int y, World* world2, Rulestring rul
     int neighbours = 0;
     for (int i = y-1; i <= y+1; i++)
         for (int j = x-1; j <= x+1; j++)
-            if (i != y && j != x) {
+            if (i != y || j != x) {
                 bool* cell_i_j = get_world_cell(world, j, i);
                 if (cell_i_j != NULL && *cell_i_j)
                     neighbours++;
@@ -35,13 +35,13 @@ bool update_world_cell(World* world, int x, int y, World* world2, Rulestring rul
 
 bool update_world(World* world, Rulestring rule) {
     bool modified = false;
-    
     World world2 = new_world(world->borders, world->width, world->height);
-    for (int i = 0; i < world->width; i++)
-        for (int j = 0; j < world->height; j++) {
-            bool state1 = *get_world_cell(world, i, j);
-            update_world_cell(world, i, j, &world2, rule);
-            bool state2 = *get_world_cell(&world2, i, j);
+    
+    for (int x = 0; x < world->width; x++)
+        for (int y = 0; y < world->height; y++) {
+            bool state1 = *get_world_cell(world, x, y);
+            update_world_cell(world, x, y, &world2, rule);
+            bool state2 = *get_world_cell(&world2, x, y);
             if (state1 != state2)
                 modified = true;
         }
