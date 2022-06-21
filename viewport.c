@@ -56,12 +56,10 @@ void drawCells(Viewport *viewport)
     for(unsigned int x = 0; x < viewport->world->width; ++x)
         for(unsigned int y = 0; y < viewport->world->height; ++y)
         {
-            // draw a cell
-            //if(get_world_cell(viewport->World, x, y))
-            if(rand()%2)
-                SDL_SetRenderDrawColor(viewport->renderer, 0, 0, 0, 255);
-            else
+            if(get_world_cell(viewport->world, x, y))
                 SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
+            else
+                SDL_SetRenderDrawColor(viewport->renderer, 220, 220, 220, 255);
 
             SDL_Rect rect;
             rect.w = viewport->width/viewport->world->width;
@@ -70,5 +68,14 @@ void drawCells(Viewport *viewport)
             rect.y = y*rect.h;
             SDL_RenderFillRect(viewport->renderer, &rect);
         }
+    if(viewport->world->borders)
+    {
+        SDL_SetRenderDrawColor(viewport->renderer, 100, 100, 100, 255);
+        for(unsigned int x = 0; x < viewport->world->width; ++x)
+                SDL_RenderDrawLine(viewport->renderer, x*(viewport->width/viewport->world->width), 0, x*(viewport->width/viewport->world->width), viewport->height);
+        for(unsigned int y = 0; y < viewport->world->width; ++y)
+                SDL_RenderDrawLine(viewport->renderer, 0, y*(viewport->height/viewport->world->height), viewport->width, y*(viewport->height/viewport->world->height));
+
+    }
     SDL_RenderPresent(viewport->renderer);
 }
