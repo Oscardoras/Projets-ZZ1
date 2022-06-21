@@ -2,3 +2,4 @@ gameoflife
 viewport.o
 world_update.o
 world.o
+save.txt
