@@ -22,7 +22,7 @@ typedef struct {
  * @param height the height of the viewport.
  * @return the created viewport.
  */
-Viewport* initViewport(World* world, unsigned int width, unsigned int height);
+Viewport* initViewport(World* world, int width, int height);
 
 /**
  * @brief closes the viewport.
