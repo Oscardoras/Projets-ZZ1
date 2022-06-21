@@ -5,4 +5,4 @@ bin/viewport.o: src/viewport.h src/viewport.c
 bin/world.o: src/world.h src/world.c
 	gcc -g -Wall -Wextra -c src/world.c -o bin/world.o
 clean:
-	rm -r bin/
+	rm -r bin/*
