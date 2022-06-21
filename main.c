@@ -16,8 +16,10 @@ int main() {
     World world = new_world(BORDER, CELL_COUNT_X, CELL_COUNT_Y);
     Viewport* viewport = initViewport(&world, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    if(!configInit(viewport)) eventLoop(viewport);
-
+    if(!configInit(viewport)) {
+        eventLoop(viewport);
+        
+    }  
     closeViewport(viewport);
     free_world(&world);
     
