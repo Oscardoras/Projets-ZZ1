@@ -6,6 +6,8 @@ typedef struct {
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	World* world;
+    unsigned int width;
+    unsigned int height;
 	} Viewport;
 /**
  * @brief Creates a new viewport.
@@ -27,4 +29,10 @@ void eventLoop(Viewport* viewport);
  * @param viewport if the world has borders.
  */
 void closeViewport(Viewport* viewport);
+/**
+ * @brief draw the cells
+ *
+ * @param viewport if the world has borders.
+ */
+void drawCells(Viewport* viewport);
 #endif

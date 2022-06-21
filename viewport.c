@@ -19,6 +19,8 @@ Viewport *initViewport(World *world, unsigned int width, unsigned int height)
                                                   SDL_WINDOW_OPENGL);
     viewport->world = world;
     viewport->renderer = SDL_CreateRenderer(viewport->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    viewport->width = width;
+    viewport->height = height;
 }
 
 void closeViewport(Viewport *viewport)
@@ -38,9 +40,35 @@ void eventLoop(Viewport *viewport)
                 case SDL_QUIT:
                     continuer = false;
                 break;
+                case SDL_WINDOWEVENT_RESIZED:
+                    viewport->width = event.window.data1;
+                    viewport->height = event.window.data2;
             }
         }
         SDL_RenderPresent(viewport->renderer);
         SDL_Delay(60);
+        drawCells(viewport);
    }
+}
+
+void drawCells(Viewport *viewport)
+{
+    for(unsigned int x = 0; x < viewport->world->width; ++x)
+        for(unsigned int y = 0; y < viewport->world->height; ++y)
+        {
+            // draw a cell
+            //if(get_world_cell(viewport->World, x, y))
+            if(rand()%2)
+                SDL_SetRenderDrawColor(viewport->renderer, 0, 0, 0, 255);
+            else
+                SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
+
+            SDL_Rect rect;
+            rect.w = viewport->width/viewport->world->width;
+            rect.h = viewport->height/viewport->world->height;
+            rect.x = x*rect.w;
+            rect.y = y*rect.h;
+            SDL_RenderFillRect(viewport->renderer, &rect);
+        }
+    SDL_RenderPresent(viewport->renderer);
 }
