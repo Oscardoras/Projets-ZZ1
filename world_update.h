@@ -12,11 +12,11 @@ typedef char Rulestring[32];
  * @param world a pointer to the world.
  * @param x the x coordinates of the cell to evoluate.
  * @param y the y coordinates of the cell to evoluate.
- * @param table the new cell table.
+ * @param world2 the new world updated.
  * @param rule a rule string.
  * @return the state of the cell.
  */
-bool update_world_cell(World* world, int x, int y, bool *table, Rulestring rule);
+bool update_world_cell(World* world, int x, int y, World* world2, Rulestring rule);
 
 /**
  * @brief Updates the states of all the cells of a world.

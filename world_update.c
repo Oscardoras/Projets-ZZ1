@@ -29,18 +29,18 @@ bool update_world_cell(World* world, int x, int y, World* world2, Rulestring rul
         }
     }
     
-    *get_world_cell(&world2, x, y) = alive;
+    *get_world_cell(world2, x, y) = alive;
     return alive;
 }
 
-void update_world(World* world, Rulestring rule) {
+bool update_world(World* world, Rulestring rule) {
     bool modified = false;
     
     World world2 = new_world(world->borders, world->width, world->height);
     for (int i = 0; i < world->width; i++)
         for (int j = 0; j < world->height; j++) {
-            bool state1 = *get_world_cell(&world, i, j);
-            update_world_cell(world, i, j, table, rule);
+            bool state1 = *get_world_cell(world, i, j);
+            update_world_cell(world, i, j, &world2, rule);
             bool state2 = *get_world_cell(&world2, i, j);
             if (state1 != state2)
                 modified = true;
