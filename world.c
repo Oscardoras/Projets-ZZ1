@@ -24,6 +24,15 @@ World new_world(bool borders, int width, int height) {
     return world;
 }
 
+/*
+World load_world(FILE* file) {
+    World new_world;
+    bool borders;
+    int width, height;
+    
+}
+*/
+
 void free_world(World* world) {
     if (world->table != NULL) {
         world->borders = false;

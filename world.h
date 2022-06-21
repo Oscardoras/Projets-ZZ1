@@ -2,6 +2,7 @@
 #define __WORLD_H__
 
 #include <stdbool.h>
+#include <stdlib.h>
 
 
 typedef struct {
@@ -22,6 +23,22 @@ typedef struct {
 World new_world(bool borders, int width, int height);
 
 /**
+ * @brief Loads a text file into a world.
+ * 
+ * @param file the text file containing the saved world.
+ * @return the loaded world.
+ */
+World load_world(FILE* file);
+
+/**
+ * @brief Saves the world in a text file.
+ * 
+ * @param world a pointer to the world to save.
+ * @param file the text file containing the saved world.
+ */
+void save_world(World* world, FILE* file);
+
+/**
  * @brief free world's memory.
  * 
  * @param world a pointer to the world.
@@ -37,6 +54,15 @@ void free_world(World* world);
  */
 void set_world_size(World* world, int width, int height);
 
+
+/**
+ * @brief Gets a cell.
+ * 
+ * @param world a pointer to the world.
+ * @param x the x coordinates.
+ * @param y the y coordinates.
+ * @return a pointer to the cell. Returns NULL if the cell doesn't exist.
+ */
 bool* get_world_cell(World* world, int x, int y);
 
 
