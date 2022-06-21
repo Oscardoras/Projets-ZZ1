@@ -9,13 +9,13 @@ void update_world_cell(World* world, int x, int y, bool *table, Rulestring rule)
     
     int neighbours = 0;
     for (int i = y-1; i <= y+1; i++)
-        for (int j = x-1; j <= x+1; j++){
+        for (int j = x-1; j <= x+1; j++)
             if (i != y && j != x) {
                 bool* cell_i_j = get_world_cell(world, j, i);
                 if (cell_i_j != NULL && *cell_i_j)
                     neighbours++;
-          }
-    }
+            }
+    
     bool cell = *get_world_cell(world, j, i);
     bool alive = false;
     char state;

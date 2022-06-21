@@ -1,8 +1,10 @@
-gameoflifemake: main.c viewport.o world_update.o
-	gcc -g -Wall -Wextra main.c world.c viewport.o world_update.o -o gameoflife -lSDL2
+gameoflifemake: main.c viewport.o world.o world_update.o
+	gcc -g -Wall -Wextra main.c viewport.o world.o world_update.o -o gameoflife -lSDL2
 viewport.o: viewport.h viewport.c
-	gcc viewport.c viewport.h-c  viewport.o
+	gcc -c viewport.c -o viewport.o
+world.o: world.h world.c
+	gcc -c world.c -o world.o
 world_update.o: world_update.h world_update.c
-	gcc world_update.c world_update.h -c world_update.o
+	gcc -c world_update.c -o world_update.o
 clean:
 	rm -r *.o
