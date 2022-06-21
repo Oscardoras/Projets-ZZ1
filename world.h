@@ -40,7 +40,7 @@ World load_world(FILE* file);
 void save_world(World* world, FILE* file);
 
 /**
- * @brief free world's memory.
+ * @brief frees world's memory.
  * 
  * @param world a pointer to the world.
  */
