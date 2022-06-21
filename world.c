@@ -24,14 +24,33 @@ World new_world(bool borders, int width, int height) {
     return world;
 }
 
-/*
 World load_world(FILE* file) {
-    World new_world;
-    bool borders;
-    int width, height;
+    World world;
+    char line[8];
     
+    fgets(line, 8, file);
+    world.borders = atoi(line);
+    
+    fgets(line, 8, file);
+    world.width = atoi(line);
+    
+    fgets(line, 8, file);
+    world.height = atoi(line);
+    
+    world.table = malloc(sizeof(bool) * world.width * world.height);
+    int k = 0;
+    while (fgets(line, 8, file)) {
+        world.table[k] = atoi(line);
+        k++;
+    }
 }
-*/
+
+void save_world(World* world, FILE* file) {
+    fprintf(file, "%d\n%d\n%d\n", world->borders, world->width, world->height);
+    
+    for (int k = 0; k < world->width * world->height; k++)
+        fprintf(file, "%d\n", world->table[k]);
+}
 
 void free_world(World* world) {
     if (world->table != NULL) {

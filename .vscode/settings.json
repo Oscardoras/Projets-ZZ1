@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "stdlib.h": "c",
-        "world_update.h": "c"
+        "world_update.h": "c",
+        "*.tcc": "c"
     }
 }
