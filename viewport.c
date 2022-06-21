@@ -72,7 +72,14 @@ int configInit(Viewport* viewport) {
                 case SDL_QUIT:
                     quitState = 1;
                     break;
-                
+                case SDL_WINDOWEVENT:
+                    if(event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+                        SDL_Log("resized");
+                        viewport->width = event.window.data1;
+                        viewport->height = event.window.data2;
+                        drawCells(viewport);
+                        }
+                    break;
                 case SDL_MOUSEBUTTONDOWN:
                     if(SDL_GetMouseState(&xcell, &ycell) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
                         icell = xcell * viewport->world->width / viewport->width;
@@ -121,11 +128,13 @@ void eventLoop(Viewport* viewport, int delay) {
                 case SDL_QUIT:
                     running = false;
                     break;
-                case SDL_WINDOWEVENT_RESIZED:
-                    viewport->width = event.window.data1;
-                    viewport->height = event.window.data2;
-                    break;
-
+                case SDL_WINDOWEVENT:
+                    if(event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+                        viewport->width = event.window.data1;
+                        viewport->height = event.window.data2;
+                        drawCells(viewport);
+                        }
+                break;
                 case SDL_KEYDOWN:
                     switch(event.key.keysym.sym) {
                         case SDLK_RETURN:
@@ -150,37 +159,27 @@ void eventLoop(Viewport* viewport, int delay) {
     }
 }
 
-void drawCells(Viewport* viewport) {
-    for(int x = 0; x < viewport->world->width; x++)
-        for (int y = 0; y < viewport->world->height; y++) {
-            if (*get_world_cell(viewport->world, x, y))
-                SDL_SetRenderDrawColor(viewport->renderer, 200, 200, 200, 255);
-            else
+void drawCells(Viewport *viewport) {
+    for(int x = 0; x < viewport->world->width; ++x)
+        for(int y = 0; y < viewport->world->height; ++y)
+        {
+            if(!(*get_world_cell(viewport->world, x, y)))
                 SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
+            else
+                SDL_SetRenderDrawColor(viewport->renderer, 220, 220, 220, 255);
 
             SDL_Rect rect;
-            rect.w = viewport->width/viewport->world->width;
-            rect.h = viewport->height/viewport->world->height;
-            rect.x = x*rect.w;
-            rect.y = y*rect.h;
+            rect.w = (float)viewport->width/(float)viewport->world->width+1;
+            rect.h = (float)viewport->height/(float)viewport->world->height+1;
+            rect.x = x*(float)viewport->width/(float)viewport->world->width;
+            rect.y = y*(float)viewport->height/(float)viewport->world->height;
             SDL_RenderFillRect(viewport->renderer, &rect);
         }
-    
     SDL_SetRenderDrawColor(viewport->renderer, 100, 100, 100, 255);
-    for (int x = 0; x < viewport->world->width; x++)
-        SDL_RenderDrawLine(viewport->renderer,
-            x*(viewport->width/viewport->world->width),
-            0,
-            x*(viewport->width/viewport->world->width),
-            viewport->height
-        );
-    for (int y = 0; y < viewport->world->width; y++)
-        SDL_RenderDrawLine(viewport->renderer,
-            0,
-            y*(viewport->height/viewport->world->height),
-            viewport->width,
-            y*(viewport->height/viewport->world->height)
-        );
-    
+    for(int x = 1; x < viewport->world->width+1; ++x)
+        SDL_RenderDrawLine(viewport->renderer, x*((float)viewport->width/(float)viewport->world->width), 0, x*((float)viewport->width/(float)viewport->world->width), viewport->height);
+    for(int y = 1; y < viewport->world->height+1; ++y)
+        SDL_RenderDrawLine(viewport->renderer, 0, y*((float)viewport->height/(float)viewport->world->height), viewport->width, y*((float)viewport->height/(float)viewport->world->height));
+
     SDL_RenderPresent(viewport->renderer);
 }
