@@ -7,7 +7,7 @@
 Level* new_level(int min_x, int max_x, int min_y, int max_y, int seed) {
     Level* level = malloc(sizeof(Level));
     if (level != NULL) {
-        level->blocks = malloc(sizeof(Block) * width*height);
+        level->blocks = malloc(sizeof(Block) * (level->max_x - level->min_x) * (level->max_y - level->min_y));
         if (level->blocks != NULL) {
             level->min_x = min_x;
             level->max_x = max_x;
@@ -54,7 +54,8 @@ void save_level(Level* level, FILE* file) {
 }
 
 Level* load_level(FILE* file) {
-    
+    char buffer[256];
+    //fgets(buffer, 256, );
 }
 
 bool resize_level(Level* level, int min_x, int max_x, int min_y, int max_y) {
