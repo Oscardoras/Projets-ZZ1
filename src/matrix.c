@@ -11,13 +11,13 @@ float* parse(char* string, unsigned int count)
         exit(EXIT_FAILURE);
     }
     char* cour = string;
-    bool prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? true : false );
+    bool prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? false : true );
     char* begin = NULL;
     char* end = NULL;
     unsigned int current = 0;
     while(*cour != '\0')
     {
-        bool blank = ( (*cour >= '0' && *cour <='9') || *cour == '.'  ? true : false );
+        bool blank = ( (*cour >= '0' && *cour <='9') || *cour == '.'  ? false : true );
         if(prec_blank && !blank)
         {
             //begin
@@ -28,6 +28,7 @@ float* parse(char* string, unsigned int count)
             end = cour;
             *end = '\0';
             floats[current] = atof(begin);
+            ++current;
             //end
         }
         ++cour;
@@ -43,10 +44,10 @@ matrix_t initMatrix(FILE *file)
     char buffer[READ_BUFFER_SIZE];
     fgets(buffer, 1000, file); // compter le nombre de colonnes
     char * cour = buffer;
-    bool prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? true : false );
+    bool prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? false : true );
     while(*cour != '\0')
     {
-        bool blank = ( (*cour >= '0' && *cour <='9') || *cour == '.'  ? true : false );
+        bool blank = ( (*cour >= '0' && *cour <='9') || *cour == '.'  ? false : true );
         if(prec_blank && !blank)
         {
             ++matrix.size;
