@@ -1,4 +1,5 @@
 #include "matrix.h"
+#include <SDL2/SDL.h>
 matrix_t init(FILE *file)
 {
     matrix_t matrix;
@@ -19,7 +20,7 @@ matrix_t copy(matrix_t *matrix)
 {
     matrix_t newMatrix;
     newMatrix.size = matrix->size;
-    newMatrix.data = (float*)malloc(sizeof(float)*newMatrix->size*newMatrix->size);
+    newMatrix.data = (float*)malloc(sizeof(float)*newMatrix.size*newMatrix.size);
     if(newMatrix.data)
     {
         for(unsigned int it = 0; it < newMatrix.size*newMatrix.size; ++it)
@@ -29,7 +30,7 @@ matrix_t copy(matrix_t *matrix)
     }
     else{
         printf("Erreur alloc dynamique\n");
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 }
 
@@ -55,12 +56,12 @@ void forward(matrix_t *markov, unsigned int *currentState)
             Densites[it] += Densites[it2];
         }
     }
-    int continue = 1;
-    for(unsigned int it = 0; it < markov->size && continue; ++it)
+    int found = 0;
+    for(unsigned int it = 0; it < markov->size && !found; ++it)
     {
         if(random < Densites[it]){
             *currentState = it;
-            continue = false;
+            found = 1;
         }
     }
     free(Densites);
