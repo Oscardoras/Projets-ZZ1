@@ -80,5 +80,21 @@ void resize_level(Level* level, int width, int height);
  */
 Block* get_level_block(Level* level, int x, int y);
 
+/**
+ * @brief Adds an entity in a level.
+ * 
+ * @param level a level.
+ * @param entity an entity.
+ * @return if the entity has correctly been added.
+ */
+bool add_level_entity(Level* level, Entity* entity);
+
+/**
+ * @brief Remove deleted entities from a level.
+ * 
+ * @param level the level.
+ */
+void clean_world_entities(Level* level);
+
 
 #endif

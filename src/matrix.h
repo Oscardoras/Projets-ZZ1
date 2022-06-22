@@ -4,7 +4,13 @@
 #include <stdio.h>
 
 
+typedef enum {
+    Born = 0,
+    Void = 1
+} DefaultState;
+
 typedef unsigned int State;
+
 
 typedef struct {
     float *data;
