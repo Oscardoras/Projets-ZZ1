@@ -1,9 +1,7 @@
 #include "matrix.h"
 #include <SDL2/SDL.h>
 #define READ_BUFFER_SIZE 1000
-typedef int bool;
-#define true 1
-#define false 0
+#include <stdbool.h>
 float* parse(char* string, unsigned int count)
 {
     float * floats = (float*)malloc(sizeof(float) * count);
