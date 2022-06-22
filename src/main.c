@@ -16,6 +16,10 @@
 extern EntityType** entity_types;
 
 int main(/*int argc, char** argv*/) {
+    
+    FILE* file = fopen("data.txt", "r");
+    if(file) load_types(file);
+    fclose(file);
 
     Level* level = new_level(WORLD_X_MIN, WORLD_X_MAX, WORLD_Y_MIN, WORLD_Y_MAX, SEED);
     Viewport* viewport = init_viewport(WIDTH, HEIGHT, level);

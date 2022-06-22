@@ -41,10 +41,7 @@ void load_types(FILE* file) {
         entity_types[i] = load_type(file);
     }
 }
-void save_entity ()
-{
     
-}
 EntityType* load_type(FILE* file) {
     int i;
     char* c;
