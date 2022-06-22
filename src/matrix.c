@@ -3,7 +3,7 @@
 matrix_t init(FILE *file)
 {
     matrix_t matrix;
-    
+    return matrix;
 }
 
 void close(matrix_t *matrix)
@@ -32,11 +32,12 @@ matrix_t copy(matrix_t *matrix)
         printf("Erreur alloc dynamique\n");
         exit(1);
     }
+    return newMatrix;
 }
 
 void forward(matrix_t *markov, unsigned int *currentState)
 {
-    if(currentState >= markov->size)
+    if(*currentState >= markov->size)
     {
         printf("Erreur etat non existant\n");
         exit(EXIT_FAILURE);
