@@ -1,10 +1,11 @@
 #include <stdlib.h>
-#include <stdbool.h>
 
 #include "entity.h"
 
+#define ENTITY_TYPES 10
 
-EntityType* entity_types[10] = {};
+
+EntityType* entity_types[ENTITY_TYPES] = {};
 
 
 Entity* new_entity(EntityType* type, State state, int hp, Position position) {
@@ -21,8 +22,7 @@ Entity* new_entity(EntityType* type, State state, int hp, Position position) {
 }
 
 void save_entity(Entity* entity, FILE* file) {
-    fprintf(file,
-        "%d %d %d %d %d %s\n",
+    fprintf(file, "%d %d %d %d %d %s\n",
         entity->position.x,
         entity->position.y,
         entity->position.rotation,
@@ -33,13 +33,14 @@ void save_entity(Entity* entity, FILE* file) {
 }
 
 Entity* load_entity(FILE* file) {
-    char* line[128];
-    char* split[32];
-    int i_line=0;
-    int i_split;
     Entity* entity = NULL;
 
-    if(fgets(line, 128, file)) {
+    char line[128];
+    char split[32];
+    int i_line = 0;
+    int i_split;
+
+    if (fgets(line, 128, file)) {
         Position position;
         State state;
         int hp;
@@ -86,28 +87,26 @@ Entity* load_entity(FILE* file) {
 }
 
 void free_entity(Entity* entity) {
-    if(entity) {
-        entity->type = NULL;
+    if (entity != NULL)
         free(entity);
-    }
 }
 
 void load_types(FILE* file) {
-    for(int i=0; i<10; i++) {
+    for (int i = 0; i < ENTITY_TYPES; i++)
         entity_types[i] = load_type(file);
-    }
 }
     
 EntityType* load_type(FILE* file) {
+    EntityType* type = NULL;
+
     int i;
     char* c;
     char line[32];
-    EntityType* type = NULL;
     
-    if(fgets(line, 32, file)) { //Pas à la fin du fichier
+    if (fgets(line, 32, file)) { //Pas à la fin du fichier
         type = malloc(sizeof(EntityType));
         
-        if(type) {
+        if (type != NULL) {
             for(i=0; line[i] != '\n'; i++)
                 type->name[i]=line[i];
             type->name[i] = '\0';
@@ -132,7 +131,7 @@ EntityType* load_type(FILE* file) {
             *c = '\0';
             type->stats.speed = atoi(line);
             
-            type->markov = new_matrix(file);
+            type->markov = load_matrix(file);
             
             fgets(line, 32, file); //Ligne vide entre chaque type
         }
@@ -164,18 +163,13 @@ EntityType* search_type(char* name) {
 }
 
 void free_types() {
-    for(int i=0; i<10; i++)
+    for (int i = 0; i < ENTITY_TYPES; i++)
         free_type(entity_types[i]);
 }
 
 void free_type(EntityType* type) {
-    if(type) {
-        if(type->name) {
-            free(type->name);
-        }
-        if(type->markov.data) {
-            closeMatrix(&(type->markov));
-        }
+    if (type != NULL) {
+        free_matrix(&type->markov);
         free(type);
     }
 }

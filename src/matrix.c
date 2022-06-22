@@ -1,12 +1,12 @@
-#include <SDL2/SDL.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "matrix.h"
 
 #define READ_BUFFER_SIZE 1000
 
 
-Matrix new_matrix(FILE* file) {
+Matrix load_matrix(FILE* file) {
     Matrix matrix;
     matrix.size = 0;
     char buffer[READ_BUFFER_SIZE];
@@ -31,14 +31,14 @@ Matrix new_matrix(FILE* file) {
     }
     float * floats = parse(buffer, matrix.size);
     for(unsigned int j = 0; j < matrix.size; ++j)
-        *getMatrix(&matrix, 0, j) = floats[j];
+        *get_matrix_element(&matrix, 0, j) = floats[j];
     free(floats);
     for(unsigned int i = 1; i < matrix.size; ++i)
     {
         fgets(buffer, 1000, file);
         float * floats = parse(buffer, matrix.size);
         for(unsigned int j = 0; j < matrix.size; ++j)
-            *getMatrix(&matrix, i, j) = floats[j];
+            *get_matrix_element(&matrix, i, j) = floats[j];
         free(floats);
     }
     return matrix;
@@ -88,7 +88,7 @@ void forward(Matrix* matrix, State* state) {
     float random = (float)(rand()%1000)/1000.0;
     for(int it = matrix->size-1; it >= 0; --it)
     {
-        Densites[it] = *get_matrix_element(matrix, *currentState, it);
+        Densites[it] = *get_matrix_element(matrix, *state, it);
         for(unsigned int it2 = 0; it2 < (unsigned int)it; ++it2)
         {
             Densites[it] += Densites[it2];
@@ -98,7 +98,7 @@ void forward(Matrix* matrix, State* state) {
     for(unsigned int it = 0; it < matrix->size && !found; ++it)
     {
         if(random < Densites[it]){
-            *currentState = it;
+            *state = it;
             found = 1;
         }
     }

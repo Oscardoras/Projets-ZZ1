@@ -1,11 +1,11 @@
 #ifndef __VIEWPORT_H__
 #define __VIEWPORT_H__
 
-
 #include <SDL2/SDL.h>
 
-#include "viewport.h"
 #include "level.h"
+#include "viewport.h"
+
 
 typedef struct {
     int x;
@@ -17,9 +17,9 @@ typedef struct {
 typedef struct {
     int width;
     int height;
-    Camera* camera;
     SDL_Window* window;
     SDL_Renderer* renderer;
+    Camera camera;
     Level* level;
 } Viewport;
 

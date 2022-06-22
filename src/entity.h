@@ -2,7 +2,6 @@
 #define __ENTITY_H__
 
 #include <stdbool.h>
-#include <stdio.h>
 
 #include "matrix.h"
 

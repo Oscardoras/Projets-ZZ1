@@ -1,14 +1,13 @@
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "level.h"
 
+
 Level* new_level(int min_x, int max_x, int min_y, int max_y, int seed) {
     Level* level = malloc(sizeof(Level));
     if (level != NULL) {
-        level->blocks = malloc(sizeof(Block) * (level->max_x - level->min_x) * (level->max_y - level->min_y));
+        level->blocks = malloc(sizeof(Block) * (max_x - min_x) * (max_y - min_y));
         if (level->blocks != NULL) {
-            level->blocks[0] = Air;
             level->min_x = min_x;
             level->max_x = max_x;
             level->min_y = min_y;
@@ -17,8 +16,7 @@ Level* new_level(int min_x, int max_x, int min_y, int max_y, int seed) {
             level->entities = NULL;
             
             //TODO : generate the world
-        } 
-        else free(level);
+        } else free(level);
     }
     
     return level;
@@ -45,7 +43,7 @@ void save_level(Level* level, FILE* file) {
     
     int size = (level->max_x - level->min_x) * (level->max_y - level->min_y);
     for (int k = 0; k < size; k++)
-        fprintf("%d\n", (int) level->blocks[k]);
+        fprintf(file, "%d\n", (int) level->blocks[k]);
     
     struct ListCell* cell = level->entities;
     while (cell != NULL) {
@@ -160,7 +158,7 @@ bool add_level_entity(Level* level, Entity* entity) {
 void clean_level_entities(Level* level) {
     struct ListCell** ptr = &level->entities;
     while (*ptr != NULL) {
-        if ((*ptr)->entity->current_state == Void) {
+        if ((*ptr)->entity->state == VOID) {
             struct ListCell* tmp = *ptr;
             *ptr = (*ptr)->next;
             free(tmp);

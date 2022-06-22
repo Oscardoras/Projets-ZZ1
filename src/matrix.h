@@ -19,12 +19,12 @@ typedef struct {
 
 
 /**
- * @brief Creates a new matrix.
+ * @brief Loads a matrix from a configuration file.
  * 
  * @param file the file containing the matrix.
  * @return the loaded matrix.
  */
-Matrix new_matrix(FILE* file);
+Matrix load_matrix(FILE* file);
 
 /**
  * @brief Frees a matrix.
