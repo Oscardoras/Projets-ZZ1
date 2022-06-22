@@ -25,7 +25,7 @@ typedef struct {
 } InitStats;
 
 typedef struct {
-    char *name;
+    char name[32];
     InitStats stats;
     matrix_t markov;
 } EntityType;
@@ -34,49 +34,28 @@ typedef struct {
     int current_hp;
     State current_state;
     Position world_position;
-
     EntityType* type;
 } Entity;
 
 
-extern EntityType entity_types[10];
-
-
-/**
- * @brief Loads the types from a configuration file.
- * 
- * @param file the configuration file.
- */
-void load_types(FILE* file);
-
-/**
- * @brief Frees types.
- */
-void free_types();
-
-/**
- * @brief Loads a type from a file.
- * 
- * @param file the configuration file.
- * @return the type.
- */
-EntityType load_type(FILE* file);
-
-/**
- * @brief Frees a type
- * 
- * @param type a type.
- */
-void free_type(EntityType* type);
 
 /**
  * @brief Creates a new entity.
  * 
- * @param birth_position his position in the level.
+ * @param position his position in the level.
+ * @param state the state of the entity, 0 when created, maybe != 0 when loaded
  * @param type the type of entity created.
  * @return the new entity created.
  */
-Entity* new_entity(Position birth_position, EntityType type);
+Entity* new_entity(Position position, State state, EntityType type);
+
+/**
+ * @brief Saves an entity in the save-file.
+ * 
+ * @param entity the entity to save.
+ * @param file the save-file.
+ */
+void save_entity(Entity* entity, FILE* file);
 
 /**
  * @brief Loads an entity from a save file.
@@ -87,19 +66,38 @@ Entity* new_entity(Position birth_position, EntityType type);
 Entity* load_entity(FILE* file);
 
 /**
- * @brief Saves an entity into a save file.
- * 
- * @param entity an entity.
- * @param file the save file.
- */
-void save_entity(Entity* entity, FILE* file);
-
-/**
  * @brief Frees an entity.
  * 
  * @param entity the entity.
  */
 void free_entity(Entity* entity);
+
+/**
+ * @brief Loads the types from a configuration file.
+ * 
+ * @param file the configuration file.
+ */
+void load_types(FILE* file);
+
+/**
+ * @brief Loads a type from a file.
+ * 
+ * @param file the configuration file.
+ * @return the type.
+ */
+EntityType* load_type(FILE* file);
+
+/**
+ * @brief Frees types.
+ */
+void free_types();
+
+/**
+ * @brief Frees a type
+ * 
+ * @param type a pointer to a type.
+ */
+void free_type(EntityType* type);
 
 
 #endif
