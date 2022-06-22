@@ -5,11 +5,9 @@
 #include <stdio.h>
 
 
-typedef struct {
+typedef struct matrix_t;{
     int temp;
-} matrix_t;
-/*
-Uniquement pour la compilation
+} 
 et les tests des fonctions de ce fichier
 */
 
