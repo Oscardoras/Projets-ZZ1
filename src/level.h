@@ -8,7 +8,7 @@
 
 
 typedef enum {
-    Air,
+    Air = 0,
     Dirt,
     Path,
     Grass,
