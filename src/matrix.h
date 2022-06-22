@@ -13,7 +13,7 @@ typedef struct {
  * @param file Le fichier depuis lequel charger la matrice
  * @return La matrice créée
  */
-matrix_t* init(FILE * file);
+matrix_t init(FILE * file);
 
 /**
  * @brief Libère la mémoire en détruisant une matrice
@@ -30,7 +30,7 @@ void close(matrix_t& matrix);
  * @param j coordonnée j
  * @return Un pointeur sur la donnée que l'on récupère
  */
-float* get(matrix_t& matrix, unsigned int i, unsigned int j);
+float* get(matrix_t *matrix, unsigned int i, unsigned int j);
 
 /**
  * @brief Alloue dynamiquement de l'espace et copie les données dans une nouvelle matrice
@@ -38,7 +38,7 @@ float* get(matrix_t& matrix, unsigned int i, unsigned int j);
  * @param matrix La matrice dont il faut copier les donnéees
  * @return La nouvelle matrice
  */
-matrix_t copy(matrix_t& matrix);
+matrix_t copy(matrix_t *matrix);
 
 /**
  * @brief Calcule un nouvel état markovien à partir d'une matrice de probabilités
@@ -46,5 +46,5 @@ matrix_t copy(matrix_t& matrix);
  * @param markov La matrice de probabilités markovienne
  * @param currentState L'état courant
  */
-void forward(matrix_t& markov, unsigned int &currentState);
+void forward(matrix_t *markov, unsigned int &currentState);
 #endif
