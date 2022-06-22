@@ -45,7 +45,7 @@ typedef struct {
  * @param position his position in the level.
  * @param state the state of the entity, 0 when created, maybe != 0 when loaded
  * @param type the type of entity created.
- * @return a pointer to the new entity created.
+ * @return the new entity created.
  */
 Entity* new_entity(Position position, State state, EntityType type);
 
@@ -61,14 +61,14 @@ void save_entity(Entity* entity, FILE* file);
  * @brief Loads an entity from a save file.
  * 
  * @param file the save file.
- * @return a pointer to the loaded entity.
+ * @return the loaded entity, NULL if no entity has been loaded.
  */
 Entity* load_entity(FILE* file);
 
 /**
  * @brief Frees an entity.
  * 
- * @param entity a pointer to the entity.
+ * @param entity the entity.
  */
 void free_entity(Entity* entity);
 
