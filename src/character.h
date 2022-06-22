@@ -4,12 +4,10 @@
 
 #include <stdio.h>
 
+#include "matrix.h"
 
-typedef struct matrix_t;{
-    int temp;
-} 
-et les tests des fonctions de ce fichier
-*/
+
+typedef struct matrix_t;
 
 typedef struct {
     int x;

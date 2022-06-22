@@ -4,6 +4,7 @@
 
 #include <SDL2/SDL.h>
 
+#include "viewport.h"
 #include "level.h"
 
 typedef struct {
@@ -28,9 +29,10 @@ typedef struct {
  * 
  * @param width the width of the window.
  * @param height the height of the window.
+ * @param level the level to link to the viewport.
  * @return a pointer to the viewport created.
  */
-Viewport* initViewport(int width, int height);
+Viewport* initViewport(int width, int height, Level level);
 
 /**
  * @brief Frees the viewport
