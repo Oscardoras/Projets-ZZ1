@@ -13,6 +13,7 @@ int main(/*int argc, char** argv*/) {
 
     Level* level = new_level(WORLD_WIDTH, WORLD_HEIGHT, SEED);
     Viewport* viewport = init_viewport(WIDTH, HEIGHT, level);
+    event_loop(viewport);
     close_viewport(viewport);
     free_level(level);
     return EXIT_SUCCESS;
