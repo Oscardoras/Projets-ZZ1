@@ -10,3 +10,10 @@
     - Nourriture
     - Creuser
     - Danger
+
+
+- Evènements aléatoire :
+    - Attaque arraignée
+    - Attaque menthe religieuse
+    - Pluie
+    - Chaleur
