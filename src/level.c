@@ -1,4 +1,4 @@
-#include <sdtio.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "level.h"
@@ -7,7 +7,7 @@
 Level* new_level(int min_x, int max_x, int min_y, int max_y, int seed) {
     Level* level = malloc(sizeof(Level));
     if (level != NULL) {
-        level->blocks = malloc(sizeof(Block) * width*height);
+        level->blocks = malloc(sizeof(Block) * (level->max_x - level->min_x) * (level->max_y - level->min_y));
         if (level->blocks != NULL) {
             level->min_x = min_x;
             level->max_x = max_x;
@@ -44,7 +44,7 @@ void save_level(Level* level, FILE* file) {
     
     unsigned int size = (level->max_x - level->min_x) * (level->max_y - level->min_y);
     for (int k = 0; k < size; k++)
-        fprintf("%d\n", level->block[k]);
+        fprintf("%d\n", level->blocks[k]);
     
     struct ListCell* cell = level->entities;
     while (cell != NULL) {
@@ -54,18 +54,19 @@ void save_level(Level* level, FILE* file) {
 }
 
 Level* load_level(FILE* file) {
-    
+    char buffer[256];
+    //fgets(buffer, 256, );
 }
 
 bool resize_level(Level* level, int min_x, int max_x, int min_y, int max_y) {
     Level* level2 = new_level(min_x, max_x, min_y, max_y, 0);
-    if (new_blocks != NULL) {
+    if (level2 != NULL) {
         for (int x = level->min_x; x < level->max_x; x++) {
             for (int y = level->min_y; y < level->max_y; y++) {
                 Block* b = get_level_block(level, x, y);
                 Block* b2 = get_level_block(level2, x, y);
                 if (b != NULL)
-                    *b2 = *b
+                    *b2 = *b;
                 //TODO : generate the world
             }
         }
