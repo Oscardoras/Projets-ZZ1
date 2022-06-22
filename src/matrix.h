@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 
-typedef int State;
+typedef unsigned int State;
 
 typedef struct {
     float *data;
