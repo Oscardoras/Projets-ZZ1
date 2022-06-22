@@ -12,7 +12,7 @@ Viewport* init_viewport(int width, int height, Level* level) {
     if(viewport) {
         viewport->width = width;
         viewport->height = height;
-        viewport->level = &level;
+        viewport->level = level;
         viewport->window = NULL;
         viewport->renderer = NULL;
         
@@ -34,13 +34,13 @@ Viewport* init_viewport(int width, int height, Level* level) {
                 
                 if(!viewport->renderer) {
                     SDL_Log("Error SDL Renderer init - %s", SDL_GetError());
-                    closeViewport(viewport);
+                    close_viewport(viewport);
                     viewport = NULL;
                 }
             }
             else {
                 SDL_Log("Error SDL Window init - %s", SDL_GetError());
-                closeViewport(viewport);
+                close_viewport(viewport);
                 viewport = NULL;
             }
         }
@@ -57,7 +57,7 @@ Viewport* init_viewport(int width, int height, Level* level) {
     return viewport;
 }
 
-void closeViewport(Viewport* viewport) {
+void close_viewport(Viewport* viewport) {
     if(viewport) {
         if(viewport->camera) {
             free(viewport->camera);
