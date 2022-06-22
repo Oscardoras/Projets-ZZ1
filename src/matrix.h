@@ -17,6 +17,7 @@ typedef struct {
     unsigned int size;
 } matrix_t;
 
+
 /**
  * @brief Creates a new matrix
  * 
@@ -28,7 +29,7 @@ matrix_t initMatrix(FILE* file);
 /**
  * @brief Frees a matrix.
  * 
- * @param matrix La matrice à libérer
+ * @param matrix the matrix to free.
  */
 void closeMatrix(matrix_t* matrix);
 
@@ -56,13 +57,15 @@ matrix_t copyMatrix(matrix_t* matrix);
  * @param matrix a pointer to the matrix.
  * @param state a pointer to the state.
  */
-void forward(matrix_t *markov, unsigned int *currentState);
+void forward(matrix_t* matrix, State* state);
 
 /**
- * @brief Parse une chaîne de caractères afin de récupérer tous les flotants
+ * @brief Parses a string to Parse une chaîne de caractères afin de récupérer tous les flotants
  * 
  * @param string la chaîne de caractères
  * @return Un tableau de flotants
  */
 float* parse(char* string, unsigned int count);
+
+
 #endif
