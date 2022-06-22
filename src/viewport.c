@@ -105,8 +105,6 @@ void event_loop(Viewport* viewport, Rulestring rule) {
                             break;
                         
                         case SDLK_p:
-                            viewport->pause = !viewport->pause;
-                            break;
                         case SDLK_RETURN:
                             viewport->pause = !viewport->pause;
                             break;
