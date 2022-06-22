@@ -75,7 +75,7 @@ Level* load_level(FILE* file);
  * @param max_y
  * @param height the new height of the level.
  */
-void resize_level(Level* level, int min_x, int max_x, int min_y, int max_y);
+bool resize_level(Level* level, int min_x, int max_x, int min_y, int max_y);
 
 /**
  * @brief Gets a pointer to a block in a level.
