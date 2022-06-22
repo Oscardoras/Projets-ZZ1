@@ -38,19 +38,19 @@ typedef struct {
  * @param seed a seed for generation.
  * @return the created level.
  */
-Level new_level(int width, int height, int seed);
+Level* new_level(int width, int height, int seed);
 
 /**
  * @brief Frees a level.
  * 
- * @param level a pointer to the level to free.
+ * @param level the level to free.
  */
 void free_level(Level* level);
 
 /**
  * @brief Saves a level into a file.
  * 
- * @param level a pointer to the level to save.
+ * @param level the level to save.
  * @param file the save file.
  */
 void save_level(Level* level, FILE* file);
@@ -61,12 +61,12 @@ void save_level(Level* level, FILE* file);
  * @param file the save file.
  * @return the loaded level.
  */
-Level load_level(FILE* file);
+Level* load_level(FILE* file);
 
 /**
  * @brief Resizes a level.
  * 
- * @param level a pointer to the level to resize.
+ * @param level the level to resize.
  * @param width the new width of the level.
  * @param height the new height of the level.
  */
@@ -75,7 +75,7 @@ void resize_level(Level* level, int width, int height);
 /**
  * @brief Gets a pointer to a block in a level.
  * 
- * @param level a pointer to the level.
+ * @param level the level.
  * @param x the x coordinates.
  * @param y the y coordinates.
  * @return a pointer to the block.

@@ -2,7 +2,7 @@
 
 #include "viewport.h"
 
-Viewport* initViewport(int width, int height, Level level) {
+Viewport* init_viewport(int width, int height, Level* level) {
     if(SDL_Init(SDL_INIT_VIDEO)) {
         SDL_Log("Error SDL init - %s", SDL_GetError());
         exit(EXIT_FAILURE);
