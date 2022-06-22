@@ -4,6 +4,7 @@
 #include "viewport.h"
 #include "character.h"
 #include "matrix.h"
+
 #define WIDTH 800
 #define HEIGHT 600
 #define WORLD_X_MIN -80
@@ -11,6 +12,9 @@
 #define WORLD_X_MAX 80
 #define WORLD_Y_MAX 60
 #define SEED 0
+
+extern EntityType** entity_types;
+
 int main(/*int argc, char** argv*/) {
 
     Level* level = new_level(WORLD_X_MIN, WORLD_X_MAX, WORLD_Y_MIN, WORLD_Y_MAX, SEED);
