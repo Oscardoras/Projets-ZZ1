@@ -41,14 +41,14 @@ Level new_level(int width, int height, int seed);
 /**
  * @brief Frees a level.
  * 
- * @param level the level to free.
+ * @param level a pointer to the level to free.
  */
 void free_level(Level* level);
 
 /**
  * @brief Saves a level into a file.
  * 
- * @param level the level to save.
+ * @param level a pointer to the level to save.
  * @param file the save file.
  */
 void save_level(Level* level, FILE* file);
@@ -64,19 +64,19 @@ Level load_level(FILE* file);
 /**
  * @brief Resizes a level.
  * 
- * @param level the level to resize.
+ * @param level a pointer to the level to resize.
  * @param width the new width of the level.
  * @param height the new height of the level.
  */
 void resize_level(Level* level, int width, int height);
 
 /**
- * @brief Get the level block object
+ * @brief Gets a pointer to a block in a level.
  * 
- * @param level 
- * @param x 
- * @param y 
- * @return Block* 
+ * @param level a pointer to the level.
+ * @param x the x coordinates.
+ * @param y the y coordinates.
+ * @return a pointer to the block.
  */
 Block* get_level_block(Level* level, int x, int y);
 

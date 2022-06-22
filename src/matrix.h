@@ -1,36 +1,38 @@
 #ifndef __MARKOV_H__
 #define __MARKOV_H__
+
 #include <stdio.h>
 
+
 typedef struct {
-    float* data;
+    float *data;
     unsigned int size;
 } matrix_t;
 
 /**
- * @brief create a new matrix
+ * @brief Creates a new matrix
  * 
- * @param file Le fichier depuis lequel charger la matrice
- * @return La matrice créée
+ * @param file the file containing the matrix.
+ * @return the loaded matrix.
  */
-matrix_t* init(FILE * file);
+matrix_t init(FILE* file);
 
 /**
- * @brief Libère la mémoire en détruisant une matrice
+ * @brief Frees a matrix.
  * 
  * @param matrix La matrice à libérer
  */
-void close(matrix_t& matrix);
+void close(matrix_t* matrix);
 
 /**
- * @brief Récupère une case d'une matrice
+ * @brief Get a pointer to a matrix element.
  * 
- * @param matrix La matrice dont il fautr récupérer la donnée
- * @param i coordonnée i
- * @param j coordonnée j
- * @return Un pointeur sur la donnée que l'on récupère
+ * @param matrix a pointer to the matrix.
+ * @param i the i coordinates.
+ * @param j the j coordinates.
+ * @return a pointer to the matrix element.
  */
-float* get(matrix_t& matrix, unsigned int i, unsigned int j);
+float* get(matrix_t* matrix, int i, int j);
 
 /**
  * @brief Alloue dynamiquement de l'espace et copie les données dans une nouvelle matrice
@@ -38,13 +40,15 @@ float* get(matrix_t& matrix, unsigned int i, unsigned int j);
  * @param matrix La matrice dont il faut copier les donnéees
  * @return La nouvelle matrice
  */
-matrix_t copy(matrix_t& matrix);
+matrix_t copy(matrix_t* matrix);
 
 /**
- * @brief Calcule un nouvel état markovien à partir d'une matrice de probabilités
+ * @brief Computes the new state.
  * 
- * @param markov La matrice de probabilités markovienne
- * @param currentState L'état courant
+ * @param matrix a pointer to the matrix.
+ * @param state a pointer to the state.
  */
-void forward(matrix_t& markov, unsigned int &currentState);
+void forward(matrix_t* matrix, int* state);
+
+
 #endif
