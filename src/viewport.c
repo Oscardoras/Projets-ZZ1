@@ -12,7 +12,7 @@ Viewport* init_viewport(int width, int height, Level* level) {
     if(viewport) {
         viewport->width = width;
         viewport->height = height;
-        viewport->level = &level;
+        viewport->level = level;
         viewport->window = NULL;
         viewport->renderer = NULL;
         
