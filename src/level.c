@@ -61,7 +61,7 @@ Level* load_level(FILE* file) {
         fgets(buffer, 256, file);
         char* b = buffer;
         char value[256];
-        char *v
+        char *v;
         
         for (v = value; *b != ' '; b++) {
             *v = *b;
