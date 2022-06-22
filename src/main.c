@@ -13,7 +13,7 @@
 #define WORLD_Y_MAX 60
 #define SEED 0
 
-extern EntityType** entity_types;
+extern EntityType* entity_types[10];
 
 int main(/*int argc, char** argv*/) {
     
