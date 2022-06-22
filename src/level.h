@@ -1,11 +1,9 @@
 #ifndef __LEVEL_H__
 #define __LEVEL_H__
 
-#include <stdlib.h>
+#include <stdio.h>
 
 #include "character.h"
-
-typedef struct Entity;
 
 
 typedef enum {
@@ -18,7 +16,7 @@ typedef enum {
     Leaves
 } Block;
 
-typedef struct Level {
+typedef struct {
     int seed;
     int width;
     int height;
@@ -26,7 +24,7 @@ typedef struct Level {
     struct ListCell {
         Entity* entity;
         struct ListCell* next;
-    };
+    } entities;
 } Level;
 
 
@@ -38,7 +36,7 @@ typedef struct Level {
  * @param seed a seed for generation.
  * @return the created level.
  */
-Level new_level(int width, int height, int seed);
+Level* new_level(int width, int height, int seed);
 
 /**
  * @brief Frees a level.
@@ -61,7 +59,7 @@ void save_level(Level* level, FILE* file);
  * @param file the save file.
  * @return the loaded level.
  */
-Level load_level(FILE* file);
+Level* load_level(FILE* file);
 
 /**
  * @brief Resizes a level.
@@ -73,12 +71,12 @@ Level load_level(FILE* file);
 void resize_level(Level* level, int width, int height);
 
 /**
- * @brief Get the level block object
+ * @brief Gets a pointer to a block in a level.
  * 
- * @param level 
- * @param x 
- * @param y 
- * @return Block* 
+ * @param level the level.
+ * @param x the x coordinates.
+ * @param y the y coordinates.
+ * @return a pointer to the block.
  */
 Block* get_level_block(Level* level, int x, int y);
 

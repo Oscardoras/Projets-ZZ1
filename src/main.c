@@ -6,8 +6,6 @@
 #include "matrix.h"
 
 
-int main(int argc, char** argv) {
-    Level level;
-    Viewport* viewport = initViewport(50, 60, level);
+int main(/*int argc, char** argv*/) {
     return EXIT_SUCCESS;
 }
