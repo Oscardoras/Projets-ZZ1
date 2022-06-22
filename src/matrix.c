@@ -8,12 +8,12 @@ float* parse(char* string, unsigned int count)
     if(!floats)
     {
         printf("Erreur allocation\n");
-        exit(exit_FAILURE);
+        exit(EXIT_FAILURE);
     }
     char* cour = string;
     bool prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? true : false );
-    char* begin = nullptr;
-    char* end = nullptr;
+    char* begin = NULL;
+    char* end = NULL;
     unsigned int current = 0;
     while(*cour != '\0')
     {
@@ -41,7 +41,7 @@ matrix_t init(FILE *file)
     matrix_t matrix;
     matrix.size = 0;
     char buffer[READ_BUFFER_SIZE];
-    fgets(buffer, 1024, file); // compter le nombre de colonnes
+    fgets(buffer, 1000, file); // compter le nombre de colonnes
     char * cour = buffer;
     bool prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? true : false );
     while(*cour != '\0')
@@ -54,7 +54,7 @@ matrix_t init(FILE *file)
         ++cour;
         prec_blank = blank;
     }
-    matrix.data = (float*)malloc((sizeof(float)*matrix->size));
+    matrix.data = (float*)malloc((sizeof(float)*matrix.size));
     if(!matrix.data)
     {
         printf("Erreur allocation\n");
@@ -62,14 +62,14 @@ matrix_t init(FILE *file)
     }
     float * floats = parse(buffer, matrix.size);
     for(unsigned int j = 0; j < matrix.size; ++j)
-        get(&matrix, 0, j) = floats[j];
+        *get(&matrix, 0, j) = floats[j];
     free(floats);
     for(unsigned int i = 1; i < matrix.size; ++i)
     {
-        fgets(buffer, 1024, file);
+        fgets(buffer, 1000, file);
         float * floats = parse(buffer, matrix.size);
         for(unsigned int j = 0; j < matrix.size; ++j)
-            get(&matrix, i, j) = floats[j];
+            *get(&matrix, i, j) = floats[j];
         free(floats);
     }
     return matrix;
@@ -99,7 +99,7 @@ matrix_t copy(matrix_t *matrix)
     }
     else{
         printf("Erreur alloc dynamique\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     return newMatrix;
 }
@@ -120,8 +120,8 @@ void forward(matrix_t *markov, unsigned int *currentState)
     float random = (float)(rand()%1000)/1000.0;
     for(int it = markov->size-1; it >= 0; --it)
     {
-        Densites[it] = get(&markov, *currentState, it);
-        for(unsigned int it2 = 0; it2 < it; ++it2)
+        Densites[it] = *get(markov, *currentState, it);
+        for(unsigned int it2 = 0; it2 < (unsigned int)it; ++it2)
         {
             Densites[it] += Densites[it2];
         }

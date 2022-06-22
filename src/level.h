@@ -25,7 +25,7 @@ typedef struct {
     struct ListCell {
         Entity* entity;
         struct ListCell* next;
-    } entities;
+    } *entities;
 } Level;
 
 
