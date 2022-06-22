@@ -25,35 +25,35 @@ typedef struct {
 
 
 /**
- * @brief Creates the viewport and its components
+ * @brief Creates a viewport and its components.
  * 
  * @param width the width of the window.
  * @param height the height of the window.
- * @param level the level to link to the viewport.
- * @return a pointer to the viewport created.
+ * @param level the level displayed in the window.
+ * @return the created viewport.
  */
-Viewport* initViewport(int width, int height, Level level);
+Viewport* init_viewport(int width, int height, Level* level);
 
 /**
- * @brief Frees the viewport
+ * @brief Frees a viewport.
  * 
- * @param viewport the viewport to free
+ * @param viewport the viewport to free.
  */
-void closeViewport(Viewport* viewport);
+void close_viewport(Viewport* viewport);
 
 /**
- * @brief Controls the event loop of the game.
+ * @brief The display loop.
  * 
- * @param viewport the viewport of the game.
+ * @param viewport the viewport to loop.
  */
-void eventLoop(Viewport* viewport);
+void event_loop(Viewport* viewport);
 
 /**
- * @brief Draws the viewport at the end of each event loop.
+ * @brief Draws a viewport.
  * 
  * @param viewport the viewport to draw.
  */
-void drawViewport(Viewport* viewport);
+void draw_viewport(Viewport* viewport);
 
 
 #endif

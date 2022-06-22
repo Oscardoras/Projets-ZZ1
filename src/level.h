@@ -18,7 +18,7 @@ typedef enum {
     Leaves
 } Block;
 
-typedef struct Level {
+typedef struct {
     int seed;
     int width;
     int height;
@@ -26,7 +26,7 @@ typedef struct Level {
     struct ListCell {
         Entity* entity;
         struct ListCell* next;
-    };
+    } entities;
 } Level;
 
 
