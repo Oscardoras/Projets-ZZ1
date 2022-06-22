@@ -23,14 +23,14 @@ typedef struct {
  * @param file the file containing the matrix.
  * @return the loaded matrix.
  */
-matrix_t init(FILE* file);
+matrix_t initMatrix(FILE* file);
 
 /**
  * @brief Frees a matrix.
  * 
  * @param matrix La matrice à libérer
  */
-void close(matrix_t* matrix);
+void closeMatrix(matrix_t* matrix);
 
 /**
  * @brief Get a pointer to a matrix element.
@@ -40,7 +40,7 @@ void close(matrix_t* matrix);
  * @param j the j coordinates.
  * @return a pointer to the matrix element.
  */
-float* get(matrix_t* matrix, unsigned int i, unsigned int j);
+float* getMatrix(matrix_t* matrix, unsigned int i, unsigned int j);
 
 /**
  * @brief Alloue dynamiquement de l'espace et copie les données dans une nouvelle matrice
@@ -48,7 +48,7 @@ float* get(matrix_t* matrix, unsigned int i, unsigned int j);
  * @param matrix La matrice dont il faut copier les donnéees
  * @return La nouvelle matrice
  */
-matrix_t copy(matrix_t* matrix);
+matrix_t copyMatrix(matrix_t* matrix);
 
 /**
  * @brief Computes the new state.
