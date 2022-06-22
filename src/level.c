@@ -40,7 +40,7 @@ void free_level(Level* level) {
 }
 
 void save_level(Level* level, FILE* file) {
-    fprintf(file, "%d %d %d %d\n", level->min_x, level->max_x, level->min_y, level->max_y);
+    fprintf(file, "%d %d %d %d %d\n", level->min_x, level->max_x, level->min_y, level->max_y, level->seed);
     
     unsigned int size = (level->max_x - level->min_x) * (level->max_y - level->min_y);
     for (int k = 0; k < size; k++)
