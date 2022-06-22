@@ -9,7 +9,7 @@ typedef enum {
     Void = 1
 } DefaultState;
 
-typedef int State;
+typedef unsigned int State;
 
 
 typedef struct {
@@ -40,7 +40,7 @@ void close(matrix_t* matrix);
  * @param j the j coordinates.
  * @return a pointer to the matrix element.
  */
-float* get(matrix_t* matrix, int i, int j);
+float* get(matrix_t* matrix, unsigned int i, unsigned int j);
 
 /**
  * @brief Alloue dynamiquement de l'espace et copie les données dans une nouvelle matrice
@@ -56,7 +56,13 @@ matrix_t copy(matrix_t* matrix);
  * @param matrix a pointer to the matrix.
  * @param state a pointer to the state.
  */
-void forward(matrix_t* matrix, State* state);
+void forward(matrix_t *markov, unsigned int *currentState);
 
-
+/**
+ * @brief Parse une chaîne de caractères afin de récupérer tous les flotants
+ * 
+ * @param string la chaîne de caractères
+ * @return Un tableau de flotants
+ */
+float* parse(char* string, unsigned int count);
 #endif
