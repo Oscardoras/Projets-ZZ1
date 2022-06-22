@@ -55,7 +55,7 @@ matrix_t initMatrix(FILE *file)
         ++cour;
         prec_blank = blank;
     }
-    matrix.data = (float*)malloc((sizeof(float)*matrix.size));
+    matrix.data = (float*)malloc((sizeof(float)*matrix.size*matrix.size));
     if(!matrix.data)
     {
         printf("Erreur allocation\n");
