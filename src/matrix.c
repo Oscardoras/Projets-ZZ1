@@ -1,15 +1,44 @@
 #include "matrix.h"
 #include <SDL2/SDL.h>
 #define READ_BUFFER_SIZE 1000
-float* parse(char*)
+float* parse(char* string, unsigned int count)
 {
-
+    float * floats = (float*)malloc(sizeof(float) * count);
+    if(!floats)
+    {
+        printf("Erreur allocation\n");
+        exit(exit_FAILURE);
+    }
+    char* cour = string;
+    int prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? 1 : 0 );
+    char* begin = nullptr;
+    char* end = nullptr;
+    unsigned int current = 0;
+    while(*cour != '\0')
+    {
+        int blank = ( (*cour >= '0' && *cour <='9') || *cour == '.'  ? 1 : 0 );
+        if(prec_blank && !blank)
+        {
+            //begin
+            begin = cour;
+        }
+        else if(blank && !prec_blank)
+        {
+            end = cour;
+            *end = '\0';
+            floats[current] = atof(begin);
+            //end
+        }
+        ++cour;
+        prec_blank = blank;
+    }
+    return floats;
 }
 
 matrix_t init(FILE *file)
 {
     matrix_t matrix;
-    matrix->size = 0;
+    matrix.size = 0;
     char buffer[READ_BUFFER_SIZE];
     fgets(buffer, 1024, file); // compter le nombre de colonnes
     char * cour = buffer;
@@ -30,14 +59,14 @@ matrix_t init(FILE *file)
         printf("Erreur allocation\n");
         exit(EXIT_FAILURE);
     }
-    float * floats = parse(buffer);
+    float * floats = parse(buffer, matrix.size);
     for(unsigned int j = 0; j < matrix.size; ++j)
         get(&matrix, 0, j) = floats[j];
     free(floats);
     for(unsigned int i = 1; i < matrix.size; ++i)
     {
         fgets(buffer, 1024, file);
-        float * floats = parse(buffer);
+        float * floats = parse(buffer, matrix.size);
         for(unsigned int j = 0; j < matrix.size; ++j)
             get(&matrix, i, j) = floats[j];
         free(floats);
@@ -88,10 +117,10 @@ void forward(matrix_t *markov, unsigned int *currentState)
         exit(EXIT_FAILURE);
     }
     float random = (float)(rand()%1000)/1000.0;
-    for(unsigned int it = 0; it < markov->size; ++it)
+    for(unsigned int it = markov->size-1; it > 0; ++it)
     {
-        Densites[it] = 0;
-        for(unsigned int it2 = 0; it2 < markov->size; ++it2)
+        Densites[it] = get(&markov, *currentState, it);
+        for(unsigned int it2 = 0; it2 < it; ++it2)
         {
             Densites[it] += Densites[it2];
         }

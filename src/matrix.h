@@ -4,7 +4,13 @@
 #include <stdio.h>
 
 
+typedef enum {
+    Born = 0,
+    Void = 1
+} DefaultState;
+
 typedef unsigned int State;
+
 
 typedef struct {
     float *data;
@@ -58,5 +64,5 @@ void forward(matrix_t *markov, unsigned int *currentState);
  * @param string la chaîne de caractères
  * @return Un tableau de flotants
  */
-float* parse(char* string);
+float* parse(char* string, unsigned int count);
 #endif
