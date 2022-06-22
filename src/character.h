@@ -2,6 +2,7 @@
 #define __CHARACTER_H__
 
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "matrix.h"
 
@@ -43,11 +44,12 @@ typedef struct {
  * @brief Creates a new entity.
  * 
  * @param position his position in the level.
- * @param state the state of the entity, 0 when created, maybe != 0 when loaded
- * @param type the type of entity created.
+ * @param state the state of the entity, 0 when created, maybe != 0 when loaded.
+ * @param hp hp of the entity created. if 0, takes type->state.hp instead.
+ * @param type a pointer to the type of the entity created.
  * @return the new entity created.
  */
-Entity* new_entity(Position position, State state, EntityType type);
+Entity* new_entity(Position position, State state, int hp, EntityType* type);
 
 /**
  * @brief Saves an entity in the save-file.
@@ -86,6 +88,23 @@ void load_types(FILE* file);
  * @return the type.
  */
 EntityType* load_type(FILE* file);
+
+/**
+ * @brief Acts identically to strcmp.
+ * 
+ * @param str1 the 1st string to compare.
+ * @param str2 the 2nd string to compare.
+ * @return true is the 2 strings are identical, false otherwise.
+ */
+bool compare_str(char* str1, char* str2);
+
+/**
+ * @brief Searchs in entity_types for the type of a said name.
+ * 
+ * @param name the name of the type wanted.
+ * @return a pointer to the entity.
+ */
+EntityType* search_type(char* name);
 
 /**
  * @brief Frees types.
