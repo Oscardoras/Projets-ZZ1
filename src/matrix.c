@@ -62,14 +62,14 @@ matrix_t initMatrix(FILE *file)
     }
     float * floats = parse(buffer, matrix.size);
     for(unsigned int j = 0; j < matrix.size; ++j)
-        *get(&matrix, 0, j) = floats[j];
+        *getMatrix(&matrix, 0, j) = floats[j];
     free(floats);
     for(unsigned int i = 1; i < matrix.size; ++i)
     {
         fgets(buffer, 1000, file);
         float * floats = parse(buffer, matrix.size);
         for(unsigned int j = 0; j < matrix.size; ++j)
-            *get(&matrix, i, j) = floats[j];
+            *getMatrix(&matrix, i, j) = floats[j];
         free(floats);
     }
     return matrix;
@@ -120,7 +120,7 @@ void forward(matrix_t *markov, unsigned int *currentState)
     float random = (float)(rand()%1000)/1000.0;
     for(int it = markov->size-1; it >= 0; --it)
     {
-        Densites[it] = *get(markov, *currentState, it);
+        Densites[it] = *getMatrix(markov, *currentState, it);
         for(unsigned int it2 = 0; it2 < (unsigned int)it; ++it2)
         {
             Densites[it] += Densites[it2];
