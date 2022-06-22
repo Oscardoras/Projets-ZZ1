@@ -4,6 +4,11 @@
 float* parse(char* string, unsigned int count)
 {
     float * floats = (float*)malloc(sizeof(float) * count);
+    if(!floats)
+    {
+        printf("Erreur allocation\n");
+        exit(exit_FAILURE);
+    }
     char* cour = string;
     int prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? 1 : 0 );
     char* begin = nullptr;
