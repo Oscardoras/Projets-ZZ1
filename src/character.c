@@ -72,7 +72,7 @@ EntityType* load_type(FILE* file) {
             *c = '\0';
             type->stats.speed = atoi(line);
             
-            type->markov = init(file);
+            type->markov = initMatrix(file);
             
             fgets(line, 32, file); //Ligne vide entre chaque type
         }
@@ -92,7 +92,7 @@ void free_type(EntityType* type) {
             free(type->name);
         }
         if(type->markov.data) {
-            close(&(type->markov));
+            closeMatrix(&(type->markov));
         }
         free(type);
     }
