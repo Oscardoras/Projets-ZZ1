@@ -3,12 +3,37 @@
 #define READ_BUFFER_SIZE 1000
 float* parse(char* string, unsigned int count)
 {
+    float * floats = (float*)malloc(sizeof(float) * count);
+    char* cour = string;
+    int prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? 1 : 0 );
+    char* begin = nullptr;
+    char* end = nullptr;
+    unsigned int current = 0;
+    while(*cour != '\0')
+    {
+        int blank = ( (*cour >= '0' && *cour <='9') || *cour == '.'  ? 1 : 0 );
+        if(prec_blank && !blank)
+        {
+            //begin
+            begin = cour;
+        }
+        else if(blank && !prec_blank)
+        {
+            end = cour;
+            *end = '\0';
+            floats[current] = atof(begin);
+            //end
+        }
+        ++cour;
+        prec_blank = blank;
+    }
+    return floats;
 }
 
 matrix_t init(FILE *file)
 {
     matrix_t matrix;
-    matrix->size = 0;
+    matrix.size = 0;
     char buffer[READ_BUFFER_SIZE];
     fgets(buffer, 1024, file); // compter le nombre de colonnes
     char * cour = buffer;
