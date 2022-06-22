@@ -2,6 +2,7 @@
 #define __LEVEL_H__
 
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "character.h"
 

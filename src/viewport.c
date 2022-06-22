@@ -12,7 +12,7 @@ Viewport* init_viewport(int width, int height, Level* level) {
     if(viewport) {
         viewport->width = width;
         viewport->height = height;
-        viewport->level = &level;
+        viewport->level = level;
         viewport->window = NULL;
         viewport->renderer = NULL;
         
@@ -34,13 +34,13 @@ Viewport* init_viewport(int width, int height, Level* level) {
                 
                 if(!viewport->renderer) {
                     SDL_Log("Error SDL Renderer init - %s", SDL_GetError());
-                    closeViewport(viewport);
+                    close_viewport(viewport);
                     viewport = NULL;
                 }
             }
             else {
                 SDL_Log("Error SDL Window init - %s", SDL_GetError());
-                closeViewport(viewport);
+                close_viewport(viewport);
                 viewport = NULL;
             }
         }
@@ -56,8 +56,29 @@ Viewport* init_viewport(int width, int height, Level* level) {
     
     return viewport;
 }
+void event_loop(Viewport* viewport)
+{
+    SDL_Event event;
+    bool quit = false;
+    while (!quit) {
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_QUIT:
+                    quit = true;
+                    break;
+                case SDL_WINDOWEVENT:
+                    if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+                        viewport->width = event.window.data1;
+                        viewport->height = event.window.data2;
+                    }
+                    break;
+            }
+        }
+        draw_viewport(viewport);
+    }
 
-void closeViewport(Viewport* viewport) {
+}
+void close_viewport(Viewport* viewport) {
     if(viewport) {
         if(viewport->camera) {
             free(viewport->camera);
@@ -74,4 +95,8 @@ void closeViewport(Viewport* viewport) {
         free(viewport);
         SDL_Quit();
     }
+}
+void draw_viewport(Viewport* viewport)
+{
+    
 }

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "level.h"
-
+#include <stdlib.h>
 
 Level* new_level(int min_x, int max_x, int min_y, int max_y, int seed) {
     Level* level = malloc(sizeof(Level));
@@ -82,7 +82,7 @@ Block* get_level_block(Level* level, int x, int y) {
 bool add_level_entity(Level* level, Entity* entity) {
     struct ListCell* cell = malloc(sizeof(struct ListCell));
     if (cell != NULL) {
-        cell->entity = entiy;
+        cell->entity = entity;
         cell->next = level->entities;
         return true;
     } else return false;
