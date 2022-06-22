@@ -42,11 +42,12 @@ typedef struct {
 /**
  * @brief Creates a new entity.
  * 
- * @param birth_position his position in the level.
+ * @param position his position in the level.
+ * @param state the state of the entity, 0 when created, maybe != 0 when loaded
  * @param type the type of entity created.
  * @return a pointer to the new entity created.
  */
-Entity* new_entity(Position birth_position, EntityType type);
+Entity* new_entity(Position position, State state, EntityType type);
 
 /**
  * @brief Loads an entity from a save file.

@@ -8,12 +8,12 @@
 EntityType* entity_types[10] = {};
 
 
-Entity* new_entity(Position birth_position, EntityType type) {
+Entity* new_entity(Position position, State state, EntityType type) {
     Entity* entity = malloc(sizeof(entity));
     
     if(entity) {
-        entity->world_position = birth_position;
-        entity->current_state = BORN_STATE;
+        entity->world_position = position;
+        entity->current_state = state;
         entity->type = &type;
         entity->current_hp = entity->type->stats.hp;
     }
