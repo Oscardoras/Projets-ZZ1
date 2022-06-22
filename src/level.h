@@ -18,25 +18,29 @@ typedef enum {
 
 typedef struct {
     int seed;
-    int width;
-    int height;
+    int min_x; //included
+    int max_x; //excluded
+    int min_y; //included
+    int max_y; //excluded
     Block *blocks;
     struct ListCell {
         Entity* entity;
         struct ListCell* next;
-    } entities;
+    }* entities;
 } Level;
 
 
 /**
  * @brief Creates a new level from the seed.
  * 
- * @param width the width of the level.
- * @param height the height of the level.
+ * @param min_x
+ * @param max_x
+ * @param min_y
+ * @param max_y
  * @param seed a seed for generation.
  * @return the created level.
  */
-Level* new_level(int width, int height, int seed);
+Level* new_level(int min_x, int max_x, int min_y, int max_y, int seed);
 
 /**
  * @brief Frees a level.
@@ -64,11 +68,13 @@ Level* load_level(FILE* file);
 /**
  * @brief Resizes a level.
  * 
- * @param level the level to resize.
- * @param width the new width of the level.
+ * @param min_x
+ * @param max_x
+ * @param min_y
+ * @param max_y
  * @param height the new height of the level.
  */
-void resize_level(Level* level, int width, int height);
+void resize_level(Level* level, int min_x, int max_x, int min_y, int max_y);
 
 /**
  * @brief Gets a pointer to a block in a level.
@@ -94,7 +100,7 @@ bool add_level_entity(Level* level, Entity* entity);
  * 
  * @param level the level.
  */
-void clean_world_entities(Level* level);
+void clean_level_entities(Level* level);
 
 
 #endif

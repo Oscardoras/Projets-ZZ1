@@ -65,7 +65,7 @@ EntityType load_type(FILE* file);
 /**
  * @brief Frees a type
  * 
- * @param type a pointer to a type.
+ * @param type a type.
  */
 void free_type(EntityType* type);
 
@@ -74,7 +74,7 @@ void free_type(EntityType* type);
  * 
  * @param birth_position his position in the level.
  * @param type the type of entity created.
- * @return a pointer to the new entity created.
+ * @return the new entity created.
  */
 Entity* new_entity(Position birth_position, EntityType type);
 
@@ -82,14 +82,22 @@ Entity* new_entity(Position birth_position, EntityType type);
  * @brief Loads an entity from a save file.
  * 
  * @param file the save file.
- * @return a pointer to the loaded entity.
+ * @return the loaded entity.
  */
 Entity* load_entity(FILE* file);
 
 /**
+ * @brief Saves an entity into a save file.
+ * 
+ * @param entity an entity.
+ * @param file the save file.
+ */
+void save_entity(Entity* entity, FILE* file);
+
+/**
  * @brief Frees an entity.
  * 
- * @param entity a pointer to the entity.
+ * @param entity the entity.
  */
 void free_entity(Entity* entity);
 
