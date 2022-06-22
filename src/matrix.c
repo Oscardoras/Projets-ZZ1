@@ -1,44 +1,12 @@
-#include "matrix.h"
 #include <SDL2/SDL.h>
-#define READ_BUFFER_SIZE 1000
 #include <stdbool.h>
-float* parse(char* string, unsigned int count)
-{
-    float * floats = (float*)malloc(sizeof(float) * count);
-    if(!floats)
-    {
-        printf("Erreur allocation\n");
-        exit(EXIT_FAILURE);
-    }
-    char* cour = string;
-    bool prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? false : true );
-    char* begin = NULL;
-    char* end = NULL;
-    unsigned int current = 0;
-    while(*cour != '\0')
-    {
-        bool blank = ( (*cour >= '0' && *cour <='9') || *cour == '.'  ? false : true );
-        if(prec_blank && !blank)
-        {
-            //begin
-            begin = cour;
-        }
-        else if(blank && !prec_blank)
-        {
-            end = cour;
-            *end = '\0';
-            floats[current] = atof(begin);
-            ++current;
-            //end
-        }
-        ++cour;
-        prec_blank = blank;
-    }
-    return floats;
-}
 
-matrix_t initMatrix(FILE *file)
-{
+#include "matrix.h"
+
+#define READ_BUFFER_SIZE 1000
+
+
+matrix_t initMatrix(FILE *file) {
     matrix_t matrix;
     matrix.size = 0;
     char buffer[READ_BUFFER_SIZE];
@@ -76,17 +44,15 @@ matrix_t initMatrix(FILE *file)
     return matrix;
 }
 
-void closeMatrix(matrix_t *matrix)
-{
+void closeMatrix(matrix_t* matrix) {
     free(matrix->data);
 }
 
-float* getMatrix(matrix_t *matrix, unsigned int i, unsigned int j)
-{   
-    return &matrix->data[matrix->size*i+j];
+float* getMatrix(matrix_t* matrix, unsigned int i, unsigned int j) {   
+    return &matrix->data[i*matrix->size + j];
 }
 
-matrix_t copyMatrix(matrix_t *matrix)
+matrix_t copyMatrix(matrix_t* matrix)
 {
     matrix_t newMatrix;
     newMatrix.size = matrix->size;
@@ -105,8 +71,7 @@ matrix_t copyMatrix(matrix_t *matrix)
     return newMatrix;
 }
 
-void forward(matrix_t *markov, unsigned int *currentState)
-{
+void forward(matrix_t* matrix, State* currentState) {
     if(*currentState >= markov->size)
     {
         printf("Erreur etat non existant\n");
@@ -136,4 +101,38 @@ void forward(matrix_t *markov, unsigned int *currentState)
         }
     }
     free(Densites);
+}
+
+float* parse(char* string, unsigned int count) {
+    float * floats = (float*)malloc(sizeof(float) * count);
+    if(!floats)
+    {
+        printf("Erreur allocation\n");
+        exit(EXIT_FAILURE);
+    }
+    char* cour = string;
+    bool prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? false : true );
+    char* begin = NULL;
+    char* end = NULL;
+    unsigned int current = 0;
+    while(*cour != '\0')
+    {
+        bool blank = ( (*cour >= '0' && *cour <='9') || *cour == '.'  ? false : true );
+        if(prec_blank && !blank)
+        {
+            //begin
+            begin = cour;
+        }
+        else if(blank && !prec_blank)
+        {
+            end = cour;
+            *end = '\0';
+            floats[current] = atof(begin);
+            ++current;
+            //end
+        }
+        ++cour;
+        prec_blank = blank;
+    }
+    return floats;
 }
