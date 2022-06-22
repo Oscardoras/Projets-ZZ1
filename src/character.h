@@ -25,7 +25,7 @@ typedef struct {
 } InitStats;
 
 typedef struct {
-    char *name;
+    char name[32];
     InitStats stats;
     matrix_t markov;
 } EntityType;
@@ -37,8 +37,6 @@ typedef struct {
     EntityType* type;
 } Entity;
 
-
-extern EntityType entity_types[10];
 
 
 /**
@@ -73,17 +71,17 @@ void free_entity(Entity* entity);
 void load_types(FILE* file);
 
 /**
- * @brief Frees types.
- */
-void free_types();
-
-/**
  * @brief Loads a type from a file.
  * 
  * @param file the configuration file.
  * @return the type.
  */
-EntityType load_type(FILE* file);
+EntityType* load_type(FILE* file);
+
+/**
+ * @brief Frees types.
+ */
+void free_types();
 
 /**
  * @brief Frees a type
