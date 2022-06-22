@@ -117,10 +117,10 @@ void forward(matrix_t *markov, unsigned int *currentState)
         exit(EXIT_FAILURE);
     }
     float random = (float)(rand()%1000)/1000.0;
-    for(unsigned int it = 0; it < markov->size; ++it)
+    for(unsigned int it = markov->size-1; it > 0; ++it)
     {
-        Densites[it] = 0;
-        for(unsigned int it2 = 0; it2 < markov->size; ++it2)
+        Densites[it] = get(&markov, *currentState, it);
+        for(unsigned int it2 = 0; it2 < it; ++it2)
         {
             Densites[it] += Densites[it2];
         }
