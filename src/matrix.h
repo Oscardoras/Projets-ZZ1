@@ -47,4 +47,12 @@ matrix_t copy(matrix_t *matrix);
  * @param currentState L'état courant
  */
 void forward(matrix_t *markov, unsigned int *currentState);
+
+/**
+ * @brief Parse une chaîne de caractères afin de récupérer tous les flotants
+ * 
+ * @param string la chaîne de caractères
+ * @return Un tableau de flotants
+ */
+float* parse(char* string);
 #endif

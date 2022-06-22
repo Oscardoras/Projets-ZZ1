@@ -1,8 +1,47 @@
 #include "matrix.h"
 #include <SDL2/SDL.h>
+#define READ_BUFFER_SIZE 1000
+float* parse(char*)
+{
+
+}
+
 matrix_t init(FILE *file)
 {
     matrix_t matrix;
+    matrix->size = 0;
+    char buffer[READ_BUFFER_SIZE];
+    fgets(buffer, 1024, file); // compter le nombre de colonnes
+    char * cour = buffer;
+    int prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? 1 : 0 );
+    while(*cour != '\0')
+    {
+        int blank = ( (*cour >= '0' && *cour <='9') || *cour == '.'  ? 1 : 0 );
+        if(prec_blank && !blank)
+        {
+            ++matrix.size;
+        }
+        ++cour;
+        prec_blank = blank;
+    }
+    matrix.data = (float*)malloc((sizeof(float)*matrix->size));
+    if(!matrix.data)
+    {
+        printf("Erreur allocation\n");
+        exit(EXIT_FAILURE);
+    }
+    float * floats = parse(buffer);
+    for(unsigned int j = 0; j < matrix.size; ++j)
+        get(&matrix, 0, j) = floats[j];
+    free(floats);
+    for(unsigned int i = 1; i < matrix.size; ++i)
+    {
+        fgets(buffer, 1024, file);
+        float * floats = parse(buffer);
+        for(unsigned int j = 0; j < matrix.size; ++j)
+            get(&matrix, i, j) = floats[j];
+        free(floats);
+    }
     return matrix;
 }
 
