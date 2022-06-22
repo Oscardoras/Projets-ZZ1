@@ -1,0 +1,12 @@
+- Donner un ordre général aux fourmis :
+    - Agressif
+    - Defensif
+    - Eviter de sortir
+    - Essayer de sortir
+    - Se concentrer sur la nourriture
+    - Se concentrer sur la construction
+- Déplacer la reine
+- Mettre des phéromones quelque part :
+    - Nourriture
+    - Creuser
+    - Danger
