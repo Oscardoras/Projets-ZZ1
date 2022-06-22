@@ -1,7 +1,7 @@
 #ifndef __LEVEL_H__
 #define __LEVEL_H__
 
-#include <stdlib.h>
+#include <stdio.h>
 
 typedef struct Entity;
 

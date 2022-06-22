@@ -4,6 +4,8 @@
 #include <stdio.h>
 
 
+typedef int State;
+
 typedef struct {
     float *data;
     unsigned int size;
