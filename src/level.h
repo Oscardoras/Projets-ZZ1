@@ -5,8 +5,6 @@
 
 #include "character.h"
 
-typedef struct Entity;
-
 
 typedef enum {
     Air,
@@ -26,7 +24,7 @@ typedef struct Level {
     struct ListCell {
         Entity* entity;
         struct ListCell* next;
-    };
+    } entities;
 } Level;
 
 

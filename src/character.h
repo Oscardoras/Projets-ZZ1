@@ -7,8 +7,6 @@
 #include "matrix.h"
 
 
-typedef struct matrix_t;
-
 typedef struct {
     int x;
     int y;
@@ -39,7 +37,7 @@ typedef struct {
 } Entity;
 
 
-ToE ToE_array[10];
+extern ToE *ToE_array;
 
 /**
  * @brief Creates a new entity in the world.
@@ -94,10 +92,6 @@ void free_types(ToE* ToEarray);
  * @param pToE a pointer to the ToE.
  */
 void free_type(ToE* pToE);
-
-
-
-
 
 
 #endif
