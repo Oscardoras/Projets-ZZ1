@@ -34,7 +34,7 @@ void close(matrix_t* matrix);
  * @param j the j coordinates.
  * @return a pointer to the matrix element.
  */
-float* get(matrix_t* matrix, int i, int j);
+float* get(matrix_t* matrix, unsigned int i, unsigned int j);
 
 /**
  * @brief Alloue dynamiquement de l'espace et copie les données dans une nouvelle matrice
