@@ -1,6 +1,9 @@
 #include "matrix.h"
 #include <SDL2/SDL.h>
 #define READ_BUFFER_SIZE 1000
+typedef int bool;
+#define true 1
+#define false 0
 float* parse(char* string, unsigned int count)
 {
     float * floats = (float*)malloc(sizeof(float) * count);
@@ -10,13 +13,13 @@ float* parse(char* string, unsigned int count)
         exit(exit_FAILURE);
     }
     char* cour = string;
-    int prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? 1 : 0 );
+    bool prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? true : false );
     char* begin = nullptr;
     char* end = nullptr;
     unsigned int current = 0;
     while(*cour != '\0')
     {
-        int blank = ( (*cour >= '0' && *cour <='9') || *cour == '.'  ? 1 : 0 );
+        bool blank = ( (*cour >= '0' && *cour <='9') || *cour == '.'  ? true : false );
         if(prec_blank && !blank)
         {
             //begin
@@ -42,10 +45,10 @@ matrix_t init(FILE *file)
     char buffer[READ_BUFFER_SIZE];
     fgets(buffer, 1024, file); // compter le nombre de colonnes
     char * cour = buffer;
-    int prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? 1 : 0 );
+    bool prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? true : false );
     while(*cour != '\0')
     {
-        int blank = ( (*cour >= '0' && *cour <='9') || *cour == '.'  ? 1 : 0 );
+        bool blank = ( (*cour >= '0' && *cour <='9') || *cour == '.'  ? true : false );
         if(prec_blank && !blank)
         {
             ++matrix.size;
