@@ -36,7 +36,7 @@ float* parse(char* string, unsigned int count)
     return floats;
 }
 
-matrix_t init(FILE *file)
+matrix_t initMatrix(FILE *file)
 {
     matrix_t matrix;
     matrix.size = 0;
@@ -75,17 +75,17 @@ matrix_t init(FILE *file)
     return matrix;
 }
 
-void close(matrix_t *matrix)
+void closeMatrix(matrix_t *matrix)
 {
     free(matrix->data);
 }
 
-float* get(matrix_t *matrix, unsigned int i, unsigned int j)
+float* getMatrix(matrix_t *matrix, unsigned int i, unsigned int j)
 {   
     return &matrix->data[matrix->size*i+j];
 }
 
-matrix_t copy(matrix_t *matrix)
+matrix_t copyMatrix(matrix_t *matrix)
 {
     matrix_t newMatrix;
     newMatrix.size = matrix->size;
