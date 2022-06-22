@@ -40,11 +40,11 @@ void free_level(Level* level) {
 }
 
 void save_level(Level* level, FILE* file) {
-    fprintf(file, "%d %d %d %d %d\n", level->min_x, level->max_x, level->min_y, level->max_y);
+    fprintf(file, "%d %d %d %d\n", level->min_x, level->max_x, level->min_y, level->max_y);
     
     unsigned int size = (level->max_x - level->min_x) * (level->max_y - level->min_y);
     for (int k = 0; k < size; k++)
-        fprintf("%d\n", level->blocks[k]);
+        fprintf("%d\n", (int)level->blocks[k]);
     
     struct ListCell* cell = level->entities;
     while (cell != NULL) {
@@ -77,7 +77,7 @@ bool resize_level(Level* level, int min_x, int max_x, int min_y, int max_y) {
 
 Block* get_level_block(Level* level, int x, int y) {
     if (level->min_x <= x && x < level->max_x)
-    return &level->blocks[(y - level->min_y)*(level->max_x - level->min_x) + (x - level->min_x)];
+        return &level->blocks[(y - level->min_y)*(level->max_x - level->min_x) + (x - level->min_x)];
 }
 
 bool add_level_entity(Level* level, Entity* entity) {
