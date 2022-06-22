@@ -21,6 +21,10 @@ Entity* new_entity(Position position, State state, EntityType type) {
     return entity;
 }
 
+void save_entity(Entity* entity, FILE* file) {
+    
+}
+
 Entity* load_entity(FILE* file) {
     return NULL;
 }

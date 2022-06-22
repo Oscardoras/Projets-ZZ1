@@ -50,6 +50,14 @@ typedef struct {
 Entity* new_entity(Position position, State state, EntityType type);
 
 /**
+ * @brief Saves an entity in the save-file.
+ * 
+ * @param entity the entity to save.
+ * @param file the save-file.
+ */
+void save_entity(Entity* entity, FILE* file);
+
+/**
  * @brief Loads an entity from a save file.
  * 
  * @param file the save file.
