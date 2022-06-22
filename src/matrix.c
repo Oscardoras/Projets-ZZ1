@@ -6,8 +6,8 @@
 #define READ_BUFFER_SIZE 1000
 
 
-matrix_t initMatrix(FILE *file) {
-    matrix_t matrix;
+Matrix new_matrix(FILE* file) {
+    Matrix matrix;
     matrix.size = 0;
     char buffer[READ_BUFFER_SIZE];
     fgets(buffer, 1000, file); // compter le nombre de colonnes
@@ -44,14 +44,15 @@ matrix_t initMatrix(FILE *file) {
     return matrix;
 }
 
-void closeMatrix(matrix_t* matrix) {
+void free_matrix(Matrix* matrix) {
     free(matrix->data);
 }
 
-float* getMatrix(matrix_t* matrix, unsigned int i, unsigned int j) {   
+float* get_matrix_element(Matrix* matrix, unsigned int i, unsigned int j) {   
     return &matrix->data[i*matrix->size + j];
 }
 
+/*
 matrix_t copyMatrix(matrix_t* matrix)
 {
     matrix_t newMatrix;
@@ -70,9 +71,10 @@ matrix_t copyMatrix(matrix_t* matrix)
     }
     return newMatrix;
 }
+*/
 
-void forward(matrix_t* matrix, State* currentState) {
-    if(*currentState >= matrix->size)
+void forward(Matrix* matrix, State* state) {
+    if(*state >= matrix->size)
     {
         printf("Erreur etat non existant\n");
         exit(EXIT_FAILURE);
@@ -86,7 +88,7 @@ void forward(matrix_t* matrix, State* currentState) {
     float random = (float)(rand()%1000)/1000.0;
     for(int it = matrix->size-1; it >= 0; --it)
     {
-        Densites[it] = *getMatrix(matrix, *currentState, it);
+        Densites[it] = *get_matrix_element(matrix, *currentState, it);
         for(unsigned int it2 = 0; it2 < (unsigned int)it; ++it2)
         {
             Densites[it] += Densites[it2];
@@ -103,7 +105,7 @@ void forward(matrix_t* matrix, State* currentState) {
     free(Densites);
 }
 
-float* parse(char* string, unsigned int count) {
+float* parse(char *string, unsigned int count) {
     float * floats = (float*)malloc(sizeof(float) * count);
     if(!floats)
     {

@@ -5,8 +5,8 @@
 
 
 typedef enum {
-    Born = 0,
-    Void = 1
+    BORN = 0,
+    VOID = 1
 } DefaultState;
 
 typedef unsigned int State;
@@ -15,23 +15,23 @@ typedef unsigned int State;
 typedef struct {
     float *data;
     unsigned int size;
-} matrix_t;
+} Matrix;
 
 
 /**
- * @brief Creates a new matrix
+ * @brief Creates a new matrix.
  * 
  * @param file the file containing the matrix.
  * @return the loaded matrix.
  */
-matrix_t initMatrix(FILE* file);
+Matrix new_matrix(FILE* file);
 
 /**
  * @brief Frees a matrix.
  * 
  * @param matrix the matrix to free.
  */
-void closeMatrix(matrix_t* matrix);
+void free_matrix(Matrix* matrix);
 
 /**
  * @brief Get a pointer to a matrix element.
@@ -41,15 +41,7 @@ void closeMatrix(matrix_t* matrix);
  * @param j the j coordinates.
  * @return a pointer to the matrix element.
  */
-float* getMatrix(matrix_t* matrix, unsigned int i, unsigned int j);
-
-/**
- * @brief Alloue dynamiquement de l'espace et copie les données dans une nouvelle matrice
- * 
- * @param matrix La matrice dont il faut copier les donnéees
- * @return La nouvelle matrice
- */
-matrix_t copyMatrix(matrix_t* matrix);
+float* get_matrix_element(Matrix* matrix, unsigned int i, unsigned int j);
 
 /**
  * @brief Computes the new state.
@@ -57,7 +49,7 @@ matrix_t copyMatrix(matrix_t* matrix);
  * @param matrix a pointer to the matrix.
  * @param state a pointer to the state.
  */
-void forward(matrix_t* matrix, State* state);
+void forward(Matrix* matrix, State* state);
 
 /**
  * @brief Parses a string to Parse une chaîne de caractères afin de récupérer tous les flotants
@@ -65,7 +57,7 @@ void forward(matrix_t* matrix, State* state);
  * @param string la chaîne de caractères
  * @return Un tableau de flotants
  */
-float* parse(char* string, unsigned int count);
+float* parse(char *string, unsigned int count);
 
 
 #endif

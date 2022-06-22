@@ -1,8 +1,8 @@
-#ifndef __CHARACTER_H__
-#define __CHARACTER_H__
+#ifndef __ENTITY_H__
+#define __ENTITY_H__
 
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "matrix.h"
 
@@ -19,25 +19,22 @@ typedef struct {
 } Position;
 
 typedef struct {
-    int hp;
-    int atk;
-    int atk_speed;
-    int speed;
-} InitStats;
-
-typedef struct {
     char name[32];
-    InitStats stats;
-    matrix_t markov;
+    struct {
+        int hp;
+        int atk;
+        int atk_speed;
+        int speed;
+    } stats;
+    Matrix markov;
 } EntityType;
 
 typedef struct {
-    int current_hp;
-    State current_state;
-    Position world_position;
     EntityType* type;
+    int hp;
+    State state;
+    Position position;
 } Entity;
-
 
 
 /**
@@ -49,7 +46,7 @@ typedef struct {
  * @param type a pointer to the type of the entity created.
  * @return the new entity created.
  */
-Entity* new_entity(Position position, State state, int hp, EntityType* type);
+Entity* new_entity(EntityType* type, State state, int hp, Position position);
 
 /**
  * @brief Saves an entity in the save-file.
@@ -104,7 +101,7 @@ bool compare_str(char* str1, char* str2);
  * @param name the name of the type wanted.
  * @return a pointer to the entity.
  */
-EntityType* search_type(char* name);
+EntityType* search_type(char *name);
 
 /**
  * @brief Frees types.

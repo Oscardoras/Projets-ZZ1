@@ -1,22 +1,20 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "character.h"
+#include "entity.h"
 
-
-#define BORN_STATE 0
 
 EntityType* entity_types[10] = {};
 
 
-Entity* new_entity(Position position, State state, int hp, EntityType* type) {
+Entity* new_entity(EntityType* type, State state, int hp, Position position) {
     Entity* entity = malloc(sizeof(entity));
     
-    if(entity) {
-        entity->world_position = position;
-        entity->current_state = state;
+    if (entity) {
         entity->type = type;
-        entity->current_hp = (hp) ? hp : entity->type->stats.hp;
+        entity->hp = (hp != 0) ? hp : entity->type->stats.hp;
+        entity->state = state;
+        entity->position = position;
     }
     
     return entity;
@@ -25,11 +23,11 @@ Entity* new_entity(Position position, State state, int hp, EntityType* type) {
 void save_entity(Entity* entity, FILE* file) {
     fprintf(file,
         "%d %d %d %d %d %s\n",
-        entity->world_position.x,
-        entity->world_position.y,
-        entity->world_position.rotation,
-        entity->current_hp,
-        entity->current_state,
+        entity->position.x,
+        entity->position.y,
+        entity->position.rotation,
+        entity->hp,
+        entity->state,
         entity->type->name
     );
 }
@@ -42,7 +40,7 @@ Entity* load_entity(FILE* file) {
     Entity* entity = NULL;
 
     if(fgets(line, 128, file)) {
-        Position world_position;
+        Position position;
         State state;
         int hp;
         EntityType* type;
@@ -50,19 +48,19 @@ Entity* load_entity(FILE* file) {
         for(i_split=0; line[i_line] != ' '; i_line++, i_split++)
             split[i_split] = line[i_line];
         split[i_split] = '\0';
-        world_position.x = atoi(split);
+        position.x = atoi(split);
         i_line++;
 
         for(i_split=0; line[i_line] != ' '; i_line++, i_split++)
             split[i_split] = line[i_line];
         split[i_split] = '\0';
-        world_position.y = atoi(split);
+        position.y = atoi(split);
         i_line++;
 
         for(i_split=0; line[i_line] != ' '; i_line++, i_split++)
             split[i_split] = line[i_line];
         split[i_split] = '\0';
-        world_position.rotation = atoi(split);
+        position.rotation = atoi(split);
 
         for(i_split=0; line[i_line] != ' '; i_line++, i_split++)
             split[i_split] = line[i_line];
@@ -81,7 +79,7 @@ Entity* load_entity(FILE* file) {
         split[i_split] = '\0';
         type = search_type(split);
 
-        entity = new_entity(world_position, state, hp, type);
+        entity = new_entity(type, state, hp, position);
     }
     
     return entity;
@@ -134,7 +132,7 @@ EntityType* load_type(FILE* file) {
             *c = '\0';
             type->stats.speed = atoi(line);
             
-            type->markov = initMatrix(file);
+            type->markov = new_matrix(file);
             
             fgets(line, 32, file); //Ligne vide entre chaque type
         }
