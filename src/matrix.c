@@ -1,9 +1,8 @@
 #include "matrix.h"
 #include <SDL2/SDL.h>
 #define READ_BUFFER_SIZE 1000
-float* parse(char*)
+float* parse(char* string, unsigned int count)
 {
-
 }
 
 matrix_t init(FILE *file)
@@ -30,14 +29,14 @@ matrix_t init(FILE *file)
         printf("Erreur allocation\n");
         exit(EXIT_FAILURE);
     }
-    float * floats = parse(buffer);
+    float * floats = parse(buffer, matrix.size);
     for(unsigned int j = 0; j < matrix.size; ++j)
         get(&matrix, 0, j) = floats[j];
     free(floats);
     for(unsigned int i = 1; i < matrix.size; ++i)
     {
         fgets(buffer, 1024, file);
-        float * floats = parse(buffer);
+        float * floats = parse(buffer, matrix.size);
         for(unsigned int j = 0; j < matrix.size; ++j)
             get(&matrix, i, j) = floats[j];
         free(floats);
