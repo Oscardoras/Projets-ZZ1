@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+#include "character.h"
+
 typedef struct Entity;
 
 
@@ -24,7 +26,7 @@ typedef struct Level {
     struct ListCell {
         Entity* entity;
         struct ListCell* next;
-    }
+    };
 } Level;
 
 

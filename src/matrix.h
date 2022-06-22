@@ -50,7 +50,7 @@ matrix_t copy(matrix_t* matrix);
  * @param matrix a pointer to the matrix.
  * @param state a pointer to the state.
  */
-void forward(matrix_t* matrix, int* state);
+void forward(matrix_t* matrix, State* state);
 
 
 #endif

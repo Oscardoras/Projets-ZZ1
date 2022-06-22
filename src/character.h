@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-typedef struct matrix_t;
+#include "matrix.h"
 
 
 typedef struct {
