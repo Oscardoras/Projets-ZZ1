@@ -20,7 +20,7 @@ matrix_t init(FILE * file);
  * 
  * @param matrix La matrice à libérer
  */
-void close(matrix_t& matrix);
+void close(matrix_t* matrix);
 
 /**
  * @brief Récupère une case d'une matrice
@@ -46,5 +46,5 @@ matrix_t copy(matrix_t *matrix);
  * @param markov La matrice de probabilités markovienne
  * @param currentState L'état courant
  */
-void forward(matrix_t *markov, unsigned int &currentState);
+void forward(matrix_t *markov, unsigned int *currentState);
 #endif

@@ -2,6 +2,7 @@
 matrix_t init(FILE *file)
 {
     matrix_t matrix;
+    
 }
 
 void close(matrix_t *matrix)
@@ -32,7 +33,7 @@ matrix_t copy(matrix_t *matrix)
     }
 }
 
-void forward(matrix_t *markov, unsigned int &currentState)
+void forward(matrix_t *markov, unsigned int *currentState)
 {
     if(currentState >= markov->size)
     {
@@ -58,7 +59,7 @@ void forward(matrix_t *markov, unsigned int &currentState)
     for(unsigned int it = 0; it < markov->size && continue; ++it)
     {
         if(random < Densites[it]){
-            currentState = it;
+            *currentState = it;
             continue = false;
         }
     }
