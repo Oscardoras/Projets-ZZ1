@@ -5,8 +5,6 @@
 
 #include "character.h"
 
-typedef struct Entity;
-
 
 typedef enum {
     Air,

@@ -12,6 +12,7 @@ Viewport* init_viewport(int width, int height, Level* level) {
     if(viewport) {
         viewport->width = width;
         viewport->height = height;
+        viewport->level = &level;
         viewport->window = NULL;
         viewport->renderer = NULL;
         
@@ -54,4 +55,23 @@ Viewport* init_viewport(int width, int height, Level* level) {
     }
     
     return viewport;
+}
+
+void closeViewport(Viewport* viewport) {
+    if(viewport) {
+        if(viewport->camera) {
+            free(viewport->camera);
+        }
+        
+        if(viewport->renderer) {
+            SDL_DestroyRenderer(viewport->renderer);
+        }
+        
+        if(viewport->window) {
+            SDL_DestroyWindow(viewport->window);
+        }
+        
+        free(viewport);
+        SDL_Quit();
+    }
 }

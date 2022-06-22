@@ -38,7 +38,8 @@ typedef struct {
     EntityType* type;
 } Entity;
 
-EntityType entity_types[10];
+
+extern EntityType entity_types[10];
 
 
 /**
