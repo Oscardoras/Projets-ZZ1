@@ -2,13 +2,13 @@
 #include <stdlib.h>
 
 #include "level.h"
-#include <stdlib.h>
 
 Level* new_level(int min_x, int max_x, int min_y, int max_y, int seed) {
     Level* level = malloc(sizeof(Level));
     if (level != NULL) {
         level->blocks = malloc(sizeof(Block) * (level->max_x - level->min_x) * (level->max_y - level->min_y));
         if (level->blocks != NULL) {
+            level->blocks[0] = Air;
             level->min_x = min_x;
             level->max_x = max_x;
             level->min_y = min_y;
@@ -17,7 +17,8 @@ Level* new_level(int min_x, int max_x, int min_y, int max_y, int seed) {
             level->entities = NULL;
             
             //TODO : generate the world
-        } else free(level);
+        } 
+        else free(level);
     }
     
     return level;

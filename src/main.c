@@ -27,5 +27,4 @@ int main(/*int argc, char** argv*/) {
     close_viewport(viewport);
     free_level(level);
     return EXIT_SUCCESS;
-
 }

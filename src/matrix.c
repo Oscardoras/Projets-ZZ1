@@ -72,28 +72,28 @@ matrix_t copyMatrix(matrix_t* matrix)
 }
 
 void forward(matrix_t* matrix, State* currentState) {
-    if(*currentState >= markov->size)
+    if(*currentState >= matrix->size)
     {
         printf("Erreur etat non existant\n");
         exit(EXIT_FAILURE);
     }
-    float *Densites = (float*)malloc(sizeof(float)*markov->size);
+    float *Densites = (float*)malloc(sizeof(float)*matrix->size);
     if(!Densites)
     {
         printf("Erreur allocation\n");
         exit(EXIT_FAILURE);
     }
     float random = (float)(rand()%1000)/1000.0;
-    for(int it = markov->size-1; it >= 0; --it)
+    for(int it = matrix->size-1; it >= 0; --it)
     {
-        Densites[it] = *getMatrix(markov, *currentState, it);
+        Densites[it] = *getMatrix(matrix, *currentState, it);
         for(unsigned int it2 = 0; it2 < (unsigned int)it; ++it2)
         {
             Densites[it] += Densites[it2];
         }
     }
     int found = 0;
-    for(unsigned int it = 0; it < markov->size && !found; ++it)
+    for(unsigned int it = 0; it < matrix->size && !found; ++it)
     {
         if(random < Densites[it]){
             *currentState = it;

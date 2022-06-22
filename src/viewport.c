@@ -32,7 +32,7 @@ Viewport* init_viewport(int width, int height, Level* level) {
                     SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
                 );
                 
-                if(!viewport->renderer) {
+                if(!(viewport->renderer)) {
                     SDL_Log("Error SDL Renderer init - %s", SDL_GetError());
                     close_viewport(viewport);
                     viewport = NULL;
@@ -56,6 +56,7 @@ Viewport* init_viewport(int width, int height, Level* level) {
     
     return viewport;
 }
+
 void event_loop(Viewport* viewport)
 {
     SDL_Event event;
@@ -76,8 +77,8 @@ void event_loop(Viewport* viewport)
         }
         draw_viewport(viewport);
     }
-
 }
+
 void close_viewport(Viewport* viewport) {
     if(viewport) {
         if(viewport->camera) {
@@ -91,11 +92,12 @@ void close_viewport(Viewport* viewport) {
         if(viewport->window) {
             SDL_DestroyWindow(viewport->window);
         }
-        
-        free(viewport);
+
         SDL_Quit();
+        free(viewport);
     }
 }
+
 void draw_viewport(Viewport* viewport)
 {
     
