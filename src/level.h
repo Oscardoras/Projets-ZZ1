@@ -2,6 +2,7 @@
 #define __LEVEL_H__
 
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "character.h"
 
@@ -24,7 +25,7 @@ typedef struct {
     struct ListCell {
         Entity* entity;
         struct ListCell* next;
-    } entities;
+    } *entities;
 } Level;
 
 
