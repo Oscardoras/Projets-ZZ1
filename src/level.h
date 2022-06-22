@@ -18,11 +18,11 @@ typedef enum {
 } Block;
 
 typedef struct {
-    int seed;
     int min_x; //included
     int max_x; //excluded
     int min_y; //included
     int max_y; //excluded
+    int seed;
     Block *blocks;
     struct ListCell {
         Entity* entity;

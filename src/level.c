@@ -54,8 +54,73 @@ void save_level(Level* level, FILE* file) {
 }
 
 Level* load_level(FILE* file) {
-    char buffer[256];
-    //fgets(buffer, 256, );
+    Level* level = malloc(sizeof(Level));
+    
+    if (level != NULL) {
+        char buffer[256];
+        fgets(buffer, 256, file);
+        char* b = buffer;
+        char value[256];
+        char *v
+        
+        for (v = value; *b != ' '; b++) {
+            *v = *b;
+            v++;
+        }
+        b++;
+        *v = '\0';
+        level->min_x = atoi(v);
+        
+        for (v = value; *b != ' '; b++) {
+            *v = *b;
+            v++;
+        }
+        b++;
+        *v = '\0';
+        level->max_x = atoi(v);
+        
+        for (v = value; *b != ' '; b++) {
+            *v = *b;
+            v++;
+        }
+        b++;
+        *v = '\0';
+        level->min_y = atoi(v);
+        
+        for (v = value; *b != ' '; b++) {
+            *v = *b;
+            v++;
+        }
+        b++;
+        *v = '\0';
+        level->max_y = atoi(v);
+        
+        for (v = value; *b != '\n'; b++) {
+            *v = *b;
+            v++;
+        }
+        b++;
+        *v = '\0';
+        level->seed = atoi(v);
+        
+        unsigned int size = (level->max_x - level->min_x) * (level->max_y - level->min_y);
+        for (int i = 0; i < size; i++) {
+            fgets(buffer, 256, file);
+            b = buffer;
+            for (v = value; *b != '\n'; b++) {
+                *v = *b;
+                v++;
+            }
+            *v = '\0';
+            level->blocks[i] = atoi(v);
+        }
+        
+        Entity* entity = load_entity(file);
+        while (entity != NULL && add_level_entity(level, entity))
+            entity = load_entity(file);
+    }
+    
+    return level;
 }
 
 bool resize_level(Level* level, int min_x, int max_x, int min_y, int max_y) {

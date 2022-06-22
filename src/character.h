@@ -82,7 +82,7 @@ Entity* new_entity(Position birth_position, EntityType type);
  * @brief Loads an entity from a save file.
  * 
  * @param file the save file.
- * @return the loaded entity.
+ * @return the loaded entity, NULL if no entity has been loaded.
  */
 Entity* load_entity(FILE* file);
 
