@@ -2,8 +2,6 @@
 #define __MARKOV_H__
 #include <stdio.h>
 
-matrix_t *markov = nullptr;
-
 typedef struct {
     float* data;
     unsigned int size;
