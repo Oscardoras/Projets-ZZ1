@@ -8,8 +8,8 @@
 #define TEXTURE_FOURMI_NAME "sprites/FourmiGuerriere.png"
 #define TEXTURE_BACKGROUND_NAME "sprites/misc/Textures-16.png"
 #define TILE_SIZE 16
-#define CAMERA_WIDTH 800
-#define CAMERA_HEIGHT 600
+#define CAMERA_WIDTH 80*TILE_SIZE
+#define CAMERA_HEIGHT 60*TILE_SIZE
 
 void initEnvRect(SDL_Rect* environment_rect, int i, int j)
 {
@@ -108,8 +108,8 @@ Viewport* init_viewport(int width, int height, Level* level) {
 	viewport->animations[1].rects[2].y = 12*5;
 	viewport->animations[1].rects[2].w = 37;
 	viewport->animations[1].rects[2].h = 12;
-    viewport->camera.x= 0;
-    viewport->camera.y= 0;
+    viewport->camera.x= -40;
+    viewport->camera.y= -30;
     viewport->camera.width = CAMERA_WIDTH;
     viewport->camera.height = CAMERA_HEIGHT;
     return viewport;
@@ -150,17 +150,30 @@ void close_viewport(Viewport* viewport) {
 void draw_viewport(Viewport* viewport) {
     SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
 	SDL_RenderClear(viewport->renderer);
+    int printable_x = 0;
+    int printable_y = 0;
+
+    for(int i = viewport->level->d.min_x; i < viewport->level->d.max_x; ++i)
+        if(i * TILE_SIZE >= (viewport->camera.x * TILE_SIZE) && i * TILE_SIZE <= (viewport->camera.x*TILE_SIZE + viewport->camera.width))
+            ++printable_x;
+    for(int j = viewport->level->d.min_y; j < viewport->level->d.max_y; ++j)
+        if(j * TILE_SIZE >= (viewport->camera.y * TILE_SIZE) && j * TILE_SIZE <= (viewport->camera.y*TILE_SIZE + viewport->camera.height))
+                ++printable_y;
+    printable_x*=TILE_SIZE;
+    printable_y*=TILE_SIZE;
     for(int i = viewport->level->d.min_x; i < viewport->level->d.max_x; ++i)
     {
         for(int j = viewport->level->d.min_y; j < viewport->level->d.max_y; ++j)
         {
+            
             int w, h;
             SDL_GetWindowSize(viewport->window, &w, &h);
             SDL_Rect destination;
-            destination.x = i*(w/(viewport->camera.width/TILE_SIZE));
-            destination.y = (viewport->level->d.max_y-1-(j-viewport->level->d.min_y))*(h/(viewport->camera.height/TILE_SIZE));
-            destination.w = (w/(viewport->camera.width/TILE_SIZE))+1;
-            destination.h = (h/(viewport->camera.height/TILE_SIZE))+1;
+            destination.x = ((i-viewport->camera.x)*((float)w/((float)printable_x/(float)TILE_SIZE)));
+            //destination.y = (viewport->level->d.max_y-1-((j-viewport->camera.y)-viewport->level->d.min_y))*(h/(viewport->camera.height/TILE_SIZE));
+            destination.y = ((viewport->level->d.max_y-1+viewport->level->d.min_y-j-viewport->camera.y)*((float)h/((float)printable_y/(float)TILE_SIZE)));
+            destination.w = w/((printable_x/TILE_SIZE))+1;
+            destination.h = h/((printable_y/TILE_SIZE))+1;
             SDL_RenderCopy(viewport->renderer, viewport->texture_background,
                  &viewport->environment_rect[viewport->level->blocks[(i-viewport->level->d.min_x) + (viewport->level->d.max_x - viewport->level->d.min_x)*(j-viewport->level->d.min_y)]],
                  &destination);
