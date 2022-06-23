@@ -9,7 +9,6 @@
 #define ANIMATION_COUNT 2
 #define ANIMATION_SIZE_MAX 10
 
-
 typedef struct  {
     SDL_Rect rects[ANIMATION_SIZE_MAX];
     unsigned int count;
@@ -29,8 +28,10 @@ typedef struct {
     SDL_Renderer* renderer;
     Camera camera;
     Level* level;
-    SDL_Texture* texture;
+    SDL_Texture* texture_fourmi;
+    SDL_Texture* texture_background;
     Animation animations[ANIMATION_COUNT];
+    SDL_Rect* environment_rect[7];
 } Viewport;
 
 

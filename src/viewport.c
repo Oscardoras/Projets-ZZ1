@@ -5,9 +5,17 @@
 
 #include "viewport.h"
 
-#define TEXTURE_NAME "sprites/FourmiGuerriere.png"
+#define TEXTURE_FOURMI_NAME "sprites/FourmiGuerriere.png"
+#define TEXTURE_BACKGROUND_NAME "sprites/misc/Textures-16.png"
+#define TILE_SIZE 16
 
-
+void initEnvRect(SDL_Rect* environment_rect, int i, int j)
+{
+    environment_rect->x = TILE_SIZE * i;
+    environment_rect->y = TILE_SIZE * j;
+    environment_rect->w = TILE_SIZE;
+    environment_rect->h = TILE_SIZE;
+}
 Viewport* init_viewport(int width, int height, Level* level) {
     if (SDL_Init(SDL_INIT_VIDEO)) {
         SDL_Log("Error SDL init - %s", SDL_GetError());
@@ -16,6 +24,13 @@ Viewport* init_viewport(int width, int height, Level* level) {
     
     Viewport* viewport = malloc(sizeof(Viewport));
     if (viewport) {
+        initEnvRect(&viewport->environment_rect[0], 9, 12); // AIR
+        initEnvRect(&viewport->environment_rect[1], 2, 3); // DIRT
+        initEnvRect(&viewport->environment_rect[2], 1, 1); // PATH
+        initEnvRect(&viewport->environment_rect[3], 1, 0); // GRASS
+        initEnvRect(&viewport->environment_rect[4], 5, 3); // ROCK
+        initEnvRect(&viewport->environment_rect[5], 0, 19); // FRUIT
+        initEnvRect(&viewport->environment_rect[6], 11, 18); // LEAVES
         viewport->width = width;
         viewport->height = height;
         viewport->level = level;
@@ -36,13 +51,18 @@ Viewport* init_viewport(int width, int height, Level* level) {
             );
             
             if (viewport->renderer) {
-                viewport->texture = IMG_LoadTexture(viewport->renderer, TEXTURE_NAME);
-                
-  	            if (viewport->texture == NULL) {
+                viewport->texture_fourmi = IMG_LoadTexture(viewport->renderer,TEXTURE_FOURMI_NAME);
+  	            if (viewport->texture_fourmi == NULL) {
 		            SDL_Log("Erreur creation texture - %s", SDL_GetError());
                     close_viewport(viewport);
 		            exit(EXIT_FAILURE);
 	            }
+                viewport->texture_background = IMG_LoadTexture(viewport->renderer,TEXTURE_BACKGROUND_NAME);
+  	            if (viewport->texture_background == NULL) {
+		            SDL_Log("Erreur creation texture - %s", SDL_GetError());
+                    close_viewport(viewport);
+		            exit(EXIT_FAILURE);
+                }
             }
             else {
                 SDL_Log("Error SDL Renderer init - %s", SDL_GetError());
@@ -58,12 +78,7 @@ Viewport* init_viewport(int width, int height, Level* level) {
     } else {
         SDL_Log("Error Viewport alloc");
     }
-  	viewport->texture = IMG_LoadTexture(viewport->renderer,TEXTURE_NAME);
-  	if (viewport->texture == NULL)
-	{
-		SDL_Log("Erreur creation texture");
-		exit(EXIT_FAILURE);
-	} 
+  	
     viewport->animations[0].count = 3;
     viewport->animations[1].count = 3;
     viewport->animations[0].rects[0].x = 0;
@@ -117,7 +132,8 @@ void event_loop(Viewport* viewport) {
 
 void close_viewport(Viewport* viewport) {
     if (viewport != NULL) {
-        if (viewport->texture != NULL) SDL_DestroyTexture(viewport->texture);
+        if (viewport->texture_fourmi != NULL) SDL_DestroyTexture(viewport->texture_fourmi);
+        if (viewport->texture_background != NULL) SDL_DestroyTexture(viewport->texture_background);
         if (viewport->renderer != NULL) SDL_DestroyRenderer(viewport->renderer);
         if (viewport->window != NULL) SDL_DestroyWindow(viewport->window);
         free(viewport);
@@ -128,6 +144,20 @@ void close_viewport(Viewport* viewport) {
 void draw_viewport(Viewport* viewport) {
     SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
 	SDL_RenderClear(viewport->renderer);
+    for(int i = viewport->level->d.min_x; i < viewport->level->d.max_x; ++i)
+    {
+        for(int j = viewport->level->d.min_y; j < viewport->level->d.max_y; ++j)
+        {
+            SDL_Rect destination;
+            destination.x = i*TILE_SIZE;
+            destination.y = j*TILE_SIZE;
+            destination.w = 16;
+            destination.h = 16;
+            SDL_RenderCopy(viewport->renderer, viewport->texture_background,
+                 &viewport->environment_rect[viewport->level->blocks[(i-viewport->level->d.min_x) + (viewport->level->d.max_x - viewport->level->d.min_x)*(j-viewport->level->d.min_y)]],
+                 &destination);
+        }
+    }
     for(struct ListCell* iterator = viewport->level->entities; iterator; iterator = iterator->next)
     {
         Entity *fourmi = iterator->entity;
@@ -139,9 +169,10 @@ void draw_viewport(Viewport* viewport) {
         SDL_Point center;
         center.x = destination.w/2;
         center.y = destination.h/2;
-		SDL_RenderCopyEx(viewport->renderer, viewport->texture,
+		SDL_RenderCopyEx(viewport->renderer, viewport->texture_fourmi,
                  &viewport->animations[1].rects[time(0)%viewport->animations[1].count],
                  &destination, fourmi->position.rotation*90, &center, SDL_FLIP_NONE);
     }
+    
     SDL_RenderPresent(viewport->renderer);
 }
