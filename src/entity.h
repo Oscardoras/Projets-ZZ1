@@ -34,12 +34,14 @@ typedef struct {
 
 extern EntityType* entity_types[ENTITY_TYPES];
 
-typedef struct {
+typedef struct entity {
     EntityType* type;
     int hp;
     State state;
     Position position;
+    struct entity* target;
 } Entity;
+
 
 
 /**

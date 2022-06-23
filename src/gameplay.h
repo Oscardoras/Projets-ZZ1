@@ -28,6 +28,8 @@ typedef struct updateCell {
  */
 void update_entity(Entity* entity);
 
+
+
 /**
  * @brief Sets the global behavior of the ants.
  * 
@@ -68,6 +70,20 @@ void update_queen(Entity* queen, Level* level, QueenAction action);
  * 
  * @param list the list of the entities to update
  */
-void gameloop(ListUpdate* list);
+void update_list(ListUpdate* list);
+
+/**
+ * @brief Lets an entity attack its target.
+ * 
+ * @param entity the entity that will attack its target.
+ */
+void attack(Entity* entity);
+
+/**
+ * @brief Makes every entity in the list attacks its target.
+ * 
+ * @param list the list of the entities that attack.
+ */
+void attack_list(ListUpdate* list);
 
 #endif

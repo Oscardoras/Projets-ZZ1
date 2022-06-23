@@ -6,7 +6,8 @@
 #define PONTE_OUVR 3
 
 void update_entity(Entity* entity) {
-    forward(&(entity->type->markov), &(entity->state));
+    if(entity)
+        forward(&(entity->type->markov), &(entity->state));
 }
 
 void set_global_behaviour(Level* level, GlobalBehavior behaviour) {
@@ -41,7 +42,7 @@ void lay_egg_queen(Entity* queen, Level* level) {
 
     add_level_entity(level,
         new_entity(type, 0, 0, queen->position)
-    );
+    );update_entity
 }
 
 void update_queen(Entity* queen, Level* level, QueenAction action) {
@@ -58,11 +59,32 @@ void update_queen(Entity* queen, Level* level, QueenAction action) {
     }
 }
 
-void gameloop(ListUpdate* list) {
+void update_list(ListUpdate* list) {
     ListUpdate* cour = list;
     ListUpdate* temp = NULL;
     while(cour) {
         update_entity(cour->entity);
+        temp = cour;
+        cour = cour->next;
+        free(temp);
+    }
+}
+
+void attack(Entity* entity) {
+    if(entity && entity->target) {
+        entity->target->hp -= entity->type->stats.atk;
+        
+        if(entity->target->hp <= 0) {
+            
+        }
+    }
+}
+
+void attack_list(ListUpdate* list) {
+    ListUpdate* cour = list;
+    ListUpdate* temp = NULL;
+    while(cour) {
+        attack(cour->entity);
         temp = cour;
         cour = cour->next;
         free(temp);
