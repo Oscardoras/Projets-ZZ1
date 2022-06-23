@@ -2,7 +2,6 @@
 #include <SDL2/SDL_image.h>
 #include "viewport.h"
 #define TEXTURE_NAME "sprites/FourmiGuerriere.png"
-
 Viewport* init_viewport(int width, int height, Level* level) {
     if (SDL_Init(SDL_INIT_VIDEO)) {
         SDL_Log("Error SDL init - %s", SDL_GetError());
@@ -113,18 +112,33 @@ void close_viewport(Viewport* viewport) {
 
 void draw_viewport(Viewport* viewport)
 {
+    #ifdef TEST_SPRITES
+    viewport->level->entities = (Entity*)malloc(sizeof(Entity)*10);
+    for(struct ListCell* iterator = viewport->level->entities; iterator; iterator = iterator.next)
+    {
+        iterator->hp = 100;
+        iterator->position.x = (iterator - viewport->level->entities) * 30;
+        iterator->position.y = (iterator - viewport->level->entities) * 30;
+        iterator->position.rotation = (iterator - viewport->level->entities) * 90;
+        iterator->state = 0;
+    }
+    #endif
     SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
 	SDL_RenderClear(viewport->renderer);
-    for(Entity* iterator = viewport->level->entities; iterator; ++iterator)
+    for(struct ListCell* iterator = viewport->level->entities; iterator; iterator = iterator->next)
     {
+        Entity *fourmi = iterator->entity;
         SDL_Rect destination;
-        destination.x = iterator->position.x;
-        destination.y = iterator->position.y;
+        destination.x = fourmi->position.x;
+        destination.y = fourmi->position.y;
         destination.w = viewport->animations[1].rects[time(0)%viewport->animations[1].count].w;
         destination.h = viewport->animations[1].rects[time(0)%viewport->animations[1].count].h;
-		SDL_RenderCopy(viewport->renderer, viewport->texture,
+        SDL_Point center;
+        center.x = destination.w/2;
+        center.y = destination.h/2;
+		SDL_RenderCopyEx(viewport->renderer, viewport->texture,
                  &viewport->animations[1].rects[time(0)%viewport->animations[1].count],
-                 &destination);
+                 &destination, fourmi->position.rotation*90, &center, SDL_FLIP_NONE);
     }
     SDL_RenderPresent(viewport->renderer);
 }
