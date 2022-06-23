@@ -1,7 +1,7 @@
 #include <stdlib.h>
-
+#include <SDL2/SDL_image.h>
 #include "viewport.h"
-#define TEXTURE_NAME "FourmiGuerrier.png"
+#define TEXTURE_NAME "sprites/FourmiGuerriere.png"
 
 Viewport* init_viewport(int width, int height, Level* level) {
     if (SDL_Init(SDL_INIT_VIDEO)) {
@@ -44,26 +44,39 @@ Viewport* init_viewport(int width, int height, Level* level) {
     } else {
         SDL_Log("Error Viewport alloc");
     }
-    viewport->texture = IMG_LoadTexture(TEXTURE_NAME);
-    if (viewport->texture == NULL) 
-    {
-        SDL_Log("Chargement des textures impossible\n");
-        exit(EXIT_FAILURE);        
-    }
-    SDL_Surface *image_texture = NULL;
-    image_texture = IMG_Load(TEXTURE_NAME);    
-    if (image_texture == NULL) 
-    {
-        SDL_Log("Chargement des textures impossible\n");
-        exit(EXIT_FAILURE);        
-    }
-    viewport->texture = SDL_CreateTextureFromSurface(viewport->renderer, image_texture); // Chargement de l'image de la surface vers la texture
-    SDL_FreeSurface(image_texture);                                     // la SDL_Surface ne sert que comme élément transitoire 
-    if (viewport->texture == NULL) 
-    {
-        SDL_Log("Chargement des textures impossible\n");
-        exit(EXIT_FAILURE);
-    }
+  	viewport->texture = IMG_LoadTexture(viewport->renderer,TEXTURE_NAME);
+  	if (viewport->texture == NULL)
+	{
+		SDL_Log("Erreur creation texture");
+		exit(EXIT_FAILURE);
+	} 
+    viewport->animations[0].count = 3;
+    viewport->animations[1].count = 3;
+    viewport->animations[0].rects[0].x = 0;
+	viewport->animations[0].rects[0].y = 0;
+	viewport->animations[0].rects[0].w = 37;
+	viewport->animations[0].rects[0].h = 12;
+	viewport->animations[0].rects[1].x = 0;
+	viewport->animations[0].rects[1].y = 12*3;
+	viewport->animations[0].rects[1].w = 37;
+	viewport->animations[0].rects[1].h = 12;
+	viewport->animations[0].rects[2].x = 0;
+	viewport->animations[0].rects[2].y = 12*4;
+	viewport->animations[0].rects[2].w = 37;
+	viewport->animations[0].rects[2].h = 12;
+
+    viewport->animations[1].rects[0].x = 0;
+	viewport->animations[1].rects[0].y = 12;
+	viewport->animations[1].rects[0].w = 37;
+	viewport->animations[1].rects[0].h = 12;
+	viewport->animations[1].rects[1].x = 0;
+	viewport->animations[1].rects[1].y = 12*2;
+	viewport->animations[1].rects[1].w = 37;
+	viewport->animations[1].rects[1].h = 12;
+	viewport->animations[1].rects[2].x = 0;
+	viewport->animations[1].rects[2].y = 12*5;
+	viewport->animations[1].rects[2].w = 37;
+	viewport->animations[1].rects[2].h = 12;
     return viewport;
 }
 
@@ -99,5 +112,27 @@ void close_viewport(Viewport* viewport) {
 }
 
 void draw_viewport(Viewport* viewport) {
+
+    /*** CECI EST UN TEST **/
     
+	SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
+	SDL_RenderClear(viewport->renderer);
+    for(unsigned int it = 0; it < 10; ++it)
+    {
+        SDL_Rect destination;
+        destination.x = 80*it;
+        destination.y = 60*it;
+        destination.w = viewport->animations[1].rects[time(0)%viewport->animations[1].count].w;
+        destination.h = viewport->animations[1].rects[time(0)%viewport->animations[1].count].h;
+		SDL_RenderCopy(viewport->renderer, viewport->texture,
+                 &viewport->animations[1].rects[time(0)%viewport->animations[1].count],
+                 &destination);
+        destination.x = 800-destination.x;
+        SDL_RenderCopy(viewport->renderer, viewport->texture,
+                 &viewport->animations[1].rects[time(0)%viewport->animations[1].count],
+                 &destination);
+    }
+    SDL_RenderPresent(viewport->renderer);
+
+    /*** FIN DU TEST **/
 }
