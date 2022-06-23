@@ -1,19 +1,33 @@
-#ifndef GAMEPLAY_H
-#define GAMEPLAY_H
+#ifndef __GAMEPLAY_H_
+#define __GAMEPLAY_H_
 
-#include "entity.h"
+#include "level.h"
 
 
 typedef enum {
-    AGGRESSIVE,
-    DEFESIVE,
-    NOT_GOING_OUT,
-    GOING_OUT,
-    TARGET_FOOD,
-    TARGET_BUILD
-} Behavior;
-    
-void change_rule(Level* level, Behavior behavior);
+    FOOD,
+    ENNEMI,
+    DIG,
+    FILL
+} Target;
+
+
+/**
+ * @brief Sets the global behavior of the ants.
+ * 
+ * @param behavior the global behavior.
+ */
+void set_global_behavior(GlobalBehavior behavior);
+
+/**
+ * @brief Adds an target for the ants.
+ * 
+ * @param level the level.
+ * @param x the x coordinates of the target.
+ * @param y the y coordinates of the target.
+ * @param target the target to add.
+ */
+void add_target(Level* level, int x, int y, Target target);
 
 
 #endif

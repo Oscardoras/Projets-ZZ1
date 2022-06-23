@@ -5,6 +5,23 @@
 
 
 typedef enum {
+    SUN = 0,
+    RAIN,
+    WARM,
+    COLD
+} Weather;
+
+typedef enum {
+    DEFAULT = 0,
+    AGGRESSIVE,
+    DEFESIVE,
+    NOT_GOING_OUT,
+    GOING_OUT,
+    TARGET_FOOD,
+    TARGET_BUILD
+} GlobalBehavior;
+
+typedef enum {
     AIR = 0,
     DIRT,
     PATH,
@@ -15,11 +32,17 @@ typedef enum {
 } Block;
 
 typedef struct {
-    int min_x; //included
-    int max_x; //excluded
-    int min_y; //included
-    int max_y; //excluded
+    struct {
+        int min_x; //included
+        int max_x; //excluded
+        int min_y; //included
+        int max_y; //excluded
+    } d;
     int seed;
+    struct {
+        Weather weather;
+        GlobalBehavior behavior;
+    } states;
     Block *blocks;
     struct ListCell {
         Entity* entity;

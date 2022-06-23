@@ -98,7 +98,6 @@ void close_viewport(Viewport* viewport) {
     }
 }
 
-void draw_viewport(Viewport* viewport)
-{
+void draw_viewport(Viewport* viewport) {
     
 }
