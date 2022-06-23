@@ -35,7 +35,16 @@ Viewport* init_viewport(int width, int height, Level* level) {
                 SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
             );
             
-            if (!viewport->renderer) {
+            if (viewport->renderer) {
+                viewport->texture = IMG_LoadTexture(viewport->renderer, TEXTURE_NAME);
+                
+  	            if (viewport->texture == NULL) {
+		            SDL_Log("Erreur creation texture - %s", SDL_GetError());
+                    close_viewport(viewport);
+		            exit(EXIT_FAILURE);
+	            }
+            }
+            else {
                 SDL_Log("Error SDL Renderer init - %s", SDL_GetError());
                 close_viewport(viewport);
                 viewport = NULL;
@@ -108,9 +117,9 @@ void event_loop(Viewport* viewport) {
 
 void close_viewport(Viewport* viewport) {
     if (viewport != NULL) {
+        if (viewport->texture != NULL) SDL_DestroyTexture(viewport->texture);
         if (viewport->renderer != NULL) SDL_DestroyRenderer(viewport->renderer);
         if (viewport->window != NULL) SDL_DestroyWindow(viewport->window);
-        if (viewport->texture != NULL) SDL_DestroyTexture(viewport->texture);
         free(viewport);
         SDL_Quit();
     }

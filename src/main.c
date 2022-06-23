@@ -19,6 +19,19 @@ int main(/*int argc, char** argv*/) {
         load_types(file);
         fclose(file);
     }
+    
+    Position pos;
+    pos.x = pos.y = pos.rotation = 0;
+    Entity* entity = new_entity(search_type("Ouvriere"), 0, 0, pos);
+    
+    Entity* entity_loaded = NULL;
+    
+    file = fopen("save.txt", "w+");
+    if (file) {
+        save_entity(entity, file);
+        fseek(file, 0, 0);
+        entity_loaded = load_entity(file);
+    }
 
     Level* level = new_level(WORLD_X_MIN, WORLD_X_MAX, WORLD_Y_MIN, WORLD_Y_MAX, SEED);
     #ifdef TEST_CREATION_FOURMI
