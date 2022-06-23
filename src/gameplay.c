@@ -58,3 +58,13 @@ void update_queen(Entity* queen, Level* level, QueenAction action) {
     }
 }
 
+void gameloop(ListUpdate* list) {
+    ListUpdate* cour = list;
+    ListUpdate* temp = NULL;
+    while(cour) {
+        update_entity(cour->entity);
+        temp = cour;
+        cour = cour->next;
+        free(temp);
+    }
+}

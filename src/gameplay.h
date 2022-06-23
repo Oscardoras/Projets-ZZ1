@@ -17,7 +17,7 @@ typedef enum {
 
 typedef struct updateCell {
     Entity* entity;
-    updateCell* next;
+    struct updateCell* next;
 } ListUpdate;
 
 
@@ -26,7 +26,7 @@ typedef struct updateCell {
  * 
  * @param entity the entity to change.
  */
-void update_state_entity(Entity* entity);
+void update_entity(Entity* entity);
 
 /**
  * @brief Sets the global behavior of the ants.
@@ -68,15 +68,6 @@ void update_queen(Entity* queen, Level* level, QueenAction action);
  * 
  * @param list the list of the entities to update
  */
-void gameloop(ListUpdate* list) {
-    ListUpdate* cour = list;
-    ListUpdate* temp = NULL;
-    while(cour) {
-        update_entity(cour->entity);
-        temp = cour;
-        cour = cour->next;
-        free(temp);
-    }
-}
+void gameloop(ListUpdate* list);
 
 #endif
