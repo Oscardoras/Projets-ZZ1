@@ -17,6 +17,13 @@ typedef enum {
 
 
 /**
+ * @brief Changes the state of an entity with Markov.
+ * 
+ * @param entity the entity to change.
+ */
+void update_state_entity(Entity* entity);
+
+/**
  * @brief Sets the global behavior of the ants.
  * 
  * @param level the level to change the global behaviour.
@@ -50,6 +57,5 @@ void lay_egg_queen(Entity* queen, Level* level);
  * @param action the action wanted.
  */
 void update_queen(Entity* queen, Level* level, QueenAction action);
-
 
 #endif
