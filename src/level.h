@@ -123,5 +123,17 @@ bool add_level_entity(Level* level, Entity* entity);
  */
 void clean_level_entities(Level* level);
 
+/**
+ * @brief Genrerates procedurally a part of a level.
+ * 
+ * @param level the level to generate.
+ * @param min_x 
+ * @param max_x 
+ * @param min_y
+ * @param max_y
+ * @param seed the seed used to generate.
+ */
+void generate_level(Level* level, int min_x, int max_x, int min_y, int max_y, int seed);
+
 
 #endif

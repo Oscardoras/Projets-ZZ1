@@ -7,6 +7,7 @@
 
 #define ENTITY_TYPES 10
 
+
 typedef struct {
     int x;
     int y;
