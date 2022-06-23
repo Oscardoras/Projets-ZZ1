@@ -1,6 +1,6 @@
-all: src/main.c 
-	gcc -g -Wall -Wextra main.c -o game -lSDL2
+game: main.c 
+	gcc -g -Wall -Wextra main.c -o game -lSDL2 -lSDL2_image
 clean:
-	rm -r bin/*
+	rm -r *.o
 	rm game
  
