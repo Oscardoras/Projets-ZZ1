@@ -229,6 +229,32 @@ void event_loop(Viewport* viewport) {
                     }
                 }
                 break;
+                case SDL_MOUSEBUTTONDOWN:
+                {
+                    int w, h;
+                    SDL_GetWindowSize(viewport->window, &w, &h);
+                    int printable_x = 0;
+                        int printable_y = 0;
+
+                        for(int i = viewport->level->d.min_x; i < viewport->level->d.max_x; ++i)
+                            if(i * TILE_SIZE >= (viewport->camera.x * TILE_SIZE) && i * TILE_SIZE <= (viewport->camera.x*TILE_SIZE + viewport->camera.width))
+                                ++printable_x;
+                        for(int j = viewport->level->d.min_y; j < viewport->level->d.max_y; ++j)
+                            if(j * TILE_SIZE >= (viewport->camera.y * TILE_SIZE) && j * TILE_SIZE <= (viewport->camera.y*TILE_SIZE + viewport->camera.height))
+                                ++printable_y;
+                        printable_x*=TILE_SIZE;
+                        printable_y*=TILE_SIZE;
+                    unsigned int x;
+                    unsigned int y;
+                    unsigned int targetX = viewport->camera.x+x/(w/((printable_x/TILE_SIZE))+1);
+                    unsigned int targetY = viewport->camera.y+y/(h/((printable_y/TILE_SIZE))+1);
+                    if (SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_LEFT)) 
+                        add_pheromone(viewport->level, targetX, targetY, (PheromoneType)PHEROMONE_DIG);
+                    else if(SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_RIGHT))
+                        add_pheromone(viewport->level, targetX, targetY, (PheromoneType)PHEROMONE_FILL);
+                }
+                break;
+
                 case SDL_MOUSEWHEEL:
                 {
                     if(event.wheel.y > 0 && viewport->camera.width/TILE_SIZE < viewport->level->d.max_x - viewport->level->d.min_x) // scroll up
@@ -263,7 +289,7 @@ void event_loop(Viewport* viewport) {
 
         clock++;
         if (clock >= 10) {
-            game_loop_iteration(viewport->level);
+            //game_loop_iteration(viewport->level);
             clock = 0;
         }
         SDL_Delay(100);
