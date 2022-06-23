@@ -130,6 +130,24 @@ void event_loop(Viewport* viewport) {
                         viewport->height = event.window.data2;
                     }
                     break;
+                case SDL_KEYDOWN:
+                {
+                    switch(event.key.keysym.sym) {
+                        case SDLK_LEFT:
+                            --viewport->camera.x;
+                        break;
+                        case SDLK_RIGHT:
+                            ++viewport->camera.x;
+                        break;
+                        case SDLK_UP:
+                            --viewport->camera.y;
+                        break;
+                        case SDLK_DOWN:
+                            ++viewport->camera.y;
+                        break;
+                    }
+                }
+                break;
             }
         }
         draw_viewport(viewport);
