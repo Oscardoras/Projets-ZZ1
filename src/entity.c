@@ -27,7 +27,7 @@ void save_entity(Entity* entity, FILE* file) {
     fprintf(file, "%d %d %d %d %d %s\n",
         entity->position.x,
         entity->position.y,
-        entity->position.rotation,
+        entity->position.direction,
         entity->hp,
         entity->state,
         entity->type->name
@@ -63,7 +63,7 @@ Entity* load_entity(FILE* file) {
         for(i_split=0; line[i_line] != ' '; i_line++, i_split++)
             split[i_split] = line[i_line];
         split[i_split] = '\0';
-        position.rotation = atoi(split);
+        position.direction = atoi(split);
         i_line++;
 
         for(i_split=0; line[i_line] != ' '; i_line++, i_split++)

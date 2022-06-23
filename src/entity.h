@@ -7,15 +7,18 @@
 
 #define ENTITY_TYPES 10
 
+
+typedef enum {
+    TOP,
+    RIGHT,
+    BOT,
+    LEFT
+} Direction;
+
 typedef struct {
     int x;
     int y;
-    enum {
-        TOP,
-        RIGHT,
-        BOT,
-        LEFT
-    } rotation;
+    Direction direction;
 } Position;
 
 typedef struct {
