@@ -15,9 +15,10 @@ typedef enum {
 /**
  * @brief Sets the global behavior of the ants.
  * 
+ * @param level the level to change the global behaviour.
  * @param behavior the global behavior.
  */
-void set_global_behavior(GlobalBehavior behavior);
+void set_global_behavior(Level* level, GlobalBehavior behavior);
 
 /**
  * @brief Adds an target for the ants.
