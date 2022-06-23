@@ -157,12 +157,12 @@ void draw_viewport(Viewport* viewport) {
             int w, h;
             SDL_GetWindowSize(viewport->window, &w, &h);
             SDL_Rect destination;
-            destination.x = i*TILE_SIZE*(w/viewport->camera.width);
-            destination.y = (viewport->level->d.max_y-j)*TILE_SIZE*(h/viewport->camera.height);
-            destination.w = TILE_SIZE*(w/viewport->camera.width)+1;
-            destination.h = TILE_SIZE*(h/viewport->camera.height)+1;
+            destination.x = i*(w/(viewport->camera.width/TILE_SIZE));
+            destination.y = (viewport->level->d.max_y-1-(j-viewport->level->d.min_y))*(h/(viewport->camera.height/TILE_SIZE));
+            destination.w = (w/(viewport->camera.width/TILE_SIZE))+1;
+            destination.h = (h/(viewport->camera.height/TILE_SIZE))+1;
             SDL_RenderCopy(viewport->renderer, viewport->texture_background,
-                 &viewport->environment_rect[viewport->level->blocks[(i-viewport->level->d.min_x) + (viewport->level->d.max_x - viewport->level->d.min_x)*((viewport->level->d.max_y-j)-viewport->level->d.min_y)]],
+                 &viewport->environment_rect[viewport->level->blocks[(i-viewport->level->d.min_x) + (viewport->level->d.max_x - viewport->level->d.min_x)*(j-viewport->level->d.min_y)]],
                  &destination);
         }
     }
