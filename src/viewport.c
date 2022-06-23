@@ -134,18 +134,38 @@ void event_loop(Viewport* viewport) {
                 {
                     switch(event.key.keysym.sym) {
                         case SDLK_LEFT:
-                            --viewport->camera.x;
+                            if(viewport->camera.x > viewport->level->d.min_x)
+                                --viewport->camera.x;
                         break;
                         case SDLK_RIGHT:
-                            ++viewport->camera.x;
+                            if(viewport->camera.x+1 < viewport->level->d.max_x-(viewport->camera.width/TILE_SIZE))
+                                ++viewport->camera.x;
                         break;
                         case SDLK_UP:
-                            --viewport->camera.y;
+                            if(viewport->camera.y > viewport->level->d.min_y)
+                                --viewport->camera.y;
                         break;
                         case SDLK_DOWN:
-                            ++viewport->camera.y;
+                            if(viewport->camera.y+1 < viewport->level->d.max_y-(viewport->camera.height/TILE_SIZE))
+                                ++viewport->camera.y;
                         break;
                     }
+                }
+                break;
+                case SDL_MOUSEWHEEL:
+                {
+                    if(event.wheel.y > 0) // scroll up
+                    {
+                        viewport->camera.width *= 1.1;
+                        viewport->camera.height *= 1.1;
+                    }
+                    else if(event.wheel.y < 0) // scroll down
+                    {
+                        viewport->camera.width /= 1.1;
+                        viewport->camera.height /= 1.1;
+                    }
+                    SDL_Log("width : %d\n", viewport->camera.width);
+                    SDL_Log("height : %d\n", viewport->camera.height);
                 }
                 break;
             }
