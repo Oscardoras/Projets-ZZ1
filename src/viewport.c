@@ -1,6 +1,7 @@
 #include <SDL2/SDL_image.h>
 
 #include <stdlib.h>
+#include <time.h>
 
 #include "viewport.h"
 
