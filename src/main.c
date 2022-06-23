@@ -36,9 +36,6 @@ int main(/*int argc, char** argv*/) {
             pos.direction = rand()%360;
             add_level_entity(level, new_entity(WORKER, pos, 100, 1));
         }
-    
-    
-    
     Viewport* viewport = init_viewport(WIDTH, HEIGHT, level);
     event_loop(viewport);
     close_viewport(viewport);
