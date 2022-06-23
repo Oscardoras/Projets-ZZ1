@@ -50,7 +50,7 @@ void save_level(Level* level, FILE* file) {
         level->seed,
         level->states.weather, level->states.behavior);
     
-    int size = (level->d.max_x - level->d.min_x) * (level->d.max_y - level->d.min_y);
+    unsigned int size = (level->d.max_x - level->d.min_x) * (level->d.max_y - level->d.min_y);
     for (int k = 0; k < size; k++)
         fprintf(file, "%d\n", (int) level->blocks[k]);
     
@@ -127,7 +127,7 @@ Level* load_level(FILE* file) {
         *v = '\0';
         level->states.behavior = atoi(value);
         
-        int size = (level->d.max_x - level->d.min_x) * (level->d.max_y - level->d.min_y);
+        unsigned int size = (level->d.max_x - level->d.min_x) * (level->d.max_y - level->d.min_y);
         level->blocks = malloc(sizeof(Level) * size);
         if (level->blocks != NULL) {
             for (int i = 0; i < size; i++) {
@@ -214,7 +214,7 @@ void generate_level(Level* level, int min_x, int max_x, int min_y, int max_y, in
     
     height = 0;
     for (int x = 1; x < max_x; x++) {
-        srand(seed + 2*x + 3*y);
+        srand(seed + x);
         int r = rand()%10;
         if (r < 1) height -= 2;
         else if (r < 3) height--;
@@ -233,7 +233,7 @@ void generate_level(Level* level, int min_x, int max_x, int min_y, int max_y, in
     
     height = 0;
     for (int x = -1; min_x <= x; x--) {
-        srand(seed + 2*x + 3*y);
+        srand(seed + x);
         int r = rand()%10;
         if (r < 1) height -= 2;
         else if (r < 3) height--;

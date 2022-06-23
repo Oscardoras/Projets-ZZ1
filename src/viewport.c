@@ -141,7 +141,7 @@ void draw_viewport(Viewport* viewport) {
         center.y = destination.h/2;
 		SDL_RenderCopyEx(viewport->renderer, viewport->texture,
                  &viewport->animations[1].rects[time(0)%viewport->animations[1].count],
-                 &destination, fourmi->position.rotation*90, &center, SDL_FLIP_NONE);
+                 &destination, fourmi->position.direction*90, &center, SDL_FLIP_NONE);
     }
     SDL_RenderPresent(viewport->renderer);
 }
