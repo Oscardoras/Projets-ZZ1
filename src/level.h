@@ -40,8 +40,10 @@ typedef struct {
     } d;
     int seed;
     struct {
+        int score;
         Weather weather;
         GlobalBehavior behavior;
+        int spawn_speed;
     } states;
     Block *blocks;
     struct ListCell {

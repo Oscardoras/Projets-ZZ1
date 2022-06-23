@@ -2,11 +2,14 @@
 #define __AI_H__
 
 #include "level.h"
-#include "entity.h"
+
 
 typedef struct Vertex {
+    int x;
+    int y;
     int d;
     struct Vertex* parent;
+    int listed;
 } Vertex;
 
 
