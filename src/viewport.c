@@ -131,10 +131,36 @@ Viewport* init_viewport(int width, int height, Level* level) {
 	viewport->animations[3].rects[1].w = 37;
 	viewport->animations[3].rects[1].h = 12;
 	viewport->animations[3].rects[2].x = 56;
-	viewport->animations[3].rects[2].y = 37;
+	viewport->animations[3].rects[2].y = 35;
 	viewport->animations[3].rects[2].w = 37;
 	viewport->animations[3].rects[2].h = 12;
     viewport->animations[3].spriteNumber = 2;
+
+    viewport->animations[4].count = 4;
+    viewport->animations[4].rects[0].x = 167; // mantis walk
+	viewport->animations[4].rects[0].y = 0;
+	viewport->animations[4].rects[0].w = 100;
+	viewport->animations[4].rects[0].h = 37;
+	viewport->animations[4].rects[1].x = 166;
+	viewport->animations[4].rects[1].y = 74;
+	viewport->animations[4].rects[1].w = 100;
+	viewport->animations[4].rects[1].h = 37;
+	viewport->animations[4].rects[2].x = 168;
+	viewport->animations[4].rects[2].y = 111;
+	viewport->animations[4].rects[2].w = 100;
+	viewport->animations[4].rects[2].h = 37;
+    viewport->animations[4].rects[3].x = 170;
+	viewport->animations[4].rects[3].y = 148;
+	viewport->animations[4].rects[3].w = 100;
+	viewport->animations[4].rects[3].h = 37;
+    viewport->animations[4].spriteNumber = 2;
+
+    viewport->animations[5].count = 1;
+    viewport->animations[5].rects[0].x = 266; // cherry
+	viewport->animations[5].rects[0].y = 0;
+	viewport->animations[5].rects[0].w = 32;
+    viewport->animations[5].rects[0].h = 32;
+    viewport->animations[5].spriteNumber = 2;
 
     viewport->camera.x= viewport->level->d.min_x;
     viewport->camera.y= viewport->level->d.min_y;
@@ -292,10 +318,17 @@ void draw_viewport(Viewport* viewport) {
                 animId = 2;
             case (EntityTypeName)SOLDIER :
                 animId = 1;
+            case (EntityTypeName)WORKER :
+                animId = 3;
+            case (EntityTypeName)MANTIS :
+                animId = 4;
+            case (EntityTypeName)FOOD :
+                animId = 5;
+            case (EntityTypeName)PHEROMONE :
+                animId = 6;
             default : 
                 animId = 1;
         }
-        
         SDL_RenderCopyEx(viewport->renderer, viewport->textures[viewport->animations[animId].spriteNumber],
                  &viewport->animations[animId].rects[time(0)%viewport->animations[animId].count],
                  &destination, fourmi->position.direction*90, &center, SDL_FLIP_NONE);
