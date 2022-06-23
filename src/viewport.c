@@ -207,7 +207,7 @@ void draw_viewport(Viewport* viewport) {
         if(viewport->animations[1].rects[time(0)%viewport->animations[1].count].w > viewport->animations[1].rects[time(0)%viewport->animations[1].count].h)
             {
                  destination.h = h/((printable_y/TILE_SIZE))+1 * ((float)destination.h/(float)destination.w);
-                 destination.w = w/((printable_x/TILE_SIZE))+1;
+                 destination.w = (w/((printable_x/TILE_SIZE))+1);
             }
         else
             {
