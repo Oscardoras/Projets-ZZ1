@@ -13,7 +13,7 @@
 #define WORLD_X_MAX 50
 #define WORLD_Y_MAX 50
 #define SEED 0
-#define TEST_CREATION_FOURMI 1
+#define TEST_CREATION_FOURMI 0
 
 
 int main(/*int argc, char** argv*/) {
@@ -36,9 +36,6 @@ int main(/*int argc, char** argv*/) {
             pos.direction = rand()%360;
             add_level_entity(level, new_entity(SOLDIER, pos, 100, 0));
         }
-    
-    
-    
     Viewport* viewport = init_viewport(WIDTH, HEIGHT, level);
     event_loop(viewport);
     close_viewport(viewport);

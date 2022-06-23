@@ -202,8 +202,9 @@ bool add_level_entity(Level* level, Entity* entity) {
 
 void clean_level_entities(Level* level) {
     for (struct ListCell* cell = level->entities; cell != NULL; cell = cell->next)
-        if (cell->entity->target->state == 0)
-            cell->entity->target = NULL;
+        if(cell->entity->target)
+            if (cell->entity->target->state == 0)
+                cell->entity->target = NULL;
     
     for (struct ListCell** ptr = &level->entities; *ptr != NULL;) {
         if ((*ptr)->entity->state == 0) {

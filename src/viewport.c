@@ -7,6 +7,7 @@
 
 #define TEXTURE_FOURMI_NAME "sprites/FourmiGuerriere.png"
 #define TEXTURE_BACKGROUND_NAME "sprites/misc/Textures-16.png"
+#define TEXTURE_SPRITESHEET_NAME "sprites/SpriteSheet.png"
 #define TILE_SIZE 16
 #define CAMERA_WIDTH 80*TILE_SIZE
 #define CAMERA_HEIGHT 60*TILE_SIZE
@@ -65,6 +66,12 @@ Viewport* init_viewport(int width, int height, Level* level) {
                     close_viewport(viewport);
 		            exit(EXIT_FAILURE);
                 }
+                viewport->texture_spritesheet = IMG_LoadTexture(viewport->renderer,TEXTURE_SPRITESHEET_NAME);
+  	            if (viewport->texture_spritesheet == NULL) {
+		            SDL_Log("Erreur creation texture - %s", SDL_GetError());
+                    close_viewport(viewport);
+		            exit(EXIT_FAILURE);
+                }
             }
             else {
                 SDL_Log("Error SDL Renderer init - %s", SDL_GetError());
@@ -81,8 +88,7 @@ Viewport* init_viewport(int width, int height, Level* level) {
         SDL_Log("Error Viewport alloc");
     }
   	
-    viewport->animations[0].count = 3;
-    viewport->animations[1].count = 3;
+    viewport->animations[0].count = 3; // guerriere walk
     viewport->animations[0].rects[0].x = 0;
 	viewport->animations[0].rects[0].y = 0;
 	viewport->animations[0].rects[0].w = 37;
@@ -95,7 +101,9 @@ Viewport* init_viewport(int width, int height, Level* level) {
 	viewport->animations[0].rects[2].y = 12*4;
 	viewport->animations[0].rects[2].w = 37;
 	viewport->animations[0].rects[2].h = 12;
+    viewport->animations[0].spriteNumber = 0;
 
+    viewport->animations[1].count = 3; // guerriere attack
     viewport->animations[1].rects[0].x = 0;
 	viewport->animations[1].rects[0].y = 12;
 	viewport->animations[1].rects[0].w = 37;
@@ -108,6 +116,24 @@ Viewport* init_viewport(int width, int height, Level* level) {
 	viewport->animations[1].rects[2].y = 12*5;
 	viewport->animations[1].rects[2].w = 37;
 	viewport->animations[1].rects[2].h = 12;
+    viewport->animations[1].spriteNumber = 0;
+
+    viewport->animations[2].count = 3;
+    viewport->animations[2].rects[0].x = 0; // queen walk (todo)
+    viewport->animations[2].rects[0].x = 0;
+	viewport->animations[2].rects[0].y = 12;
+	viewport->animations[2].rects[0].w = 37;
+	viewport->animations[2].rects[0].h = 12;
+	viewport->animations[2].rects[1].x = 0;
+	viewport->animations[2].rects[1].y = 12*2;
+	viewport->animations[2].rects[1].w = 37;
+	viewport->animations[2].rects[1].h = 12;
+	viewport->animations[2].rects[2].x = 0;
+	viewport->animations[2].rects[2].y = 12*5;
+	viewport->animations[2].rects[2].w = 37;
+	viewport->animations[2].rects[2].h = 12;
+
+
     viewport->camera.x= viewport->level->d.min_x;
     viewport->camera.y= viewport->level->d.min_y;
     viewport->camera.width = CAMERA_WIDTH;
@@ -154,15 +180,29 @@ void event_loop(Viewport* viewport) {
                 break;
                 case SDL_MOUSEWHEEL:
                 {
-                    if(event.wheel.y > 0) // scroll up
+                    if(event.wheel.y > 0 && viewport->camera.width/TILE_SIZE < viewport->level->d.max_x - viewport->level->d.min_x) // scroll up
                     {
                         viewport->camera.width *= 1.1;
                         viewport->camera.height *= 1.1;
                     }
-                    else if(event.wheel.y < 0) // scroll down
+                    else if(event.wheel.y < 0 && viewport->camera.width > 0 && viewport->camera.height > 0) // scroll down
                     {
                         viewport->camera.width /= 1.1;
                         viewport->camera.height /= 1.1;
+                    }
+                    if(viewport->camera.x+1 > viewport->level->d.max_x-(viewport->camera.width/TILE_SIZE))
+                    {
+                        if(viewport->camera.width/TILE_SIZE > viewport->level->d.max_x - viewport->level->d.min_x)
+                            viewport->camera.x = viewport->level->d.min_x;
+                        else
+                            viewport->camera.x = viewport->level->d.max_x-(viewport->camera.width/TILE_SIZE);
+                    }
+                    if(viewport->camera.y+1 > viewport->level->d.max_y-(viewport->camera.height/TILE_SIZE))
+                    {
+                        if(viewport->camera.height/TILE_SIZE > viewport->level->d.max_y - viewport->level->d.min_y)
+                            viewport->camera.y = viewport->level->d.min_y;
+                        else
+                            viewport->camera.y = viewport->level->d.max_y-(viewport->camera.height/TILE_SIZE);
                     }
                     SDL_Log("width : %d\n", viewport->camera.width);
                     SDL_Log("height : %d\n", viewport->camera.height);
@@ -171,6 +211,12 @@ void event_loop(Viewport* viewport) {
             }
         }
         draw_viewport(viewport);
+        viewport->loop_iteration_count += SDL_GetTicks();
+        if(viewport->loop_iteration_count > 10000)
+        {
+            viewport->loop_iteration_count = 0;
+            //game_loop_iteration(viewport->level);
+        }
     }
 }
 

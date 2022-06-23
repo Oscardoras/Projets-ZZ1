@@ -6,12 +6,13 @@
 #include "level.h"
 #include "viewport.h"
 
-#define ANIMATION_COUNT 2
+#define ANIMATION_COUNT 3
 #define ANIMATION_SIZE_MAX 10
 
 typedef struct  {
     SDL_Rect rects[ANIMATION_SIZE_MAX];
     unsigned int count;
+    unsigned int spriteNumber;
 } Animation;
 
 typedef struct {
@@ -30,8 +31,10 @@ typedef struct {
     Level* level;
     SDL_Texture* texture_fourmi;
     SDL_Texture* texture_background;
+    SDL_Texture* texture_spritesheet;
     Animation animations[ANIMATION_COUNT];
     SDL_Rect environment_rect[7];
+    unsigned int loop_iteration_count;
 } Viewport;
 
 
