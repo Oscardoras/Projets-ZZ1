@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
 #include "viewport.h"
-
+#define TEXTURE_NAME "FourmiGuerrier.png"
 
 Viewport* init_viewport(int width, int height, Level* level) {
     if (SDL_Init(SDL_INIT_VIDEO)) {
@@ -44,7 +44,21 @@ Viewport* init_viewport(int width, int height, Level* level) {
     } else {
         SDL_Log("Error Viewport alloc");
     }
-    
+    SDL_Surface *my_image = NULL;
+    my_image = IMG_Load(TEXTURE_NAME);
+    if (my_image == NULL) 
+    {
+        SDL_Log("Chargement des textures impossible\n");
+        exit(EXIT_FAILURE);        
+    }
+
+    viewport->texture = SDL_CreateTextureFromSurface(viewport->renderer, my_image); // Chargement de l'image de la surface vers la texture
+    SDL_FreeSurface(my_image);                                     // la SDL_Surface ne sert que comme élément transitoire 
+    if (viewport->texture == NULL) 
+    {
+        SDL_Log("Chargement des textures impossible\n");
+        exit(EXIT_FAILURE);
+    }
     return viewport;
 }
 
