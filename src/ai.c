@@ -36,7 +36,10 @@ Direction path_finding(Level* level, int from_x, int from_y, int to_x, int to_y)
     list[0] = get_vertex(level, vertices, x, y);
     line[0]->d = 0;
     
-    while () {
+    int old_size = 0;
+    while (old_size < list_size) {
+        old_size = size;
+        
         Vertex* min = list[0];
         for (int k = 0; k < list_size; k++) {
             if (list[k]->d < min->d)
@@ -44,7 +47,7 @@ Direction path_finding(Level* level, int from_x, int from_y, int to_x, int to_y)
         }
         
         Block* left = get_level_block(level, min->x-1, min->y);
-        if (left != NULL) {
+        if (left != NULL && (*left == AIR || *left == PATH)) {
             list[list_size] = get_vertex(level, vertices, x, y);
             list_size++;
             list[list_size]->listed = true;
@@ -52,7 +55,7 @@ Direction path_finding(Level* level, int from_x, int from_y, int to_x, int to_y)
         }
         
         Block* right = get_level_block(level, list[k]->x+1, list[k]->y);
-        if (right != NULL) {
+        if (right != NULL && (*right == AIR || *right == PATH)) {
             list[list_size] = get_vertex(level, vertices, x, y);
             list_size++;
             list[list_size]->listed = true;
@@ -60,7 +63,7 @@ Direction path_finding(Level* level, int from_x, int from_y, int to_x, int to_y)
         }
         
         Block* top = get_level_block(level, list[k]->x+, list[k]->y+1);
-        if (top != NULL) {
+        if (top != NULL && (*top == AIR || *top == PATH)) {
             list[list_size] = get_vertex(level, vertices, x, y);
             list_size++;
             list[list_size]->listed = true;
@@ -68,11 +71,20 @@ Direction path_finding(Level* level, int from_x, int from_y, int to_x, int to_y)
         }
         
         Block* bot = get_level_block(level, list[k]->x+, list[k]->y-1);
-        if (bot != NULL) {
+        if (bot != NULL && (*bot == AIR || *bot == PATH)) {
             list[list_size] = get_vertex(level, vertices, x, y);
             list_size++;
             list[list_size]->listed = true;
             relachement(vertices, min, list[list_size]);
         }
     }
+    
+    Vertex* v = get_vertex(level, vertices, to_x, to_y);
+    while (!(v->parent->x == from_x && v->parent->y == from_y))
+        v = v->parent;
+    
+    if (v->x < v->parent->x) return LEFT;
+    if (v->x > v->parent->x) return RIGHT;
+    if (v->y < v->parent->y) return BOT;
+    if (v->y > v->parent->y) return TOP;
 }

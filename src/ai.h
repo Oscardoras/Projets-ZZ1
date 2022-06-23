@@ -9,7 +9,7 @@ typedef struct Vertex {
     int y;
     int d;
     struct Vertex* parent;
-    int listed;
+    bool listed;
 } Vertex;
 
 

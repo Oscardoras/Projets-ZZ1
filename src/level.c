@@ -253,7 +253,7 @@ void generate_level(Level* level, int min_x, int max_x, int min_y, int max_y, in
     
     if (min_x <= 0 && 0 < max_x) {
         for (int y = min_y; y < max_y; y++) {
-            Block* b = *get_level_block(level, x, y);
+            Block* b = *get_level_block(level, 0, y);
             if (y < 0) *b = DIRT;
             else if (y > 0) *b = AIR;
             else *b = GRASS;
