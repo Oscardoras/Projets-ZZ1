@@ -40,6 +40,7 @@ typedef struct {
     int seed;
     struct {
         int score;
+        int food;
         Weather weather;
         GlobalBehavior behavior;
         int spawn_speed;

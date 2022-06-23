@@ -15,6 +15,8 @@ Level* new_level(int min_x, int max_x, int min_y, int max_y, int seed) {
             level->d.min_y = min_y;
             level->d.max_y = max_y;
             level->seed = seed;
+            level->states.score = 0;
+            level->states.food = 10;
             level->states.weather = SUN;
             level->states.behavior = DEFAULT;
             level->entities = NULL;

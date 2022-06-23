@@ -75,23 +75,3 @@ bool is_valid_position(Level* level, int x, int y) {
 
     return false;
 }
-
-
-void lay_egg_queen(Entity* queen, Level* level) {
-    float rand_type = (rand() % 1000) / 1000.;
-    
-    EntityTypeName type = (rand_type < 0.5/*Où est stocker ratio*/) ? WORKER : SOLDIER;
-
-    add_level_entity(level, new_entity(type, queen->position, 0, 0));
-}
-
-void update_queen(Entity* queen, Level* level, QueenAction action) {
-    if(queen->state == 2) {
-        if(action == MOVE) {
-            //On doit voir
-        }
-        if(action == LAY) {
-            lay_egg_queen(queen, level);
-        }
-    }
-}

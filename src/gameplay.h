@@ -5,11 +5,6 @@
 
 
 typedef enum {
-    MOVE,
-    LAY
-} QueenAction;
-
-typedef enum {
     PHEROMONE_FOOD,
     PHEROMONE_ENNEMI,
     PHEROMONE_DIG,
@@ -43,6 +38,11 @@ void set_global_behavior(Level* level, GlobalBehavior behavior);
 void add_pheromone(Level* level, int x, int y, PheromoneType type);
 
 /**
+ * @brief Adds an ant.
+ */
+void new_ant(Level* level);
+
+/**
  * @brief Determines if a position is valid to walk on.
  * 
  * @param level the level.
@@ -51,24 +51,6 @@ void add_pheromone(Level* level, int x, int y, PheromoneType type);
  * @return if it is possible to walk on this position.
  */
 bool is_valid_position(Level* level, int x, int y);
-
-
-/**
- * @brief Makes the queen give birth to a new ant.
- * 
- * @param queen the ant queen.
- * @param level the level it's in.
- */
-void lay_egg_queen(Entity* queen, Level* level);
-
-/**
- * @brief Makes the queen move or lay depending of "action".
- * 
- * @param queen the ant queen.
- * @param level the level it's in.
- * @param action the action wanted.
- */
-void update_queen(Entity* queen, Level* level, QueenAction action);
 
 
 #endif

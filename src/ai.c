@@ -24,8 +24,8 @@ void compute_worker(Level* level, Entity* entity) {
                 entity->state = WORKER_WAITING;
         } else if (target->position.x == entity->position.x && target->position.y == entity->position.y) {
             entity->state = WORKER_TAKING_FOOD;
-        } else {
-            entity->position = path_finding(level, entity->position, entity->target->position);
+        } else if (!path_finding(level, &entity->position, entity->target->position)) {
+            entity->state = SOLDIER_WAITING;
         }
         break;
     }
@@ -47,8 +47,8 @@ void compute_worker(Level* level, Entity* entity) {
                 entity->state = WORKER_WAITING;
         } else if (target->position.x == entity->position.x && target->position.y == entity->position.y) {
             entity->state = WORKER_TAKING_FOOD;
-        } else {
-            entity->position = path_finding(level, entity->position, entity->target->position);
+        } else if (!path_finding(level, &entity->position, entity->target->position)) {
+            entity->state = SOLDIER_WAITING;
         }
         break;
     }
@@ -57,7 +57,8 @@ void compute_worker(Level* level, Entity* entity) {
         if (target == NULL) {
             entity->state = WORKER_WAITING;
         } else {
-            //Increase food level.
+            target->hp--;
+            level->states.food++;
         }
         break;
     }
@@ -74,19 +75,25 @@ void compute_worker(Level* level, Entity* entity) {
             if (cell == NULL)
                 entity->state = WORKER_WAITING;
         } else if (target->position.x == entity->position.x && target->position.y == entity->position.y) {
-            Block* b = get_level_block(level, target->position.x, target->position.y);
-            if (target->state == PHEROMONE_DIG && *b == DIRT) {
-                *b = PATH;
-                target->state = 0;
-            } else if (target->state == PHEROMONE_DIG && *b == GRASS) {
-                *b = GRASS;
-                target->state = 0;
-            } else if (target->state == PHEROMONE_FILL && (*b == PATH || *b == AIR)) {
-                *b = DIRT;
-                target->state = 0;
+            if (target->state == PHEROMONE_FILL) {
+                Block* b = get_level_block(level, target->position.x, target->position.y);
+                if (*b == PATH || *b == AIR) {
+                    *b = DIRT;
+                    target->state = 0;
+                }
+            } else if (target->state == PHEROMONE_DIG) {
+                for (int i = target->position.x-1; i <= target->position.x+1; i++) {
+                    for (int j = target->position.y-1; j <= target->position.y+1; j++) {
+                        Block* b = get_level_block(level, i, j);
+                        if (b != NULL && (*b == DIRT || *b == GRASS)) {
+                            *b = PATH;
+                        }
+                    }
+                }
             }
-        } else {
-            entity->position = path_finding(level, entity->position, entity->target->position);
+            target->state = 0;
+        } else if (!path_finding(level, &entity->position, entity->target->position)) {
+            entity->state = SOLDIER_WAITING;
         }
         break;
     }
@@ -114,8 +121,8 @@ void compute_soldier(Level* level, Entity* entity) {
                 entity->state = SOLDIER_WAITING;
         } else if (target->position.x == entity->position.x && target->position.y == entity->position.y) {
             entity->state = SOLDIER_FIGHTING;
-        } else {
-            entity->position = path_finding(level, entity->position, entity->target->position);
+        } else if (!path_finding(level, &entity->position, entity->target->position)) {
+            entity->state = SOLDIER_WAITING;
         }
         break;
     }
@@ -128,6 +135,12 @@ void compute_soldier(Level* level, Entity* entity) {
 
     if (entity->hp <= 0)
         entity->state = SOLDIER_DEAD;
+}
+
+void compute_queen(Level* level, Entity* entity) {
+    if (entity->state == 1 && level->states.food > 0) {
+        add_level_entity(level, new_entity(rand()%2 == 0 ? WORKER : SOLDIER, entity->position, 0, WORKER_WAITING));
+    }
 }
 
 void compute_mantis(Level* level, Entity* entity) {
@@ -146,8 +159,8 @@ void compute_mantis(Level* level, Entity* entity) {
                 entity->state = SOLDIER_WAITING;
         } else if (target->position.x == entity->position.x && target->position.y == entity->position.y) {
             entity->state = SOLDIER_FIGHTING;
-        } else {
-            entity->position = path_finding(level, entity->position, entity->target->position);
+        } else if (!path_finding(level, &entity->position, entity->target->position)) {
+            entity->state = SOLDIER_WAITING;
         }
         break;
     }
@@ -198,7 +211,7 @@ void relachement(Vertex* u, Vertex* v) {
     }
 }
 
-Position path_finding(Level* level, Position from, Position to) {
+bool path_finding(Level* level, Position* from, Position to) {
     unsigned int width = level->d.max_x - level->d.min_x;
     unsigned int height = level->d.max_y - level->d.min_y;
     unsigned int size = width * height;
@@ -217,7 +230,7 @@ Position path_finding(Level* level, Position from, Position to) {
     
     Vertex* list[1024];
     unsigned int list_size = 1;
-    list[0] = get_vertex(level, vertices, from.x, from.y);
+    list[0] = get_vertex(level, vertices, from->x, from->y);
     list[0]->d = 0;
     list[0]->present = true;
     list[0]->listed = false;
@@ -276,8 +289,18 @@ Position path_finding(Level* level, Position from, Position to) {
         }
     }
     
-    while (e->parent != NULL && e->parent->parent != NULL)
-        e = e->parent;
-    
-    return e->position;
+    if (e->parent != NULL) {
+        while (e->parent->parent != NULL)
+            e = e->parent;
+        
+        Direction direction;
+        if (e->position.x < from->x) direction = LEFT;
+        else if (e->position.x > from->x) direction = RIGHT;
+        else if (e->position.y < from->y) direction = BOT;
+        else if (e->position.y > from->y) direction = TOP;
+
+        *from = e->position;
+        from->direction = direction;
+        return true;
+    } return false;
 }
