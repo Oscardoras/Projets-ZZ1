@@ -1,6 +1,8 @@
 #ifndef __AI_H__
 #define __AI_H__
 
+#include "level.h"
+#include "entity.h"
 
 typedef struct Vertex {
     int d;
