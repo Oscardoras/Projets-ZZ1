@@ -17,6 +17,7 @@ Entity* new_entity(EntityType* type, State state, int hp, Position position) {
         entity->state = state;
         entity->position = position;
     }
+    else pirntf("Error Entity alloc\n");
     
     return entity;
 }

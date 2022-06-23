@@ -20,6 +20,11 @@ int main(/*int argc, char** argv*/) {
         load_types(file);
         fclose(file);
     }
+    
+    Position pos;
+    pos.x = pos.y = pos.rotation = 0;
+    Entity* entity = new_entity(search_type("Ouvriere"), 0, 0, pos);
+    
 
     Level* level = new_level(WORLD_X_MIN, WORLD_X_MAX, WORLD_Y_MIN, WORLD_Y_MAX, SEED);
     Viewport* viewport = init_viewport(WIDTH, HEIGHT, level);
