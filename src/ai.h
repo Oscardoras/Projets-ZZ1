@@ -1,10 +1,15 @@
 #ifndef __AI_H__
 #define __AI_H__
 
+#include "level.h"
+
 
 typedef struct Vertex {
+    int x;
+    int y;
     int d;
     struct Vertex* parent;
+    int listed;
 } Vertex;
 
 
