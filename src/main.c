@@ -26,7 +26,7 @@ int main(/*int argc, char** argv*/) {
 
 
     Level* level = new_level(WORLD_X_MIN, WORLD_X_MAX, WORLD_Y_MIN, WORLD_Y_MAX, SEED);
-    add_target(level, 2, 3, DIG);
+    add_pheromone(level, 2, 3, PHEROMONE_DIG);
     
     if(TEST_CREATION_FOURMI)
         for(unsigned int it = 0; it < 5; ++it) {
@@ -34,7 +34,7 @@ int main(/*int argc, char** argv*/) {
             pos.x = rand()%10;
             pos.y = rand()%10;
             pos.direction = rand()%360;
-            add_level_entity(level, new_entity(entity_types[0], 0, 100, pos));
+            add_level_entity(level, new_entity(SOLDIER, pos, 100, 0));
         }
     
     

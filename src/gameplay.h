@@ -10,11 +10,11 @@ typedef enum {
 } QueenAction;
 
 typedef enum {
-    FOOD,
-    ENNEMI,
-    DIG,
-    FILL
-} Target;
+    PHEROMONE_FOOD,
+    PHEROMONE_ENNEMI,
+    PHEROMONE_DIG,
+    PHEROMONE_FILL
+} PheromoneType;
 
 
 /**
@@ -38,9 +38,10 @@ void set_global_behavior(Level* level, GlobalBehavior behavior);
  * @param level the level.
  * @param x the x coordinates of the target.
  * @param y the y coordinates of the target.
- * @param target the target to add.
+ * @param type the type of pheromone to add.
  */
-void add_target(Level* level, int x, int y, Target target);
+void add_pheromone(Level* level, int x, int y, PheromoneType type);
+
 
 /**
  * @brief Makes the queen give birth to a new ant.

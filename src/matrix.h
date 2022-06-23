@@ -4,11 +4,6 @@
 #include <stdio.h>
 
 
-typedef enum {
-    BORN = 0,
-    VOID = 1
-} DefaultState;
-
 typedef unsigned int State;
 
 

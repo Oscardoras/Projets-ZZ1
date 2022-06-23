@@ -27,7 +27,6 @@ typedef enum {
     PATH,
     GRASS,
     ROCK,
-    FRUIT,
     LEAVES
 } Block;
 

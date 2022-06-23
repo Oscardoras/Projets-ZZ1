@@ -9,28 +9,28 @@
 EntityType* entity_types[ENTITY_TYPES] = {};
 
 
-Entity* new_entity(EntityType* type, State state, int hp, Position position) {
+Entity* new_entity(EntityTypeName type, Position position, int hp, State state) {
     Entity* entity = malloc(sizeof(Entity));
     
-    if (entity) {
-        entity->type = type;
-        entity->hp = (hp != 0) ? hp : entity->type->stats.hp;
-        entity->state = state;
+    if (entity != NULL) {
         entity->position = position;
+        entity->type = type;
+        entity->hp = (hp != 0) ? hp : entity_types[type]->stats.hp;
+        entity->state = state;
+        entity->target = NULL;
     }
-    else printf("Error Entity alloc\n");
     
     return entity;
 }
 
 void save_entity(Entity* entity, FILE* file) {
-    fprintf(file, "%d %d %d %d %d %s\n",
+    fprintf(file, "%d %d %d %d %d %d\n",
+        entity->type,
         entity->position.x,
         entity->position.y,
         entity->position.direction,
         entity->hp,
-        entity->state,
-        entity->type->name
+        entity->state
     );
 }
 
@@ -43,10 +43,16 @@ Entity* load_entity(FILE* file) {
     int i_split;
 
     if (fgets(line, 128, file)) {
+        EntityTypeName type;
         Position position;
-        State state;
         int hp;
-        EntityType* type;
+        State state;
+
+        for(i_split=0; line[i_line] != ' '; i_line++, i_split++)
+            split[i_split] = line[i_line];
+        split[i_split] = '\0';
+        type = atoi(split);
+        i_line++;
 
         for(i_split=0; line[i_line] != ' '; i_line++, i_split++)
             split[i_split] = line[i_line];
@@ -78,12 +84,7 @@ Entity* load_entity(FILE* file) {
         state = atoi(split);
         i_line++;
 
-        for(i_split=0; line[i_line] != '\n'; i_line++, i_split++)
-            split[i_split] = line[i_line];
-        split[i_split] = '\0';
-        type = search_type(split);
-
-        entity = new_entity(type, state, hp, position);
+        entity = new_entity(type, position, hp, state);
     }
     
     return entity;
@@ -93,27 +94,17 @@ void free_entity(Entity* entity) {
     if (entity != NULL)
         free(entity);
 }
-
-void load_types(FILE* file) {
-    for (int i = 0; i < ENTITY_TYPES; i++)
-        entity_types[i] = load_type(file);
-}
     
 EntityType* load_type(FILE* file) {
     EntityType* type = NULL;
 
-    int i;
-    char* c;
+    char *c;
     char line[32];
     
     if (fgets(line, 32, file)) { //Pas à la fin du fichier
         type = malloc(sizeof(EntityType));
         
         if (type != NULL) {
-            for(i=0; line[i] != '\n'; i++)
-                type->name[i]=line[i];
-            type->name[i] = '\0';
-            
             fgets(line, 32, file);
             for(c = line; *c != '\n'; c++);
             *c = '\0';
@@ -143,22 +134,19 @@ EntityType* load_type(FILE* file) {
     return type;
 }
 
-EntityType* search_type(char* name) {
-    int i;
-
-    for(i=0; entity_types[i] && strcmp(name, entity_types[i]->name); i++);
-
-    return entity_types[i];
-}
-
-void free_types() {
-    for (int i = 0; i < ENTITY_TYPES; i++)
-        free_type(entity_types[i]);
-}
-
 void free_type(EntityType* type) {
     if (type != NULL) {
         free_matrix(&type->markov);
         free(type);
     }
+}
+
+void load_types(FILE* file) {
+    for (int i = 0; i < ENTITY_TYPES; i++)
+        entity_types[i] = load_type(file);
+}
+
+void free_types() {
+    for (int i = 0; i < ENTITY_TYPES; i++)
+        free_type(entity_types[i]);
 }

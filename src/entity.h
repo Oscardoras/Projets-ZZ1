@@ -5,8 +5,6 @@
 
 #include "matrix.h"
 
-#define ENTITY_TYPES 10
-
 
 typedef enum {
     TOP,
@@ -22,7 +20,6 @@ typedef struct {
 } Position;
 
 typedef struct {
-    char name[32];
     struct {
         int hp;
         int atk;
@@ -32,13 +29,22 @@ typedef struct {
     Matrix markov;
 } EntityType;
 
+#define ENTITY_TYPES 10
+typedef enum {
+    WORKER,
+    SOLDIER,
+    QUEEN,
+    MANTIS,
+    PHEROMONE,
+    FOOD,
+} EntityTypeName;
 extern EntityType* entity_types[ENTITY_TYPES];
 
 typedef struct Entity {
-    EntityType* type;
+    EntityTypeName type;
+    Position position;
     int hp;
     State state;
-    Position position;
     struct Entity* target;
 } Entity;
 
@@ -47,19 +53,19 @@ typedef struct Entity {
 /**
  * @brief Creates a new entity.
  * 
- * @param position his position in the level.
- * @param state the state of the entity, 0 when created, maybe != 0 when loaded.
- * @param hp hp of the entity created. if 0, takes type->state.hp instead.
- * @param type a pointer to the type of the entity created.
- * @return the new entity created.
+ * @param type the type of the new entity.
+ * @param position the position in the level.
+ * @param hp health point of the new entity. If negative then takes the value of the type instead.
+ * @param state the state of the entity.
+ * @return the new entity.
  */
-Entity* new_entity(EntityType* type, State state, int hp, Position position);
+Entity* new_entity(EntityTypeName type, Position position, int hp, State state);
 
 /**
- * @brief Saves an entity in the save-file.
+ * @brief Saves an entity in a save file.
  * 
  * @param entity the entity to save.
- * @param file the save-file.
+ * @param file the save file.
  */
 void save_entity(Entity* entity, FILE* file);
 
@@ -79,14 +85,7 @@ Entity* load_entity(FILE* file);
 void free_entity(Entity* entity);
 
 /**
- * @brief Loads the types from a configuration file.
- * 
- * @param file the configuration file.
- */
-void load_types(FILE* file);
-
-/**
- * @brief Loads a type from a file.
+ * @brief Loads a type from a configuration file.
  * 
  * @param file the configuration file.
  * @return the type.
@@ -94,24 +93,23 @@ void load_types(FILE* file);
 EntityType* load_type(FILE* file);
 
 /**
- * @brief Searchs in entity_types for the type of a said name.
- * 
- * @param name the name of the type wanted.
- * @return a pointer to the entity.
- */
-EntityType* search_type(char *name);
-
-/**
- * @brief Frees types.
- */
-void free_types();
-
-/**
  * @brief Frees a type
  * 
  * @param type a pointer to a type.
  */
 void free_type(EntityType* type);
+
+/**
+ * @brief Loads the types from a configuration file.
+ * 
+ * @param file the configuration file.
+ */
+void load_types(FILE* file);
+
+/**
+ * @brief Frees types.
+ */
+void free_types();
 
 
 #endif
