@@ -44,9 +44,8 @@ Viewport* init_viewport(int width, int height, Level* level) {
     } else {
         SDL_Log("Error Viewport alloc");
     }
-    SDL_Surface *my_image = NULL;
-    my_image = IMG_Load(TEXTURE_NAME);
-    if (my_image == NULL) 
+    viewport->texture = IMG_LoadTexture(TEXTURE_NAME);
+    if (viewport->texture == NULL) 
     {
         SDL_Log("Chargement des textures impossible\n");
         exit(EXIT_FAILURE);        
@@ -87,6 +86,7 @@ void close_viewport(Viewport* viewport) {
     if (viewport != NULL) {
         if (viewport->renderer != NULL) SDL_DestroyRenderer(viewport->renderer);
         if (viewport->window != NULL) SDL_DestroyWindow(viewport->window);
+        if (viewport->texture != NULL) SDL_DestroyTexture(viewport->texture);
         free(viewport);
         SDL_Quit();
     }
