@@ -116,23 +116,7 @@ void close_viewport(Viewport* viewport) {
     }
 }
 
-<<<<<<< HEAD
-void draw_viewport(Viewport* viewport)
-{
-    #ifdef TEST_SPRITES
-    viewport->level->entities = (Entity*)malloc(sizeof(Entity)*10);
-    for(struct ListCell* iterator = viewport->level->entities; iterator; iterator = iterator.next)
-    {
-        iterator->hp = 100;
-        iterator->position.x = (iterator - viewport->level->entities) * 30;
-        iterator->position.y = (iterator - viewport->level->entities) * 30;
-        iterator->position.rotation = (iterator - viewport->level->entities) * 90;
-        iterator->state = 0;
-    }
-    #endif
-=======
 void draw_viewport(Viewport* viewport) {
->>>>>>> 00cfcbc40c86797c684108adbc25a77cad62c794
     SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
 	SDL_RenderClear(viewport->renderer);
     for(struct ListCell* iterator = viewport->level->entities; iterator; iterator = iterator->next)
