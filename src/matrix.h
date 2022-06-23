@@ -49,7 +49,7 @@ float* get_matrix_element(Matrix* matrix, unsigned int i, unsigned int j);
  * @param matrix a pointer to the matrix.
  * @param state a pointer to the state.
  */
-void forward(Matrix* matrix, State* state);
+void forward_state(Matrix* matrix, State* state);
 
 /**
  * @brief Parses a string to Parse une chaîne de caractères afin de récupérer tous les flotants

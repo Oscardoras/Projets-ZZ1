@@ -1,7 +1,8 @@
-#ifndef __GAMEPLAY_H_
-#define __GAMEPLAY_H_
+#ifndef __GAMEPLAY_H__
+#define __GAMEPLAY_H__
 
 #include "level.h"
+
 
 typedef enum {
     MOVE,
@@ -15,20 +16,13 @@ typedef enum {
     FILL
 } Target;
 
-typedef struct updateCell {
-    Entity* entity;
-    struct updateCell* next;
-} ListUpdate;
-
 
 /**
- * @brief Changes the state of an entity with Markov.
+ * @brief Makes one iteration of the game loop.
  * 
- * @param entity the entity to change.
+ * @param level the level to update.
  */
-void update_entity(Entity* entity);
-
-
+void game_loop_iteration(Level* level);
 
 /**
  * @brief Sets the global behavior of the ants.
@@ -65,25 +59,5 @@ void lay_egg_queen(Entity* queen, Level* level);
  */
 void update_queen(Entity* queen, Level* level, QueenAction action);
 
-/**
- * @brief Updates the state of every entity which state has to be changed.
- * 
- * @param list the list of the entities to update
- */
-void update_list(ListUpdate* list);
-
-/**
- * @brief Lets an entity attack its target.
- * 
- * @param entity the entity that will attack its target.
- */
-void attack(Entity* entity);
-
-/**
- * @brief Makes every entity in the list attacks its target.
- * 
- * @param list the list of the entities that attack.
- */
-void attack_list(ListUpdate* list);
 
 #endif

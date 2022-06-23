@@ -49,7 +49,8 @@ void save_level(Level* level, FILE* file) {
     fprintf(file, "%d %d %d %d %d %d %d\n",
         level->d.min_x, level->d.max_x, level->d.min_y, level->d.max_y,
         level->seed,
-        level->states.weather, level->states.behavior);
+        level->states.weather, level->states.behavior
+    );
     
     int size = (level->d.max_x - level->d.min_x) * (level->d.max_y - level->d.min_y);
     for (int k = 0; k < size; k++)

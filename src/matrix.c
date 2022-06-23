@@ -73,7 +73,7 @@ matrix_t copyMatrix(matrix_t* matrix)
 }
 */
 
-void forward(Matrix* matrix, State* state) {
+void forward_state(Matrix* matrix, State* state) {
     if(*state >= matrix->size)
     {
         printf("Erreur etat non existant\n");

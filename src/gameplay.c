@@ -1,13 +1,34 @@
-#include <stdlib.h>
 #include <math.h>
+#include <stdlib.h>
 
+#include "ai.h"
 #include "gameplay.h"
 
 #define PONTE_OUVR 3
 
-void update_entity(Entity* entity) {
-    if(entity)
-        forward(&(entity->type->markov), &(entity->state));
+
+void game_loop_iteration(Level* level) {
+    struct ListCell* cell = level->entities;
+    while (cell != NULL) {
+        Entity* entity = cell->entity;
+        Entity* target = entity->target;
+        
+        if (entity->target == NULL || (target->position.x == entity->position.x && target->position.y == entity->position.y)) {
+            forward_state(&entity->type->markov, &entity->state);
+            switch (entity->type) {
+            case /* constant-expression */:
+                /* code */
+                break;
+            
+            default:
+                break;
+            }
+        } else {
+            Direction direction = path_finding(level, entity->position.x, entity->position.y, target->position.x, target->position.y);
+        }
+        
+        cell = cell->next;
+    }
 }
 
 void set_global_behaviour(Level* level, GlobalBehavior behaviour) {
