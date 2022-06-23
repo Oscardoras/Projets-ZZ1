@@ -23,15 +23,15 @@ int main(/*int argc, char** argv*/) {
     Level* level = new_level(WORLD_X_MIN, WORLD_X_MAX, WORLD_Y_MIN, WORLD_Y_MAX, SEED);
     #ifdef TEST_CREATION_FOURMI
     {
-        for(unsigned int it = 0; it < 100; ++it)
+        for(unsigned it = 0; it < 10; ++it)
         {
             Position pos;
             pos.x = rand()%800;
             pos.y = rand()%600;
             pos.rotation = rand()%360;
-            Entity * ant = new_entity(&entity_types[0], 0, 100, pos);
-            add_level_entity(level, ant);
+            add_level_entity(level, new_entity(&entity_types[0], 0, 100, pos));
         }
+        
     }
     #endif
     Viewport* viewport = init_viewport(WIDTH, HEIGHT, level);
