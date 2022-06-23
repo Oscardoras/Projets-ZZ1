@@ -31,7 +31,7 @@ typedef struct {
     SDL_Texture* texture_fourmi;
     SDL_Texture* texture_background;
     Animation animations[ANIMATION_COUNT];
-    SDL_Rect* environment_rect[7];
+    SDL_Rect environment_rect[7];
 } Viewport;
 
 

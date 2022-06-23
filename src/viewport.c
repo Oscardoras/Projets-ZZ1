@@ -13,8 +13,8 @@
 
 void initEnvRect(SDL_Rect* environment_rect, int i, int j)
 {
-    environment_rect->x = TILE_SIZE * i;
-    environment_rect->y = TILE_SIZE * j;
+    environment_rect->x = i;
+    environment_rect->y = j;
     environment_rect->w = TILE_SIZE;
     environment_rect->h = TILE_SIZE;
 }
@@ -26,11 +26,11 @@ Viewport* init_viewport(int width, int height, Level* level) {
     
     Viewport* viewport = malloc(sizeof(Viewport));
     if (viewport) {
-        initEnvRect(&viewport->environment_rect[0], 9, 12); // AIR
-        initEnvRect(&viewport->environment_rect[1], 2, 3); // DIRT
-        initEnvRect(&viewport->environment_rect[2], 1, 1); // PATH
-        initEnvRect(&viewport->environment_rect[3], 1, 0); // GRASS
-        initEnvRect(&viewport->environment_rect[4], 5, 3); // ROCK
+        initEnvRect(&viewport->environment_rect[0], 144, 192); // AIR
+        initEnvRect(&viewport->environment_rect[1], 32, 17); // DIRT
+        initEnvRect(&viewport->environment_rect[2], 17, 17); // PATH
+        initEnvRect(&viewport->environment_rect[3], 17, 0); // GRASS
+        initEnvRect(&viewport->environment_rect[4], 160, 17); // ROCK
         initEnvRect(&viewport->environment_rect[5], 0, 19); // FRUIT
         initEnvRect(&viewport->environment_rect[6], 11, 18); // LEAVES
         viewport->width = width;
@@ -157,10 +157,10 @@ void draw_viewport(Viewport* viewport) {
             int w, h;
             SDL_GetWindowSize(viewport->window, &w, &h);
             SDL_Rect destination;
-            destination.x = i*TILE_SIZE*(w/viewport->camera.width);
-            destination.y = j*TILE_SIZE*(h/viewport->camera.height);
-            destination.w = TILE_SIZE*(w/viewport->camera.width) + 1;
-            destination.h = TILE_SIZE*(h/viewport->camera.height) + 1;
+            destination.x = i*(w/(viewport->camera.width/TILE_SIZE));
+            destination.y = (viewport->level->d.max_y-1-(j-viewport->level->d.min_y))*(h/(viewport->camera.height/TILE_SIZE));
+            destination.w = (w/(viewport->camera.width/TILE_SIZE))+1;
+            destination.h = (h/(viewport->camera.height/TILE_SIZE))+1;
             SDL_RenderCopy(viewport->renderer, viewport->texture_background,
                  &viewport->environment_rect[viewport->level->blocks[(i-viewport->level->d.min_x) + (viewport->level->d.max_x - viewport->level->d.min_x)*(j-viewport->level->d.min_y)]],
                  &destination);
