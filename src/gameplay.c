@@ -32,7 +32,7 @@ void add_target(Level* level, int x, int y, Target target) {
 void lay_egg_queen(Entity* queen, Level* level) {
     update_entity(queen);
     
-    float rand_type = (float)(rand()%1000)/1000.0
+    float rand_type = (float)(rand()%1000)/1000.0;
     
     EntityType* type =
         (rand_type < 0.5/*Où est stocker ratio*/) ?
@@ -45,7 +45,7 @@ void lay_egg_queen(Entity* queen, Level* level) {
 }
 
 void update_queen(Entity* queen, Level* level, QueenAction action) {
-    if(queen->state = 2) {
+    if(queen->state == 2) {
         if(action == MOVE) {
             //On doit voir
         }
@@ -54,7 +54,7 @@ void update_queen(Entity* queen, Level* level, QueenAction action) {
         }
     }
     else {
-        update(queen);
+        update_entity(queen);
     }
 }
 

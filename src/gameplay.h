@@ -15,6 +15,11 @@ typedef enum {
     FILL
 } Target;
 
+typedef struct updateCell {
+    Entity* entity;
+    updateCell* next;
+} ListUpdate;
+
 
 /**
  * @brief Changes the state of an entity with Markov.
@@ -57,5 +62,21 @@ void lay_egg_queen(Entity* queen, Level* level);
  * @param action the action wanted.
  */
 void update_queen(Entity* queen, Level* level, QueenAction action);
+
+/**
+ * @brief Updates the state of every entity which state has to be changed.
+ * 
+ * @param list the list of the entities to update
+ */
+void gameloop(ListUpdate* list) {
+    ListUpdate* cour = list;
+    ListUpdate* temp = NULL;
+    while(cour) {
+        update_entity(cour->entity);
+        temp = cour;
+        cour = cour->next;
+        free(temp);
+    }
+}
 
 #endif
