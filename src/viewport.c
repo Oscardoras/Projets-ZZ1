@@ -164,6 +164,25 @@ Viewport* init_viewport(int width, int height, Level* level) {
     viewport->animations[5].rects[0].h = 32;
     viewport->animations[5].spriteNumber = 2;
 
+    viewport->animations[6].count = 4;
+    viewport->animations[6].rects[0].x = 56; // SOLDIER standing walk
+	viewport->animations[6].rects[0].y = 86;
+	viewport->animations[6].rects[0].w = 37;
+	viewport->animations[6].rects[0].h = 12;
+    viewport->animations[6].rects[1].x = 56;
+	viewport->animations[6].rects[1].y = 100;
+	viewport->animations[6].rects[1].w = 37;
+	viewport->animations[6].rects[1].h = 10;
+	viewport->animations[6].rects[2].x = 56;
+	viewport->animations[6].rects[2].y = 111;
+	viewport->animations[6].rects[2].w = 37;
+	viewport->animations[6].rects[2].h = 11;
+	viewport->animations[6].rects[3].x = 56;
+	viewport->animations[6].rects[3].y = 123;
+	viewport->animations[6].rects[3].w = 37;
+	viewport->animations[6].rects[3].h = 10;
+    viewport->animations[6].spriteNumber = 2;
+
     viewport->camera.x= viewport->level->d.min_x;
     viewport->camera.y= viewport->level->d.min_y;
     viewport->camera.width = CAMERA_WIDTH;
@@ -210,6 +229,32 @@ void event_loop(Viewport* viewport) {
                     }
                 }
                 break;
+                case SDL_MOUSEBUTTONDOWN:
+                {
+                    int w, h;
+                    SDL_GetWindowSize(viewport->window, &w, &h);
+                    int printable_x = 0;
+                        int printable_y = 0;
+
+                        for(int i = viewport->level->d.min_x; i < viewport->level->d.max_x; ++i)
+                            if(i * TILE_SIZE >= (viewport->camera.x * TILE_SIZE) && i * TILE_SIZE <= (viewport->camera.x*TILE_SIZE + viewport->camera.width))
+                                ++printable_x;
+                        for(int j = viewport->level->d.min_y; j < viewport->level->d.max_y; ++j)
+                            if(j * TILE_SIZE >= (viewport->camera.y * TILE_SIZE) && j * TILE_SIZE <= (viewport->camera.y*TILE_SIZE + viewport->camera.height))
+                                ++printable_y;
+                        printable_x*=TILE_SIZE;
+                        printable_y*=TILE_SIZE;
+                    unsigned int x;
+                    unsigned int y;
+                    unsigned int targetX = viewport->camera.x+x/(w/((printable_x/TILE_SIZE))+1);
+                    unsigned int targetY = viewport->camera.y+y/(h/((printable_y/TILE_SIZE))+1);
+                    if (SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_LEFT)) 
+                        add_pheromone(viewport->level, targetX, targetY, (PheromoneType)PHEROMONE_DIG);
+                    else if(SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_RIGHT))
+                        add_pheromone(viewport->level, targetX, targetY, (PheromoneType)PHEROMONE_FILL);
+                }
+                break;
+
                 case SDL_MOUSEWHEEL:
                 {
                     if(event.wheel.y > 0 && viewport->camera.width/TILE_SIZE < viewport->level->d.max_x - viewport->level->d.min_x) // scroll up
@@ -317,8 +362,7 @@ void draw_viewport(Viewport* viewport) {
         center.x = destination.w/2;
         center.y = destination.h/2;
         unsigned int animId = 0;
-        if(viewport->level->blocks[fourmi->position.y*(viewport->level->d.max_x - viewport->level->d.min_x)  + fourmi->position.x] != (Block)AIR)
-            switch(fourmi->type)
+        switch(fourmi->type)
             {
                 case (EntityTypeName)QUEEN :
                     animId = 2;
@@ -327,31 +371,9 @@ void draw_viewport(Viewport* viewport) {
                     animId = 1;
                 break;
                 case (EntityTypeName)WORKER :
-                    animId = 3;
-                break;
-                case (EntityTypeName)MANTIS :
-                    animId = 4;
-                break;
-                case (EntityTypeName)FOOD :
-                animId = 5;
-                break;
-                case (EntityTypeName)PHEROMONE :
                     animId = 6;
-                    break;
-                default : 
-                    animId = 1;
-            }
-        else
-            switch(fourmi->type)
-            {
-                case (EntityTypeName)QUEEN :
-                    animId = 2;
-                break;
-                case (EntityTypeName)SOLDIER :
-                    animId = 1;
-                break;
-                case (EntityTypeName)WORKER :
-                    animId = 3;
+                    if(viewport->level->blocks[fourmi->position.y*(viewport->level->d.max_x - viewport->level->d.min_x)  + fourmi->position.x] != (Block)AIR)
+                        animId = 3;
                 break;
                 case (EntityTypeName)MANTIS :
                     animId = 4;
