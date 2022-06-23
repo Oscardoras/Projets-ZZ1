@@ -1,7 +1,11 @@
-#include <stdlib.h>
 #include <SDL2/SDL_image.h>
+
+#include <stdlib.h>
+
 #include "viewport.h"
+
 #define TEXTURE_NAME "sprites/FourmiGuerriere.png"
+
 
 Viewport* init_viewport(int width, int height, Level* level) {
     if (SDL_Init(SDL_INIT_VIDEO)) {
