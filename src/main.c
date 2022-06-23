@@ -7,10 +7,10 @@
 
 #define WIDTH 800
 #define HEIGHT 600
-#define WORLD_X_MIN -5
-#define WORLD_Y_MIN -5
-#define WORLD_X_MAX 5
-#define WORLD_Y_MAX 5
+#define WORLD_X_MIN -40
+#define WORLD_Y_MIN -30
+#define WORLD_X_MAX 40
+#define WORLD_Y_MAX 30
 #define SEED 0
 #define TEST_CREATION_FOURMI
 
