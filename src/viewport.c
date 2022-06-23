@@ -50,9 +50,15 @@ Viewport* init_viewport(int width, int height, Level* level) {
         SDL_Log("Chargement des textures impossible\n");
         exit(EXIT_FAILURE);        
     }
-
-    viewport->texture = SDL_CreateTextureFromSurface(viewport->renderer, my_image); // Chargement de l'image de la surface vers la texture
-    SDL_FreeSurface(my_image);                                     // la SDL_Surface ne sert que comme élément transitoire 
+    SDL_Surface *image_texture = NULL;
+    image_texture = IMG_Load(TEXTURE_NAME);    
+    if (image_texture == NULL) 
+    {
+        SDL_Log("Chargement des textures impossible\n");
+        exit(EXIT_FAILURE);        
+    }
+    viewport->texture = SDL_CreateTextureFromSurface(viewport->renderer, image_texture); // Chargement de l'image de la surface vers la texture
+    SDL_FreeSurface(image_texture);                                     // la SDL_Surface ne sert que comme élément transitoire 
     if (viewport->texture == NULL) 
     {
         SDL_Log("Chargement des textures impossible\n");
