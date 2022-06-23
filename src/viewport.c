@@ -162,6 +162,25 @@ Viewport* init_viewport(int width, int height, Level* level) {
     viewport->animations[5].rects[0].h = 32;
     viewport->animations[5].spriteNumber = 2;
 
+    viewport->animations[6].count = 4;
+    viewport->animations[6].rects[0].x = 56; // SOLDIER standing walk
+	viewport->animations[6].rects[0].y = 86;
+	viewport->animations[6].rects[0].w = 37;
+	viewport->animations[6].rects[0].h = 12;
+    viewport->animations[6].rects[1].x = 56;
+	viewport->animations[6].rects[1].y = 100;
+	viewport->animations[6].rects[1].w = 37;
+	viewport->animations[6].rects[1].h = 10;
+	viewport->animations[6].rects[2].x = 56;
+	viewport->animations[6].rects[2].y = 111;
+	viewport->animations[6].rects[2].w = 37;
+	viewport->animations[6].rects[2].h = 11;
+	viewport->animations[6].rects[3].x = 56;
+	viewport->animations[6].rects[3].y = 123;
+	viewport->animations[6].rects[3].w = 37;
+	viewport->animations[6].rects[3].h = 10;
+    viewport->animations[6].spriteNumber = 2;
+
     viewport->camera.x= viewport->level->d.min_x;
     viewport->camera.y= viewport->level->d.min_y;
     viewport->camera.width = CAMERA_WIDTH;
@@ -312,8 +331,7 @@ void draw_viewport(Viewport* viewport) {
         center.x = destination.w/2;
         center.y = destination.h/2;
         unsigned int animId = 0;
-        if(viewport->level->blocks[fourmi->position.y*(viewport->level->d.max_x - viewport->level->d.min_x)  + fourmi->position.x] != (Block)AIR)
-            switch(fourmi->type)
+        switch(fourmi->type)
             {
                 case (EntityTypeName)QUEEN :
                     animId = 2;
@@ -322,31 +340,9 @@ void draw_viewport(Viewport* viewport) {
                     animId = 1;
                 break;
                 case (EntityTypeName)WORKER :
-                    animId = 3;
-                break;
-                case (EntityTypeName)MANTIS :
-                    animId = 4;
-                break;
-                case (EntityTypeName)FOOD :
-                animId = 5;
-                break;
-                case (EntityTypeName)PHEROMONE :
                     animId = 6;
-                    break;
-                default : 
-                    animId = 1;
-            }
-        else
-            switch(fourmi->type)
-            {
-                case (EntityTypeName)QUEEN :
-                    animId = 2;
-                break;
-                case (EntityTypeName)SOLDIER :
-                    animId = 1;
-                break;
-                case (EntityTypeName)WORKER :
-                    animId = 3;
+                    if(viewport->level->blocks[fourmi->position.y*(viewport->level->d.max_x - viewport->level->d.min_x)  + fourmi->position.x] != (Block)AIR)
+                        animId = 3;
                 break;
                 case (EntityTypeName)MANTIS :
                     animId = 4;

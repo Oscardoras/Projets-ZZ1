@@ -6,7 +6,7 @@
 #include "level.h"
 #include "viewport.h"
 
-#define ANIMATION_COUNT 6
+#define ANIMATION_COUNT 7
 #define ANIMATION_SIZE_MAX 10
 
 typedef struct  {
