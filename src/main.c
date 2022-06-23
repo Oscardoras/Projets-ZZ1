@@ -38,7 +38,7 @@ int main(/*int argc, char** argv*/) {
     Level* level = new_level(WORLD_X_MIN, WORLD_X_MAX, WORLD_Y_MIN, WORLD_Y_MAX, SEED);
     #ifdef TEST_CREATION_FOURMI
     {
-        for(unsigned it = 0; it < 10; ++it)
+        for(unsigned it = 0; it < 1000; ++it)
         {
             Position pos;
             pos.x = rand()%800;
