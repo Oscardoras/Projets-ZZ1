@@ -3,3 +3,4 @@ all: src/main.c
 clean:
 	rm -r bin/*
 	rm game
+ 
