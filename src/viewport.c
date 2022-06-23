@@ -1,7 +1,12 @@
-#include <stdlib.h>
 #include <SDL2/SDL_image.h>
+
+#include <stdlib.h>
+#include <time.h>
+
 #include "viewport.h"
+
 #define TEXTURE_NAME "sprites/FourmiGuerriere.png"
+
 
 Viewport* init_viewport(int width, int height, Level* level) {
     if (SDL_Init(SDL_INIT_VIDEO)) {
@@ -53,8 +58,39 @@ Viewport* init_viewport(int width, int height, Level* level) {
     } else {
         SDL_Log("Error Viewport alloc");
     }
-  	 
+  	viewport->texture = IMG_LoadTexture(viewport->renderer,TEXTURE_NAME);
+  	if (viewport->texture == NULL)
+	{
+		SDL_Log("Erreur creation texture");
+		exit(EXIT_FAILURE);
+	} 
+    viewport->animations[0].count = 3;
+    viewport->animations[1].count = 3;
+    viewport->animations[0].rects[0].x = 0;
+	viewport->animations[0].rects[0].y = 0;
+	viewport->animations[0].rects[0].w = 37;
+	viewport->animations[0].rects[0].h = 12;
+	viewport->animations[0].rects[1].x = 0;
+	viewport->animations[0].rects[1].y = 12*3;
+	viewport->animations[0].rects[1].w = 37;
+	viewport->animations[0].rects[1].h = 12;
+	viewport->animations[0].rects[2].x = 0;
+	viewport->animations[0].rects[2].y = 12*4;
+	viewport->animations[0].rects[2].w = 37;
+	viewport->animations[0].rects[2].h = 12;
 
+    viewport->animations[1].rects[0].x = 0;
+	viewport->animations[1].rects[0].y = 12;
+	viewport->animations[1].rects[0].w = 37;
+	viewport->animations[1].rects[0].h = 12;
+	viewport->animations[1].rects[1].x = 0;
+	viewport->animations[1].rects[1].y = 12*2;
+	viewport->animations[1].rects[1].w = 37;
+	viewport->animations[1].rects[1].h = 12;
+	viewport->animations[1].rects[2].x = 0;
+	viewport->animations[1].rects[2].y = 12*5;
+	viewport->animations[1].rects[2].w = 37;
+	viewport->animations[1].rects[2].h = 12;
     return viewport;
 }
 
@@ -89,7 +125,19 @@ void close_viewport(Viewport* viewport) {
     }
 }
 
-void draw_viewport(Viewport* viewport)
-{
-    
+void draw_viewport(Viewport* viewport) {
+    SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
+	SDL_RenderClear(viewport->renderer);
+    for(Entity* iterator = viewport->level->entities; iterator; ++iterator)
+    {
+        SDL_Rect destination;
+        destination.x = iterator->position.x;
+        destination.y = iterator->position.y;
+        destination.w = viewport->animations[1].rects[time(0)%viewport->animations[1].count].w;
+        destination.h = viewport->animations[1].rects[time(0)%viewport->animations[1].count].h;
+		SDL_RenderCopy(viewport->renderer, viewport->texture,
+                 &viewport->animations[1].rects[time(0)%viewport->animations[1].count],
+                 &destination);
+    }
+    SDL_RenderPresent(viewport->renderer);
 }

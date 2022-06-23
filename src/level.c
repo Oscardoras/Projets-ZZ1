@@ -9,11 +9,13 @@ Level* new_level(int min_x, int max_x, int min_y, int max_y, int seed) {
         int size = (max_x - min_x) * (max_y - min_y);
         level->blocks = malloc(sizeof(Block) * size);
         if (level->blocks != NULL) {
-            level->min_x = min_x;
-            level->max_x = max_x;
-            level->min_y = min_y;
-            level->max_y = max_y;
+            level->d.min_x = min_x;
+            level->d.max_x = max_x;
+            level->d.min_y = min_y;
+            level->d.max_y = max_y;
             level->seed = seed;
+            level->states.weather = SUN;
+            level->states.behavior = DEFAULT;
             level->entities = NULL;
             
             //TODO : generate the world
@@ -43,9 +45,12 @@ void free_level(Level* level) {
 }
 
 void save_level(Level* level, FILE* file) {
-    fprintf(file, "%d %d %d %d %d\n", level->min_x, level->max_x, level->min_y, level->max_y, level->seed);
+    fprintf(file, "%d %d %d %d %d %d %d\n",
+        level->d.min_x, level->d.max_x, level->d.min_y, level->d.max_y,
+        level->seed,
+        level->states.weather, level->states.behavior);
     
-    int size = (level->max_x - level->min_x) * (level->max_y - level->min_y);
+    int size = (level->d.max_x - level->d.min_x) * (level->d.max_y - level->d.min_y);
     for (int k = 0; k < size; k++)
         fprintf(file, "%d\n", (int) level->blocks[k]);
     
@@ -72,7 +77,7 @@ Level* load_level(FILE* file) {
         }
         b++;
         *v = '\0';
-        level->min_x = atoi(value);
+        level->d.min_x = atoi(value);
         
         for (v = value; *b != ' '; b++) {
             *v = *b;
@@ -80,7 +85,7 @@ Level* load_level(FILE* file) {
         }
         b++;
         *v = '\0';
-        level->max_x = atoi(value);
+        level->d.max_x = atoi(value);
         
         for (v = value; *b != ' '; b++) {
             *v = *b;
@@ -88,7 +93,7 @@ Level* load_level(FILE* file) {
         }
         b++;
         *v = '\0';
-        level->min_y = atoi(value);
+        level->d.min_y = atoi(value);
         
         for (v = value; *b != ' '; b++) {
             *v = *b;
@@ -96,9 +101,9 @@ Level* load_level(FILE* file) {
         }
         b++;
         *v = '\0';
-        level->max_y = atoi(value);
+        level->d.max_y = atoi(value);
         
-        for (v = value; *b != '\n'; b++) {
+        for (v = value; *b != ' '; b++) {
             *v = *b;
             v++;
         }
@@ -106,7 +111,23 @@ Level* load_level(FILE* file) {
         *v = '\0';
         level->seed = atoi(value);
         
-        int size = (level->max_x - level->min_x) * (level->max_y - level->min_y);
+        for (v = value; *b != ' '; b++) {
+            *v = *b;
+            v++;
+        }
+        b++;
+        *v = '\0';
+        level->states.weather = atoi(value);
+        
+        for (v = value; *b != '\n'; b++) {
+            *v = *b;
+            v++;
+        }
+        b++;
+        *v = '\0';
+        level->states.behavior = atoi(value);
+        
+        int size = (level->d.max_x - level->d.min_x) * (level->d.max_y - level->d.min_y);
         level->blocks = malloc(sizeof(Level) * size);
         if (level->blocks != NULL) {
             for (int i = 0; i < size; i++) {
@@ -135,8 +156,8 @@ Level* load_level(FILE* file) {
 bool resize_level(Level* level, int min_x, int max_x, int min_y, int max_y) {
     Level* level2 = new_level(min_x, max_x, min_y, max_y, 0);
     if (level2 != NULL) {
-        for (int x = level2->min_x; x < level2->max_x; x++) {
-            for (int y = level2->min_y; y < level2->max_y; y++) {
+        for (int x = level2->d.min_x; x < level2->d.max_x; x++) {
+            for (int y = level2->d.min_y; y < level2->d.max_y; y++) {
                 Block* b = get_level_block(level, x, y);
                 Block* b2 = get_level_block(level2, x, y);
                 if (b != NULL)
@@ -152,8 +173,8 @@ bool resize_level(Level* level, int min_x, int max_x, int min_y, int max_y) {
 }
 
 Block* get_level_block(Level* level, int x, int y) {
-    if (level->min_x <= x && x < level->max_x && level->min_y <= y && y < level->max_y)
-        return &level->blocks[(y - level->min_y)*(level->max_x - level->min_x) + (x - level->min_x)];
+    if (level->d.min_x <= x && x < level->d.max_x && level->d.min_y <= y && y < level->d.max_y)
+        return &level->blocks[(y - level->d.min_y)*(level->d.max_x - level->d.min_x) + (x - level->d.min_x)];
     else
         return NULL;
 }
