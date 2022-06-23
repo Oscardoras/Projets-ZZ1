@@ -33,6 +33,8 @@ void game_loop_iteration(Level* level) {
             break;
         }
 
+        printf("Entity of type %d has state %d.\n", entity->type, entity->state);
+
         forward_state(&entity_types[entity->type]->markov, &entity->state);
     }
 }
@@ -49,6 +51,29 @@ void add_pheromone(Level* level, int x, int y, PheromoneType type) {
     
     Entity* pheromone = new_entity(PHEROMONE, pos, 0, type);
     add_level_entity(level, pheromone);
+}
+
+bool is_valid_position(Level* level, int x, int y) {
+    Block* b = get_level_block(level, x, y);
+
+    if (b != NULL) {
+        if (*b == PATH) return true;
+        else if (*b == AIR) {
+            Block* bot = get_level_block(level, x, y-1);
+            Block* left = get_level_block(level, x, y-1);
+            Block* right = get_level_block(level, x, y-1);
+            Block* bot_left = get_level_block(level, x-1, y-1);
+            Block* bot_right = get_level_block(level, x-1, y-1);
+
+            if (bot != NULL && (*bot == PATH || *bot == GRASS || *bot == DIRT)) return true;
+            if (left != NULL && (*left == PATH || *left == GRASS || *left == DIRT)) return true;
+            if (right != NULL && (*right == PATH || *right == GRASS || *right == DIRT)) return true;
+            if (bot_left != NULL && (*bot_left == PATH || *bot_left == GRASS || *bot_left == DIRT)) return true;
+            if (bot_right != NULL && (*bot_right == PATH || *bot_right == GRASS || *bot_right == DIRT)) return true;
+        }
+    }
+
+    return false;
 }
 
 

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "gameplay.h"
 #include "viewport.h"
 
 #define TEXTURE_FOURMI_NAME "sprites/FourmiGuerriere.png"
@@ -11,13 +12,14 @@
 #define CAMERA_WIDTH 80*TILE_SIZE
 #define CAMERA_HEIGHT 60*TILE_SIZE
 
-void initEnvRect(SDL_Rect* environment_rect, int i, int j)
-{
+
+void initEnvRect(SDL_Rect* environment_rect, int i, int j) {
     environment_rect->x = i;
     environment_rect->y = j;
     environment_rect->w = TILE_SIZE;
     environment_rect->h = TILE_SIZE;
 }
+
 Viewport* init_viewport(int width, int height, Level* level) {
     if (SDL_Init(SDL_INIT_VIDEO)) {
         SDL_Log("Error SDL init - %s", SDL_GetError());
@@ -118,6 +120,8 @@ Viewport* init_viewport(int width, int height, Level* level) {
 void event_loop(Viewport* viewport) {
     SDL_Event event;
     bool quit = false;
+    unsigned int clock = 0;
+
     while (!quit) {
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
@@ -171,6 +175,13 @@ void event_loop(Viewport* viewport) {
             }
         }
         draw_viewport(viewport);
+
+        clock++;
+        if (clock >= 10) {
+            game_loop_iteration(viewport->level);
+            clock = 0;
+        }
+        SDL_Delay(100);
     }
 }
 
@@ -212,35 +223,34 @@ void draw_viewport(Viewport* viewport) {
             destination.w = w/((printable_x/TILE_SIZE))+1;
             destination.h = h/((printable_y/TILE_SIZE))+1;
             SDL_RenderCopy(viewport->renderer, viewport->texture_background,
-                 &viewport->environment_rect[viewport->level->blocks[(i-viewport->level->d.min_x) + (viewport->level->d.max_x - viewport->level->d.min_x)*(j-viewport->level->d.min_y)]],
-                 &destination);
+                &viewport->environment_rect[viewport->level->blocks[(i-viewport->level->d.min_x) + (viewport->level->d.max_x - viewport->level->d.min_x)*(j-viewport->level->d.min_y)]],
+                &destination
+            );
         }
     }
-    for(struct ListCell* iterator = viewport->level->entities; iterator; iterator = iterator->next)
-    {
+
+    for(struct ListCell* iterator = viewport->level->entities; iterator; iterator = iterator->next) {
         int w, h;
         SDL_GetWindowSize(viewport->window, &w, &h);
         Entity *fourmi = iterator->entity;
         SDL_Rect destination;
         destination.x = ((fourmi->position.x-viewport->camera.x)*((float)w/((float)printable_x/(float)TILE_SIZE)));
         destination.y = ((viewport->level->d.max_y-1+viewport->level->d.min_y-fourmi->position.y-viewport->camera.y)*((float)h/((float)printable_y/(float)TILE_SIZE)));
-        if(viewport->animations[1].rects[time(0)%viewport->animations[1].count].w > viewport->animations[1].rects[time(0)%viewport->animations[1].count].h)
-            {
-                 destination.h = h/((printable_y/TILE_SIZE))+1 * ((float)destination.h/(float)destination.w);
-                 destination.w = (w/((printable_x/TILE_SIZE))+1);
-            }
-        else
-            {
-                 destination.w = w/((printable_x/TILE_SIZE))+1 * ((float)destination.w/(float)destination.h);
-                 destination.h = h/((printable_y/TILE_SIZE))+1;
-            }
+        if(viewport->animations[1].rects[time(0)%viewport->animations[1].count].w > viewport->animations[1].rects[time(0)%viewport->animations[1].count].h) {
+            destination.h = h/((printable_y/TILE_SIZE))+1 * ((float)destination.h/(float)destination.w);
+            destination.w = (w/((printable_x/TILE_SIZE))+1);
+        } else {
+            destination.w = w/((printable_x/TILE_SIZE))+1 * ((float)destination.w/(float)destination.h);
+            destination.h = h/((printable_y/TILE_SIZE))+1;
+        }
        
         SDL_Point center;
         center.x = destination.w/2;
         center.y = destination.h/2;
 		SDL_RenderCopyEx(viewport->renderer, viewport->texture_fourmi,
-                 &viewport->animations[1].rects[time(0)%viewport->animations[1].count],
-                 &destination, fourmi->position.direction*90, &center, SDL_FLIP_NONE);
+            &viewport->animations[1].rects[time(0)%viewport->animations[1].count],
+            &destination, fourmi->position.direction*90, &center, SDL_FLIP_NONE
+        );
     }
     
     SDL_RenderPresent(viewport->renderer);

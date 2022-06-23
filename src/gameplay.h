@@ -42,6 +42,16 @@ void set_global_behavior(Level* level, GlobalBehavior behavior);
  */
 void add_pheromone(Level* level, int x, int y, PheromoneType type);
 
+/**
+ * @brief Determines if a position is valid to walk on.
+ * 
+ * @param level the level.
+ * @param x
+ * @param y
+ * @return if it is possible to walk on this position.
+ */
+bool is_valid_position(Level* level, int x, int y);
+
 
 /**
  * @brief Makes the queen give birth to a new ant.

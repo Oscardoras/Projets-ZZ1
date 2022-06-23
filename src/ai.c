@@ -179,6 +179,7 @@ typedef struct Vertex {
     Position position;
     int d;
     struct Vertex* parent;
+    bool present;
     bool listed;
 } Vertex;
 
@@ -209,6 +210,7 @@ Position path_finding(Level* level, Position from, Position to) {
             vertex->position.y = y;
             vertex->d = __INT_MAX__;
             vertex->parent = NULL;
+            vertex->present = false;
             vertex->listed = false;
         }
     }
@@ -217,53 +219,65 @@ Position path_finding(Level* level, Position from, Position to) {
     unsigned int list_size = 1;
     list[0] = get_vertex(level, vertices, from.x, from.y);
     list[0]->d = 0;
+    list[0]->present = true;
+    list[0]->listed = false;
+
+    Vertex* e = get_vertex(level, vertices, to.x, to.y);
+    Vertex inf;
+    inf.d = __INT_MAX__;
     
-    unsigned int old_size = 0;
-    while (old_size < list_size) {
-        old_size = size;
-        
-        Vertex* u = list[0];
+    Vertex* u = list[0];
+    while (u != &inf) {
+        u = &inf;
         for (unsigned int k = 0; k < list_size; k++) {
-            if (list[k]->d < u->d)
+            if (!list[k]->listed && list[k]->d < u->d)
                 u = list[k];
         }
+        u->listed = true;
         
-        Block* left = get_level_block(level, u->position.x-1, u->position.y);
-        if (left != NULL && (*left == AIR || *left == PATH)) {
-            list[list_size] = get_vertex(level, vertices, u->position.x-1, u->position.y);
-            list_size++;
-            list[list_size]->listed = true;
-            relachement(u, list[list_size]);
+        if (is_valid_position(level, u->position.x-1, u->position.y)) {
+            Vertex* v = get_vertex(level, vertices, u->position.x-1, u->position.y);
+            relachement(u, v);
+            if (!v->present) {
+                list[list_size] = v;
+                list_size++;
+                v->present = true;
+            }
         }
         
-        Block* right = get_level_block(level, u->position.x+1, u->position.y);
-        if (right != NULL && (*right == AIR || *right == PATH)) {
-            list[list_size] = get_vertex(level, vertices, u->position.x+1, u->position.y);
-            list_size++;
-            list[list_size]->listed = true;
-            relachement(u, list[list_size]);
+        if (is_valid_position(level, u->position.x+1, u->position.y)) {
+            Vertex* v = get_vertex(level, vertices, u->position.x+1, u->position.y);
+            relachement(u, v);
+            if (!v->present) {
+                list[list_size] = v;
+                list_size++;
+                v->present = true;
+            }
         }
         
-        Block* top = get_level_block(level, u->position.x, u->position.y+1);
-        if (top != NULL && (*top == AIR || *top == PATH)) {
-            list[list_size] = get_vertex(level, vertices, u->position.x, u->position.y+1);
-            list_size++;
-            list[list_size]->listed = true;
-            relachement(u, list[list_size]);
+        if (is_valid_position(level, u->position.x, u->position.y+1)) {
+            Vertex* v = get_vertex(level, vertices, u->position.x, u->position.y+1);
+            relachement(u, v);
+            if (!v->present) {
+                list[list_size] = v;
+                list_size++;
+                v->present = true;
+            }
         }
         
-        Block* bot = get_level_block(level, u->position.x, u->position.y-1);
-        if (bot != NULL && (*bot == AIR || *bot == PATH)) {
-            list[list_size] = get_vertex(level, vertices, u->position.x, u->position.y-1);
-            list_size++;
-            list[list_size]->listed = true;
-            relachement(u, list[list_size]);
+        if (is_valid_position(level, u->position.x, u->position.y-1)) {
+            Vertex* v = get_vertex(level, vertices, u->position.x, u->position.y-1);
+            relachement(u, v);
+            if (!v->present) {
+                list[list_size] = v;
+                list_size++;
+                v->present = true;
+            }
         }
     }
     
-    Vertex* v = get_vertex(level, vertices, to.x, to.y);
-    while (!(v->parent->position.x == from.x && v->parent->position.y == from.y))
-        v = v->parent;
+    while (e->parent != NULL && e->parent->parent != NULL)
+        e = e->parent;
     
-    return v->position;
+    return e->position;
 }
