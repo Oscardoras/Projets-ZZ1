@@ -6,6 +6,15 @@
 #include "level.h"
 #include "viewport.h"
 
+#define ANIMATION_COUNT 2
+#define ANIMATION_SIZE_MAX 10
+
+typedef struct 
+{
+    SDL_Rect rects[ANIMATION_SIZE_MAX];
+    unsigned int count;
+} Animation;
+
 typedef struct {
     int x;
     int y;
@@ -21,6 +30,7 @@ typedef struct {
     Camera camera;
     Level* level;
     SDL_Texture* texture;
+    Animation animations[ANIMATION_COUNT];
 } Viewport;
 
 

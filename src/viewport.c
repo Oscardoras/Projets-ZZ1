@@ -50,7 +50,33 @@ Viewport* init_viewport(int width, int height, Level* level) {
 		SDL_Log("Erreur creation texture");
 		exit(EXIT_FAILURE);
 	} 
+    viewport->animations[0].count = 3;
+    viewport->animations[1].count = 3;
+    viewport->animations[0].rects[0].x = 0;
+	viewport->animations[0].rects[0].y = 0;
+	viewport->animations[0].rects[0].w = 37;
+	viewport->animations[0].rects[0].h = 12;
+	viewport->animations[0].rects[1].x = 0;
+	viewport->animations[0].rects[1].y = 12*3;
+	viewport->animations[0].rects[1].w = 37;
+	viewport->animations[0].rects[1].h = 12;
+	viewport->animations[0].rects[2].x = 0;
+	viewport->animations[0].rects[2].y = 12*4;
+	viewport->animations[0].rects[2].w = 37;
+	viewport->animations[0].rects[2].h = 12;
 
+    viewport->animations[1].rects[0].x = 0;
+	viewport->animations[1].rects[0].y = 12;
+	viewport->animations[1].rects[0].w = 37;
+	viewport->animations[1].rects[0].h = 12;
+	viewport->animations[1].rects[1].x = 0;
+	viewport->animations[1].rects[1].y = 12*2;
+	viewport->animations[1].rects[1].w = 37;
+	viewport->animations[1].rects[1].h = 12;
+	viewport->animations[1].rects[2].x = 0;
+	viewport->animations[1].rects[2].y = 12*5;
+	viewport->animations[1].rects[2].w = 37;
+	viewport->animations[1].rects[2].h = 12;
     return viewport;
 }
 
