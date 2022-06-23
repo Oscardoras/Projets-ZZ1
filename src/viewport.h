@@ -9,8 +9,8 @@
 #define ANIMATION_COUNT 2
 #define ANIMATION_SIZE_MAX 10
 
-typedef struct 
-{
+
+typedef struct  {
     SDL_Rect rects[ANIMATION_SIZE_MAX];
     unsigned int count;
 } Animation;

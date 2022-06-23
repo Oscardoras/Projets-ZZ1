@@ -1,7 +1,13 @@
-#include <stdlib.h>
 #include <SDL2/SDL_image.h>
+
+#include <stdlib.h>
+#include <time.h>
+
 #include "viewport.h"
+
 #define TEXTURE_NAME "sprites/FourmiGuerriere.png"
+
+
 Viewport* init_viewport(int width, int height, Level* level) {
     if (SDL_Init(SDL_INIT_VIDEO)) {
         SDL_Log("Error SDL init - %s", SDL_GetError());
@@ -110,6 +116,7 @@ void close_viewport(Viewport* viewport) {
     }
 }
 
+<<<<<<< HEAD
 void draw_viewport(Viewport* viewport)
 {
     #ifdef TEST_SPRITES
@@ -123,6 +130,9 @@ void draw_viewport(Viewport* viewport)
         iterator->state = 0;
     }
     #endif
+=======
+void draw_viewport(Viewport* viewport) {
+>>>>>>> 00cfcbc40c86797c684108adbc25a77cad62c794
     SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
 	SDL_RenderClear(viewport->renderer);
     for(struct ListCell* iterator = viewport->level->entities; iterator; iterator = iterator->next)
