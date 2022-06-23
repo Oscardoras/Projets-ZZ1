@@ -40,6 +40,7 @@ void free_level(Level* level) {
         while (cell != NULL) {
             struct ListCell* tmp = cell;
             cell = cell->next;
+            free_entity(tmp->entity);
             free(tmp);
         }
         

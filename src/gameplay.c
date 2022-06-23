@@ -37,6 +37,22 @@ void game_loop_iteration(Level* level) {
 
         forward_state(&entity_types[entity->type]->markov, &entity->state);
     }
+
+    int random = rand() % 50;
+    if (random == 0) {
+        int x = level->d.min_x + rand() % (level->d.max_x - level->d.min_x);
+        int y;
+
+        for (y = level->d.max_y-1; *get_level_block(level, x, y) == AIR; y--);;
+
+        Block* b = get_level_block(level, x, y+1);
+        if (b != NULL) {
+            Position position;
+            position.x = x;
+            position.y = y;
+            add_level_entity(level, new_entity(FOOD, position, 0, 1));
+        }
+    }
 }
 
 void set_global_behaviour(Level* level, GlobalBehavior behaviour) {
