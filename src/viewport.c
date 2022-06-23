@@ -289,7 +289,7 @@ void event_loop(Viewport* viewport) {
 
         clock++;
         if (clock >= 10) {
-            //game_loop_iteration(viewport->level);
+            game_loop_iteration(viewport->level);
             clock = 0;
         }
         SDL_Delay(100);
