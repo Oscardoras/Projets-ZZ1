@@ -1,5 +1,5 @@
 all: src/main.c bin/entity.o bin/level.o bin/matrix.o bin/viewport.o
-	gcc -g -Wall -Wextra src/main.c bin/entity.o bin/level.o bin/matrix.o bin/viewport.o -o game -lSDL2
+	gcc -g -Wall -Wextra src/main.c bin/entity.o bin/level.o bin/matrix.o bin/viewport.o -o game -lSDL2 -lSDL2_image
 
 bin/entity.o: src/entity.h src/entity.c
 	gcc -g -Wall -Wextra -c src/entity.c -o bin/entity.o

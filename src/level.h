@@ -5,13 +5,13 @@
 
 
 typedef enum {
-    Air = 0,
-    Dirt,
-    Path,
-    Grass,
-    Rock,
-    Fruit,
-    Leaves
+    AIR = 0,
+    DIRT,
+    PATH,
+    GRASS,
+    ROCK,
+    FRUIT,
+    LEAVES
 } Block;
 
 typedef struct {

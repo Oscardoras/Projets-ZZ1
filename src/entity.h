@@ -86,15 +86,6 @@ void load_types(FILE* file);
 EntityType* load_type(FILE* file);
 
 /**
- * @brief Acts identically to strcmp.
- * 
- * @param str1 the 1st string to compare.
- * @param str2 the 2nd string to compare.
- * @return true is the 2 strings are identical, false otherwise.
- */
-bool compare_str(char* str1, char* str2);
-
-/**
  * @brief Searchs in entity_types for the type of a said name.
  * 
  * @param name the name of the type wanted.

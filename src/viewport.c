@@ -1,7 +1,7 @@
 #include <stdlib.h>
-
+#include <SDL2/SDL_image.h>
 #include "viewport.h"
-
+#define TEXTURE_NAME "sprites/FourmiGuerriere.png"
 
 Viewport* init_viewport(int width, int height, Level* level) {
     if (SDL_Init(SDL_INIT_VIDEO)) {
@@ -44,7 +44,13 @@ Viewport* init_viewport(int width, int height, Level* level) {
     } else {
         SDL_Log("Error Viewport alloc");
     }
-    
+  	viewport->texture = IMG_LoadTexture(viewport->renderer,TEXTURE_NAME);
+  	if (viewport->texture == NULL)
+	{
+		SDL_Log("Erreur creation texture");
+		exit(EXIT_FAILURE);
+	} 
+
     return viewport;
 }
 
@@ -73,6 +79,7 @@ void close_viewport(Viewport* viewport) {
     if (viewport != NULL) {
         if (viewport->renderer != NULL) SDL_DestroyRenderer(viewport->renderer);
         if (viewport->window != NULL) SDL_DestroyWindow(viewport->window);
+        if (viewport->texture != NULL) SDL_DestroyTexture(viewport->texture);
         free(viewport);
         SDL_Quit();
     }

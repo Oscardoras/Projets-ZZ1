@@ -6,7 +6,6 @@
 #include "level.h"
 #include "viewport.h"
 
-
 typedef struct {
     int x;
     int y;
@@ -21,6 +20,7 @@ typedef struct {
     SDL_Renderer* renderer;
     Camera camera;
     Level* level;
+    SDL_Texture* texture;
 } Viewport;
 
 
