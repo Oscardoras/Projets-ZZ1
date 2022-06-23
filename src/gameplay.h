@@ -38,11 +38,6 @@ void set_global_behavior(Level* level, GlobalBehavior behavior);
 void add_pheromone(Level* level, int x, int y, PheromoneType type);
 
 /**
- * @brief Adds an ant.
- */
-void new_ant(Level* level);
-
-/**
  * @brief Determines if a position is valid to walk on.
  * 
  * @param level the level.

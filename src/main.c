@@ -17,15 +17,22 @@
 
 
 int main(/*int argc, char** argv*/) {
-    FILE* file = fopen("data.txt", "r");
+
+    FILE* file = fopen("configuration.txt", "r");
     if (file) {
         load_types(file);
         fclose(file);
     }
 
 
-
     Level* level = new_level(WORLD_X_MIN, WORLD_X_MAX, WORLD_Y_MIN, WORLD_Y_MAX, SEED);
+    Position queen_position;
+    queen_position.x = 0;
+    queen_position.y = 1;
+    queen_position.direction = LEFT;
+    add_level_entity(level, new_entity(QUEEN, queen_position, 0, 1));
+
+
     add_pheromone(level, 1, 2, PHEROMONE_DIG);
     
     if(TEST_CREATION_FOURMI)
@@ -36,9 +43,14 @@ int main(/*int argc, char** argv*/) {
             pos.direction = rand()%360;
             add_level_entity(level, new_entity(WORKER, pos, 100, 1));
         }
+
+    
     Viewport* viewport = init_viewport(WIDTH, HEIGHT, level);
+
     event_loop(viewport);
+
     close_viewport(viewport);
     free_level(level);
+
     return EXIT_SUCCESS;
 }
