@@ -10,7 +10,7 @@ EntityType* entity_types[ENTITY_TYPES] = {};
 
 
 Entity* new_entity(EntityType* type, State state, int hp, Position position) {
-    Entity* entity = malloc(sizeof(entity));
+    Entity* entity = malloc(sizeof(Entity));
     
     if (entity) {
         entity->type = type;
@@ -18,7 +18,7 @@ Entity* new_entity(EntityType* type, State state, int hp, Position position) {
         entity->state = state;
         entity->position = position;
     }
-    else pirntf("Error Entity alloc\n");
+    else printf("Error Entity alloc\n");
     
     return entity;
 }
@@ -64,11 +64,6 @@ Entity* load_entity(FILE* file) {
             split[i_split] = line[i_line];
         split[i_split] = '\0';
         position.rotation = atoi(split);
-
-        for(i_split=0; line[i_line] != ' '; i_line++, i_split++)
-            split[i_split] = line[i_line];
-        split[i_split] = '\0';
-        state = atoi(split);
         i_line++;
 
         for(i_split=0; line[i_line] != ' '; i_line++, i_split++)
@@ -78,6 +73,12 @@ Entity* load_entity(FILE* file) {
         i_line++;
 
         for(i_split=0; line[i_line] != ' '; i_line++, i_split++)
+            split[i_split] = line[i_line];
+        split[i_split] = '\0';
+        state = atoi(split);
+        i_line++;
+
+        for(i_split=0; line[i_line] != '\n'; i_line++, i_split++)
             split[i_split] = line[i_line];
         split[i_split] = '\0';
         type = search_type(split);
@@ -145,7 +146,7 @@ EntityType* load_type(FILE* file) {
 EntityType* search_type(char* name) {
     int i;
 
-    for(i=0; strcmp(name, entity_types[i]->name); i++);
+    for(i=0; entity_types[i] && strcmp(name, entity_types[i]->name); i++);
 
     return entity_types[i];
 }
