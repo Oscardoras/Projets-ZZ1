@@ -108,8 +108,8 @@ Viewport* init_viewport(int width, int height, Level* level) {
 	viewport->animations[1].rects[2].y = 12*5;
 	viewport->animations[1].rects[2].w = 37;
 	viewport->animations[1].rects[2].h = 12;
-    viewport->camera.x= -40;
-    viewport->camera.y= -30;
+    viewport->camera.x= viewport->level->d.min_x;
+    viewport->camera.y= viewport->level->d.min_y;
     viewport->camera.width = CAMERA_WIDTH;
     viewport->camera.height = CAMERA_HEIGHT;
     return viewport;
@@ -158,7 +158,7 @@ void draw_viewport(Viewport* viewport) {
             ++printable_x;
     for(int j = viewport->level->d.min_y; j < viewport->level->d.max_y; ++j)
         if(j * TILE_SIZE >= (viewport->camera.y * TILE_SIZE) && j * TILE_SIZE <= (viewport->camera.y*TILE_SIZE + viewport->camera.height))
-                ++printable_y;
+            ++printable_y;
     printable_x*=TILE_SIZE;
     printable_y*=TILE_SIZE;
     for(int i = viewport->level->d.min_x; i < viewport->level->d.max_x; ++i)
@@ -170,7 +170,6 @@ void draw_viewport(Viewport* viewport) {
             SDL_GetWindowSize(viewport->window, &w, &h);
             SDL_Rect destination;
             destination.x = ((i-viewport->camera.x)*((float)w/((float)printable_x/(float)TILE_SIZE)));
-            //destination.y = (viewport->level->d.max_y-1-((j-viewport->camera.y)-viewport->level->d.min_y))*(h/(viewport->camera.height/TILE_SIZE));
             destination.y = ((viewport->level->d.max_y-1+viewport->level->d.min_y-j-viewport->camera.y)*((float)h/((float)printable_y/(float)TILE_SIZE)));
             destination.w = w/((printable_x/TILE_SIZE))+1;
             destination.h = h/((printable_y/TILE_SIZE))+1;
@@ -185,10 +184,19 @@ void draw_viewport(Viewport* viewport) {
         SDL_GetWindowSize(viewport->window, &w, &h);
         Entity *fourmi = iterator->entity;
         SDL_Rect destination;
-        destination.x = fourmi->position.x*TILE_SIZE*w/viewport->camera.width;
-        destination.y = fourmi->position.y*TILE_SIZE*h/viewport->camera.height;
-        destination.w = viewport->animations[1].rects[time(0)%viewport->animations[1].count].w*w/viewport->camera.width;
-        destination.h = viewport->animations[1].rects[time(0)%viewport->animations[1].count].h*h/viewport->camera.height;
+        destination.x = ((fourmi->position.x-viewport->camera.x)*((float)w/((float)printable_x/(float)TILE_SIZE)));
+        destination.y = ((viewport->level->d.max_y-1+viewport->level->d.min_y-fourmi->position.y-viewport->camera.y)*((float)h/((float)printable_y/(float)TILE_SIZE)));
+        if(viewport->animations[1].rects[time(0)%viewport->animations[1].count].w > viewport->animations[1].rects[time(0)%viewport->animations[1].count].h)
+            {
+                 destination.h = h/((printable_y/TILE_SIZE))+1 * ((float)destination.h/(float)destination.w);
+                 destination.w = w/((printable_x/TILE_SIZE))+1;
+            }
+        else
+            {
+                 destination.w = w/((printable_x/TILE_SIZE))+1 * ((float)destination.w/(float)destination.h);
+                 destination.h = h/((printable_y/TILE_SIZE))+1;
+            }
+       
         SDL_Point center;
         center.x = destination.w/2;
         center.y = destination.h/2;
