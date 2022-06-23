@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "entity.h"
 
@@ -140,24 +141,10 @@ EntityType* load_type(FILE* file) {
     return type;
 }
 
-bool compare_str(char* str1, char* str2) {
-    bool identical = true;
-    if(str1 && str2) {
-        int i=0;
-        while(str1[i] != '\0') {
-            identical = (str1[i] == str2[i]);
-        }
-        identical = (str2[i] = '\0');
-    }
-    else identical = (!str1 && !str2);
-
-    return identical;
-}
-
 EntityType* search_type(char* name) {
     int i;
 
-    for(i=0; !compare_str(name, entity_types[i]->name); i++);
+    for(i=0; strcmp(name, entity_types[i]->name); i++);
 
     return entity_types[i];
 }
