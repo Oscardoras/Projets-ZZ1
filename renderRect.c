@@ -68,7 +68,6 @@ void drawRectangle(SDL_Renderer *renderer, rect_t * rectangle) {
   int x4 = rectangle->x + cos(angle4)*rectangle->diag/2;
   int y4 = rectangle->y + sin(angle4)*rectangle->diag/2;
 
-  printf("%f, %f\n\n", rectangle->angle_base, rectangle->angle);
 
   SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
   SDL_RenderDrawLine(renderer, x2, y2, x3, y3);
@@ -147,7 +146,6 @@ int main(int argc, char **argv) {
             premierClic = 1;
           }
       }
-      if (!premierClic) printf("Ready\n");
 
     }
 
