@@ -133,7 +133,7 @@ int main(int argc, char **argv) {
 
   while(prog_on) {
 
-    if(SDL_PollEvent(&event)) {
+    while(SDL_PollEvent(&event)) {
 
       switch(event.type) {
         case(SDL_QUIT) :
@@ -148,8 +148,6 @@ int main(int argc, char **argv) {
       }
 
     }
-
-    if((rectangle->x < -10) | (rectangle->x > 810)) premierClic = 0;
 
 
     SDL_SetRenderDrawColor(renderer, 50, 50, 70, 255);
