@@ -117,27 +117,18 @@ void close_viewport(Viewport* viewport) {
 }
 
 void draw_viewport(Viewport* viewport) {
-
-    /*** CECI EST UN TEST **/
-    
-	SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
 	SDL_RenderClear(viewport->renderer);
-    for(unsigned int it = 0; it < 10; ++it)
+    for(Entity* iterator = viewport->level->entities; iterator; ++iterator)
     {
         SDL_Rect destination;
-        destination.x = 80*it;
-        destination.y = 60*it;
+        destination.x = iterator->position.x;
+        destination.y = iterator->position.y;
         destination.w = viewport->animations[1].rects[time(0)%viewport->animations[1].count].w;
         destination.h = viewport->animations[1].rects[time(0)%viewport->animations[1].count].h;
 		SDL_RenderCopy(viewport->renderer, viewport->texture,
                  &viewport->animations[1].rects[time(0)%viewport->animations[1].count],
                  &destination);
-        destination.x = 800-destination.x;
-        SDL_RenderCopy(viewport->renderer, viewport->texture,
-                 &viewport->animations[1].rects[time(0)%viewport->animations[1].count],
-                 &destination);
     }
     SDL_RenderPresent(viewport->renderer);
-
-    /*** FIN DU TEST **/
 }
