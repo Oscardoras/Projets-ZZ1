@@ -15,6 +15,8 @@ Level* new_level(int min_x, int max_x, int min_y, int max_y, int seed) {
             level->d.min_y = min_y;
             level->d.max_y = max_y;
             level->seed = seed;
+            level->states.score = 0;
+            level->states.food = 10;
             level->states.weather = SUN;
             level->states.behavior = DEFAULT;
             level->entities = NULL;
@@ -202,9 +204,8 @@ bool add_level_entity(Level* level, Entity* entity) {
 
 void clean_level_entities(Level* level) {
     for (struct ListCell* cell = level->entities; cell != NULL; cell = cell->next)
-        if(cell->entity->target)
-            if (cell->entity->target->state == 0)
-                cell->entity->target = NULL;
+        if (cell->entity->target != NULL && cell->entity->target->state == 0)
+            cell->entity->target = NULL;
     
     for (struct ListCell** ptr = &level->entities; *ptr != NULL;) {
         if ((*ptr)->entity->state == 0) {

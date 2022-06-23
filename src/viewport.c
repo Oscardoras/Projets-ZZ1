@@ -3,19 +3,21 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "gameplay.h"
 #include "viewport.h"
 #define TILE_SIZE 16
 #define CAMERA_WIDTH 80*TILE_SIZE
 #define CAMERA_HEIGHT 60*TILE_SIZE
 char* TEXTURES_NAME[] = {"sprites/FourmiGuerriere.png", "sprites/misc/Textures-16.png", "sprites/SpriteSheet.png"};
 
-void initEnvRect(SDL_Rect* environment_rect, int i, int j)
-{
+
+void initEnvRect(SDL_Rect* environment_rect, int i, int j) {
     environment_rect->x = i;
     environment_rect->y = j;
     environment_rect->w = TILE_SIZE;
     environment_rect->h = TILE_SIZE;
 }
+
 Viewport* init_viewport(int width, int height, Level* level) {
     if (SDL_Init(SDL_INIT_VIDEO)) {
         SDL_Log("Error SDL init - %s", SDL_GetError());
@@ -191,6 +193,8 @@ Viewport* init_viewport(int width, int height, Level* level) {
 void event_loop(Viewport* viewport) {
     SDL_Event event;
     bool quit = false;
+    unsigned int clock = 0;
+
     while (!quit) {
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
@@ -256,12 +260,13 @@ void event_loop(Viewport* viewport) {
             }
         }
         draw_viewport(viewport);
-        viewport->loop_iteration_count += SDL_GetTicks();
-        if(viewport->loop_iteration_count > 10000)
-        {
-            viewport->loop_iteration_count = 0;
-            //game_loop_iteration(viewport->level);
+
+        clock++;
+        if (clock >= 10) {
+            game_loop_iteration(viewport->level);
+            clock = 0;
         }
+        SDL_Delay(100);
     }
 }
 
@@ -308,8 +313,8 @@ void draw_viewport(Viewport* viewport) {
                  &destination);
         }
     }
-    for(struct ListCell* iterator = viewport->level->entities; iterator; iterator = iterator->next)
-    {
+
+    for(struct ListCell* iterator = viewport->level->entities; iterator; iterator = iterator->next) {
         int w, h;
         SDL_GetWindowSize(viewport->window, &w, &h);
         Entity *fourmi = iterator->entity;

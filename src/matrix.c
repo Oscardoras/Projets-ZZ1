@@ -52,57 +52,17 @@ float* get_matrix_element(Matrix* matrix, unsigned int i, unsigned int j) {
     return &matrix->data[i*matrix->size + j];
 }
 
-/*
-matrix_t copyMatrix(matrix_t* matrix)
-{
-    matrix_t newMatrix;
-    newMatrix.size = matrix->size;
-    newMatrix.data = (float*)malloc(sizeof(float)*newMatrix.size*newMatrix.size);
-    if(newMatrix.data)
-    {
-        for(unsigned int it = 0; it < newMatrix.size*newMatrix.size; ++it)
-        {
-            newMatrix.data[it] = matrix->data[it];
-        }
-    }
-    else{
-        printf("Erreur alloc dynamique\n");
-        exit(EXIT_FAILURE);
-    }
-    return newMatrix;
-}
-*/
-
 void forward_state(Matrix* matrix, State* state) {
-    if(*state >= matrix->size)
-    {
-        printf("Erreur etat non existant\n");
-        exit(EXIT_FAILURE);
-    }
-    float *Densites = (float*)malloc(sizeof(float)*matrix->size);
-    if(!Densites)
-    {
-        printf("Erreur allocation\n");
-        exit(EXIT_FAILURE);
-    }
-    float random = (float)(rand()%1000)/1000.0;
-    for(int it = matrix->size-1; it >= 0; --it)
-    {
-        Densites[it] = *get_matrix_element(matrix, *state, it);
-        for(unsigned int it2 = 0; it2 < (unsigned int)it; ++it2)
-        {
-            Densites[it] += Densites[it2];
+    float random = (rand() % 1000) / 1000.;
+
+    float sum = 0.;
+    for (unsigned int j = 0; j <= matrix->size; j++) {
+        sum += *get_matrix_element(matrix, *state, j);
+        if (random <= sum) {
+            *state = j;
+            return;
         }
     }
-    int found = 0;
-    for(unsigned int it = 0; it < matrix->size && !found; ++it)
-    {
-        if(random < Densites[it]){
-            *state = it;
-            found = 1;
-        }
-    }
-    free(Densites);
 }
 
 float* parse(char *string, unsigned int count) {

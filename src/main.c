@@ -26,15 +26,15 @@ int main(/*int argc, char** argv*/) {
 
 
     Level* level = new_level(WORLD_X_MIN, WORLD_X_MAX, WORLD_Y_MIN, WORLD_Y_MAX, SEED);
-    add_pheromone(level, 2, 3, PHEROMONE_DIG);
+    add_pheromone(level, 1, 2, PHEROMONE_DIG);
     
     if(TEST_CREATION_FOURMI)
-        for(unsigned int it = 0; it < 5; ++it) {
+        for(unsigned int it = 0; it < 1; ++it) {
             Position pos;
-            pos.x = rand()%10;
-            pos.y = rand()%10;
+            pos.x = 3;//rand()%10;
+            pos.y = 0;//rand()%10;
             pos.direction = rand()%360;
-            add_level_entity(level, new_entity(SOLDIER, pos, 100, 0));
+            add_level_entity(level, new_entity(WORKER, pos, 100, 1));
         }
     Viewport* viewport = init_viewport(WIDTH, HEIGHT, level);
     event_loop(viewport);

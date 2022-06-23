@@ -23,6 +23,8 @@ enum SoldierStates {
 };
 void compute_soldier(Level* level, Entity* entity);
 
+void compute_queen(Level* level, Entity* entity);
+
 void compute_mantis(Level* level, Entity* entity);
 
 void compute_pheromone(Level* level, Entity* entity);
@@ -30,14 +32,14 @@ void compute_pheromone(Level* level, Entity* entity);
 void compute_food(Level* level, Entity* entity);
 
 /**
- * @brief Finds the step for going from a point to another.
+ * @brief Finds the next step of a path.
  * 
  * @param level the level.
- * @param from the current position.
+ * @param from a pointer to the current position.
  * @param to the destination.
- * @return the next step.
+ * @return if there is a path.
  */
-Position path_finding(Level* level, Position from, Position to);
+bool path_finding(Level* level, Position* from, Position to);
 
 
 #endif

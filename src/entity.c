@@ -15,7 +15,7 @@ Entity* new_entity(EntityTypeName type, Position position, int hp, State state) 
     if (entity != NULL) {
         entity->position = position;
         entity->type = type;
-        entity->hp = (hp != 0) ? hp : entity_types[type]->stats.hp;
+        entity->hp = (hp > 0) ? hp : entity_types[type]->stats.hp;
         entity->state = state;
         entity->target = NULL;
     }
