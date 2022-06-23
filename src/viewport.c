@@ -8,6 +8,8 @@
 #define TEXTURE_FOURMI_NAME "sprites/FourmiGuerriere.png"
 #define TEXTURE_BACKGROUND_NAME "sprites/misc/Textures-16.png"
 #define TILE_SIZE 16
+#define CAMERA_WIDTH 800
+#define CAMERA_HEIGHT 600
 
 void initEnvRect(SDL_Rect* environment_rect, int i, int j)
 {
@@ -106,6 +108,10 @@ Viewport* init_viewport(int width, int height, Level* level) {
 	viewport->animations[1].rects[2].y = 12*5;
 	viewport->animations[1].rects[2].w = 37;
 	viewport->animations[1].rects[2].h = 12;
+    viewport->camera.x= 0;
+    viewport->camera.y= 0;
+    viewport->camera.width = CAMERA_WIDTH;
+    viewport->camera.height = CAMERA_HEIGHT;
     return viewport;
 }
 
@@ -148,11 +154,13 @@ void draw_viewport(Viewport* viewport) {
     {
         for(int j = viewport->level->d.min_y; j < viewport->level->d.max_y; ++j)
         {
+            int w, h;
+            SDL_GetWindowSize(viewport->window, &w, &h);
             SDL_Rect destination;
-            destination.x = i*TILE_SIZE;
-            destination.y = j*TILE_SIZE;
-            destination.w = 16;
-            destination.h = 16;
+            destination.x = i*TILE_SIZE*(w/viewport->camera.width);
+            destination.y = j*TILE_SIZE*(h/viewport->camera.height);
+            destination.w = TILE_SIZE*(w/viewport->camera.width) + 1;
+            destination.h = TILE_SIZE*(h/viewport->camera.height) + 1;
             SDL_RenderCopy(viewport->renderer, viewport->texture_background,
                  &viewport->environment_rect[viewport->level->blocks[(i-viewport->level->d.min_x) + (viewport->level->d.max_x - viewport->level->d.min_x)*(j-viewport->level->d.min_y)]],
                  &destination);
@@ -160,12 +168,14 @@ void draw_viewport(Viewport* viewport) {
     }
     for(struct ListCell* iterator = viewport->level->entities; iterator; iterator = iterator->next)
     {
+        int w, h;
+        SDL_GetWindowSize(viewport->window, &w, &h);
         Entity *fourmi = iterator->entity;
         SDL_Rect destination;
-        destination.x = fourmi->position.x;
-        destination.y = fourmi->position.y;
-        destination.w = viewport->animations[1].rects[time(0)%viewport->animations[1].count].w;
-        destination.h = viewport->animations[1].rects[time(0)%viewport->animations[1].count].h;
+        destination.x = fourmi->position.x*TILE_SIZE*w/viewport->camera.width;
+        destination.y = fourmi->position.y*TILE_SIZE*h/viewport->camera.height;
+        destination.w = viewport->animations[1].rects[time(0)%viewport->animations[1].count].w*w/viewport->camera.width;
+        destination.h = viewport->animations[1].rects[time(0)%viewport->animations[1].count].h*h/viewport->camera.height;
         SDL_Point center;
         center.x = destination.w/2;
         center.y = destination.h/2;
