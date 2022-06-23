@@ -312,23 +312,54 @@ void draw_viewport(Viewport* viewport) {
         center.x = destination.w/2;
         center.y = destination.h/2;
         unsigned int animId = 0;
-        switch(fourmi->type)
-        {
-            case (EntityTypeName)QUEEN :
-                animId = 2;
-            case (EntityTypeName)SOLDIER :
-                animId = 1;
-            case (EntityTypeName)WORKER :
-                animId = 3;
-            case (EntityTypeName)MANTIS :
-                animId = 4;
-            case (EntityTypeName)FOOD :
+        if(viewport->level->blocks[fourmi->position.y*(viewport->level->d.max_x - viewport->level->d.min_x)  + fourmi->position.x] != (Block)AIR)
+            switch(fourmi->type)
+            {
+                case (EntityTypeName)QUEEN :
+                    animId = 2;
+                break;
+                case (EntityTypeName)SOLDIER :
+                    animId = 1;
+                break;
+                case (EntityTypeName)WORKER :
+                    animId = 3;
+                break;
+                case (EntityTypeName)MANTIS :
+                    animId = 4;
+                break;
+                case (EntityTypeName)FOOD :
                 animId = 5;
-            case (EntityTypeName)PHEROMONE :
-                animId = 6;
-            default : 
-                animId = 1;
-        }
+                break;
+                case (EntityTypeName)PHEROMONE :
+                    animId = 6;
+                    break;
+                default : 
+                    animId = 1;
+            }
+        else
+            switch(fourmi->type)
+            {
+                case (EntityTypeName)QUEEN :
+                    animId = 2;
+                break;
+                case (EntityTypeName)SOLDIER :
+                    animId = 1;
+                break;
+                case (EntityTypeName)WORKER :
+                    animId = 3;
+                break;
+                case (EntityTypeName)MANTIS :
+                    animId = 4;
+                break;
+                case (EntityTypeName)FOOD :
+                animId = 5;
+                break;
+                case (EntityTypeName)PHEROMONE :
+                    animId = 6;
+                    break;
+                default : 
+                    animId = 1;
+            }
         SDL_RenderCopyEx(viewport->renderer, viewport->textures[viewport->animations[animId].spriteNumber],
                  &viewport->animations[animId].rects[time(0)%viewport->animations[animId].count],
                  &destination, fourmi->position.direction*90, &center, SDL_FLIP_NONE);
