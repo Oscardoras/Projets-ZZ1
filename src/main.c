@@ -13,7 +13,7 @@
 #define WORLD_X_MAX 50
 #define WORLD_Y_MAX 50
 #define SEED 0
-#define TEST_CREATION_FOURMI 0
+#define TEST_CREATION_FOURMI 1
 
 
 int main(/*int argc, char** argv*/) {

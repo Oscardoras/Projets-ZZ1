@@ -4,7 +4,6 @@
 #include <time.h>
 
 #include "viewport.h"
-
 #define TEXTURE_FOURMI_NAME "sprites/FourmiGuerriere.png"
 #define TEXTURE_BACKGROUND_NAME "sprites/misc/Textures-16.png"
 #define TEXTURE_SPRITESHEET_NAME "sprites/SpriteSheet.png"
@@ -54,20 +53,20 @@ Viewport* init_viewport(int width, int height, Level* level) {
             );
             
             if (viewport->renderer) {
-                viewport->texture_fourmi = IMG_LoadTexture(viewport->renderer,TEXTURE_FOURMI_NAME);
-  	            if (viewport->texture_fourmi == NULL) {
+                viewport->textures[0] = IMG_LoadTexture(viewport->renderer,TEXTURE_FOURMI_NAME);
+  	            if (viewport->textures[0] == NULL) {
 		            SDL_Log("Erreur creation texture - %s", SDL_GetError());
                     close_viewport(viewport);
 		            exit(EXIT_FAILURE);
 	            }
-                viewport->texture_background = IMG_LoadTexture(viewport->renderer,TEXTURE_BACKGROUND_NAME);
-  	            if (viewport->texture_background == NULL) {
+                viewport->textures[1] = IMG_LoadTexture(viewport->renderer,TEXTURE_BACKGROUND_NAME);
+  	            if (viewport->textures[1] == NULL) {
 		            SDL_Log("Erreur creation texture - %s", SDL_GetError());
                     close_viewport(viewport);
 		            exit(EXIT_FAILURE);
                 }
-                viewport->texture_spritesheet = IMG_LoadTexture(viewport->renderer,TEXTURE_SPRITESHEET_NAME);
-  	            if (viewport->texture_spritesheet == NULL) {
+                viewport->textures[2] = IMG_LoadTexture(viewport->renderer,TEXTURE_SPRITESHEET_NAME);
+  	            if (viewport->textures[2] == NULL) {
 		            SDL_Log("Erreur creation texture - %s", SDL_GetError());
                     close_viewport(viewport);
 		            exit(EXIT_FAILURE);
@@ -204,8 +203,6 @@ void event_loop(Viewport* viewport) {
                         else
                             viewport->camera.y = viewport->level->d.max_y-(viewport->camera.height/TILE_SIZE);
                     }
-                    SDL_Log("width : %d\n", viewport->camera.width);
-                    SDL_Log("height : %d\n", viewport->camera.height);
                 }
                 break;
             }
@@ -222,10 +219,11 @@ void event_loop(Viewport* viewport) {
 
 void close_viewport(Viewport* viewport) {
     if (viewport != NULL) {
-        if (viewport->texture_fourmi != NULL) SDL_DestroyTexture(viewport->texture_fourmi);
-        if (viewport->texture_background != NULL) SDL_DestroyTexture(viewport->texture_background);
-        if (viewport->renderer != NULL) SDL_DestroyRenderer(viewport->renderer);
-        if (viewport->window != NULL) SDL_DestroyWindow(viewport->window);
+        for(unsigned int it = 0; it < 3; ++it)
+        {
+            if(viewport->textures[it])
+                SDL_DestroyTexture(viewport->textures[it]);
+        }
         free(viewport);
         SDL_Quit();
     }
@@ -257,7 +255,7 @@ void draw_viewport(Viewport* viewport) {
             destination.y = ((viewport->level->d.max_y-1+viewport->level->d.min_y-j-viewport->camera.y)*((float)h/((float)printable_y/(float)TILE_SIZE)));
             destination.w = w/((printable_x/TILE_SIZE))+1;
             destination.h = h/((printable_y/TILE_SIZE))+1;
-            SDL_RenderCopy(viewport->renderer, viewport->texture_background,
+            SDL_RenderCopy(viewport->renderer, viewport->textures[1],
                  &viewport->environment_rect[viewport->level->blocks[(i-viewport->level->d.min_x) + (viewport->level->d.max_x - viewport->level->d.min_x)*(j-viewport->level->d.min_y)]],
                  &destination);
         }
@@ -284,9 +282,19 @@ void draw_viewport(Viewport* viewport) {
         SDL_Point center;
         center.x = destination.w/2;
         center.y = destination.h/2;
-		SDL_RenderCopyEx(viewport->renderer, viewport->texture_fourmi,
+        switch(fourmi->type)
+        {
+            case (EntityTypeName)QUEEN :
+                SDL_RenderCopyEx(viewport->renderer, viewport->textures[viewport->animations[2].spriteNumber],
+                 &viewport->animations[2].rects[time(0)%viewport->animations[1].count],
+                 &destination, fourmi->position.direction*90, &center, SDL_FLIP_NONE);
+            break;
+		    default : 
+                SDL_RenderCopyEx(viewport->renderer, viewport->textures[viewport->animations[1].spriteNumber],
                  &viewport->animations[1].rects[time(0)%viewport->animations[1].count],
                  &destination, fourmi->position.direction*90, &center, SDL_FLIP_NONE);
+            break;
+        }
     }
     
     SDL_RenderPresent(viewport->renderer);

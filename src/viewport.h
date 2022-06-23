@@ -32,6 +32,7 @@ typedef struct {
     SDL_Texture* texture_fourmi;
     SDL_Texture* texture_background;
     SDL_Texture* texture_spritesheet;
+    SDL_Texture* textures[3];
     Animation animations[ANIMATION_COUNT];
     SDL_Rect environment_rect[7];
     unsigned int loop_iteration_count;
