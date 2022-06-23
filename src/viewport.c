@@ -35,7 +35,16 @@ Viewport* init_viewport(int width, int height, Level* level) {
                 SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
             );
             
-            if (!viewport->renderer) {
+            if (viewport->renderer) {
+                viewport->texture = IMG_LoadTexture(viewport->renderer, TEXTURE_NAME);
+                
+  	            if (viewport->texture == NULL) {
+		            SDL_Log("Erreur creation texture - %s", SDL_GetError());
+                    close_viewport(viewport);
+		            exit(EXIT_FAILURE);
+	            }
+            }
+            else {
                 SDL_Log("Error SDL Renderer init - %s", SDL_GetError());
                 close_viewport(viewport);
                 viewport = NULL;
@@ -108,9 +117,9 @@ void event_loop(Viewport* viewport) {
 
 void close_viewport(Viewport* viewport) {
     if (viewport != NULL) {
+        if (viewport->texture != NULL) SDL_DestroyTexture(viewport->texture);
         if (viewport->renderer != NULL) SDL_DestroyRenderer(viewport->renderer);
         if (viewport->window != NULL) SDL_DestroyWindow(viewport->window);
-        if (viewport->texture != NULL) SDL_DestroyTexture(viewport->texture);
         free(viewport);
         SDL_Quit();
     }
@@ -119,16 +128,20 @@ void close_viewport(Viewport* viewport) {
 void draw_viewport(Viewport* viewport) {
     SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
 	SDL_RenderClear(viewport->renderer);
-    for(Entity* iterator = viewport->level->entities; iterator; ++iterator)
+    for(struct ListCell* iterator = viewport->level->entities; iterator; iterator = iterator->next)
     {
+        Entity *fourmi = iterator->entity;
         SDL_Rect destination;
-        destination.x = iterator->position.x;
-        destination.y = iterator->position.y;
+        destination.x = fourmi->position.x;
+        destination.y = fourmi->position.y;
         destination.w = viewport->animations[1].rects[time(0)%viewport->animations[1].count].w;
         destination.h = viewport->animations[1].rects[time(0)%viewport->animations[1].count].h;
-		SDL_RenderCopy(viewport->renderer, viewport->texture,
+        SDL_Point center;
+        center.x = destination.w/2;
+        center.y = destination.h/2;
+		SDL_RenderCopyEx(viewport->renderer, viewport->texture,
                  &viewport->animations[1].rects[time(0)%viewport->animations[1].count],
-                 &destination);
+                 &destination, fourmi->position.rotation*90, &center, SDL_FLIP_NONE);
     }
     SDL_RenderPresent(viewport->renderer);
 }

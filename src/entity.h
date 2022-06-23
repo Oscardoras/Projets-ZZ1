@@ -5,6 +5,8 @@
 
 #include "matrix.h"
 
+#define ENTITY_TYPES 10
+
 
 typedef struct {
     int x;
@@ -27,6 +29,8 @@ typedef struct {
     } stats;
     Matrix markov;
 } EntityType;
+
+extern EntityType* entity_types[ENTITY_TYPES];
 
 typedef struct {
     EntityType* type;
