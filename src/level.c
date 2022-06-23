@@ -51,7 +51,7 @@ void save_level(Level* level, FILE* file) {
         level->seed,
         level->states.weather, level->states.behavior);
     
-    unsigned int size = (level->d.max_x - level->d.min_x) * (level->d.max_y - level->d.min_y);
+    int size = (level->d.max_x - level->d.min_x) * (level->d.max_y - level->d.min_y);
     for (int k = 0; k < size; k++)
         fprintf(file, "%d\n", (int) level->blocks[k]);
     
@@ -128,7 +128,7 @@ Level* load_level(FILE* file) {
         *v = '\0';
         level->states.behavior = atoi(value);
         
-        unsigned int size = (level->d.max_x - level->d.min_x) * (level->d.max_y - level->d.min_y);
+        int size = (level->d.max_x - level->d.min_x) * (level->d.max_y - level->d.min_y);
         level->blocks = malloc(sizeof(Level) * size);
         if (level->blocks != NULL) {
             for (int i = 0; i < size; i++) {
@@ -253,7 +253,7 @@ void generate_level(Level* level, int min_x, int max_x, int min_y, int max_y, in
     
     if (min_x <= 0 && 0 < max_x) {
         for (int y = min_y; y < max_y; y++) {
-            Block* b = *get_level_block(level, 0, y);
+            Block* b = get_level_block(level, 0, y);
             if (y < 0) *b = DIRT;
             else if (y > 0) *b = AIR;
             else *b = GRASS;
