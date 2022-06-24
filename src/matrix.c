@@ -63,6 +63,8 @@ void forward_state(Matrix* matrix, State* state) {
             return;
         }
     }
+    
+    *state = matrix->size-1;
 }
 
 float* parse(char *string, unsigned int count) {

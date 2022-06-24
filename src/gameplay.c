@@ -36,9 +36,9 @@ void game_loop_iteration(Level* level) {
             break;
         }
 
-        printf("Entity of type %d had state %d", entity->type, entity->state);
+        //printf("Entity of type %d had state %d", entity->type, entity->state);
         forward_state(&entity_types[entity->type]->markov, &entity->state);
-        printf(" then %d.\n", entity->state);
+        //printf(" then %d.\n", entity->state);
     }
 
     int random = rand() % 20;
