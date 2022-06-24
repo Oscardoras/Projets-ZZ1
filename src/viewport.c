@@ -246,11 +246,14 @@ void event_loop(Viewport* viewport) {
                         printable_y*=TILE_SIZE;
                     int x;
                     int y;
-                    unsigned int targetX = viewport->camera.x+x/(w/((printable_x/TILE_SIZE))+1);
-                    unsigned int targetY = viewport->camera.y+y/(h/((printable_y/TILE_SIZE))+1);
-                    if (SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_LEFT)) 
+                    SDL_GetMouseState(&x, &y);
+                    unsigned int targetX = viewport->camera.x+x/(w/((printable_x/TILE_SIZE)));
+                    unsigned int targetY = viewport->camera.y+(y)/(h/((printable_y/TILE_SIZE)));
+                    targetY = (viewport->level->d.max_y)  - targetY + viewport->level->d.min_y;
+                    
+                    if (SDL_BUTTON(SDL_BUTTON_LEFT)) 
                         add_pheromone(viewport->level, targetX, targetY, (PheromoneType)PHEROMONE_DIG);
-                    else if(SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_RIGHT))
+                    else if(SDL_BUTTON(SDL_BUTTON_RIGHT))
                         add_pheromone(viewport->level, targetX, targetY, (PheromoneType)PHEROMONE_FILL);
                 }
                 break;
