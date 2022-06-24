@@ -244,8 +244,8 @@ void event_loop(Viewport* viewport) {
                                 ++printable_y;
                         printable_x*=TILE_SIZE;
                         printable_y*=TILE_SIZE;
-                    unsigned int x;
-                    unsigned int y;
+                    int x;
+                    int y;
                     unsigned int targetX = viewport->camera.x+x/(w/((printable_x/TILE_SIZE))+1);
                     unsigned int targetY = viewport->camera.y+y/(h/((printable_y/TILE_SIZE))+1);
                     if (SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_LEFT)) 

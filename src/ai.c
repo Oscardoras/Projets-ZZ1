@@ -25,6 +25,7 @@ void compute_worker(Level* level, Entity* entity) {
         } else if (target->position.x == entity->position.x && target->position.y == entity->position.y) {
             entity->state = WORKER_TAKING_FOOD;
         } else if (!path_finding(level, &entity->position, entity->target->position)) {
+            printf("Path could not be find.\n");
             entity->state = SOLDIER_WAITING;
         }
         break;
@@ -48,6 +49,7 @@ void compute_worker(Level* level, Entity* entity) {
         } else if (target->position.x == entity->position.x && target->position.y == entity->position.y) {
             entity->state = WORKER_TAKING_FOOD;
         } else if (!path_finding(level, &entity->position, entity->target->position)) {
+            printf("Path could not be find.\n");
             entity->state = SOLDIER_WAITING;
         }
         break;
@@ -93,6 +95,7 @@ void compute_worker(Level* level, Entity* entity) {
             }
             target->state = 0;
         } else if (!path_finding(level, &entity->position, entity->target->position)) {
+            printf("Path could not be find.\n");
             entity->state = SOLDIER_WAITING;
         }
         break;

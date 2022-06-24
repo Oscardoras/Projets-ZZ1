@@ -28,7 +28,7 @@ void game_loop_iteration(Level* level);
 void set_global_behavior(Level* level, GlobalBehavior behavior);
 
 /**
- * @brief Adds an target for the ants.
+ * @brief Adds a target for the ants.
  * 
  * @param level the level.
  * @param x the x coordinates of the target.

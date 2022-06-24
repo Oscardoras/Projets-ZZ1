@@ -33,7 +33,7 @@ int main(/*int argc, char** argv*/) {
     add_level_entity(level, new_entity(QUEEN, queen_position, 0, 1));
 
 
-    add_pheromone(level, 1, 2, PHEROMONE_DIG);
+    //add_pheromone(level, 1, 2, PHEROMONE_DIG);
     
     if(TEST_CREATION_FOURMI)
         for(unsigned int it = 0; it < 1; ++it) {
