@@ -384,12 +384,10 @@ void draw_viewport(Viewport* viewport) {
                 case (EntityTypeName)FOOD :
                 animId = 5;
                 break;
-                case (EntityTypeName)PHEROMONE :
-                    animId = 6;
-                    break;
                 default : 
                     animId = 1;
             }
+        if(fourmi->type != (EntityTypeName)PHEROMONE)
         SDL_RenderCopyEx(viewport->renderer, viewport->textures[viewport->animations[animId].spriteNumber],
                  &viewport->animations[animId].rects[time(0)%viewport->animations[animId].count],
                  &destination, fourmi->position.direction*90, &center, SDL_FLIP_NONE);
