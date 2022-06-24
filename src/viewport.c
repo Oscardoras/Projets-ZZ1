@@ -193,7 +193,6 @@ Viewport* init_viewport(int width, int height, Level* level) {
 void event_loop(Viewport* viewport) {
     SDL_Event event;
     bool quit = false;
-    unsigned int clock = 0;
 
     while (!quit) {
         while (SDL_PollEvent(&event)) {
