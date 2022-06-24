@@ -291,7 +291,7 @@ void event_loop(Viewport* viewport) {
         draw_viewport(viewport);
 
         clock++;
-        if (clock >= 10) {
+        if (clock >= 4) {
             game_loop_iteration(viewport->level);
             clock = 0;
         }

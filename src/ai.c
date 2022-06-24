@@ -14,30 +14,6 @@ void compute_worker(Level* level, Entity* entity) {
                 if (cell->entity->type == FOOD) {
                     Position position = cell->entity->position;
                     Block b = *get_level_block(level, position.x, position.y);
-                    if (b == AIR || b == LEAVES) {
-                        entity->target = cell->entity;
-                        break;
-                    }
-                }
-            }
-            if (cell == NULL)
-                entity->state = WORKER_WAITING;
-        } else if (target->position.x == entity->position.x && target->position.y == entity->position.y) {
-            entity->state = WORKER_TAKING_FOOD;
-        } else if (!path_finding(level, &entity->position, entity->target->position)) {
-            printf("Path could not be find.\n");
-            entity->state = SOLDIER_WAITING;
-        }
-        break;
-    }
-    case WORKER_SEEKING_FOOD_OUT: {
-        Entity* target = entity->target;
-        if (target == NULL) {
-            struct ListCell* cell;
-            for (cell = level->entities; cell != NULL; cell = cell->next) {
-                if (cell->entity->type == FOOD) {
-                    Position position = cell->entity->position;
-                    Block b = *get_level_block(level, position.x, position.y);
                     if (b == PATH) {
                         entity->target = cell->entity;
                         break;
@@ -50,7 +26,31 @@ void compute_worker(Level* level, Entity* entity) {
             entity->state = WORKER_TAKING_FOOD;
         } else if (!path_finding(level, &entity->position, entity->target->position)) {
             printf("Path could not be find.\n");
-            entity->state = SOLDIER_WAITING;
+            entity->state = WORKER_WAITING;
+        }
+        break;
+    }
+    case WORKER_SEEKING_FOOD_OUT: {
+        Entity* target = entity->target;
+        if (target == NULL) {
+            struct ListCell* cell;
+            for (cell = level->entities; cell != NULL; cell = cell->next) {
+                if (cell->entity->type == FOOD) {
+                    Position position = cell->entity->position;
+                    Block b = *get_level_block(level, position.x, position.y);
+                    if (b == AIR || b == LEAVES) {
+                        entity->target = cell->entity;
+                        break;
+                    }
+                }
+            }
+            if (cell == NULL)
+                entity->state = WORKER_WAITING;
+        } else if (target->position.x == entity->position.x && target->position.y == entity->position.y) {
+            entity->state = WORKER_TAKING_FOOD;
+        } else if (!path_finding(level, &entity->position, entity->target->position)) {
+            printf("Path could not be find.\n");
+            entity->state = WORKER_WAITING;
         }
         break;
     }
@@ -142,7 +142,9 @@ void compute_soldier(Level* level, Entity* entity) {
 
 void compute_queen(Level* level, Entity* entity) {
     if (entity->state == 1 && level->states.food > 0) {
-        add_level_entity(level, new_entity(rand()%2 == 0 ? WORKER : SOLDIER, entity->position, 0, WORKER_WAITING));
+        EntityTypeName type = rand()%2 == 0 ? WORKER : SOLDIER;
+        add_level_entity(level, new_entity(type, entity->position, 0, WORKER_WAITING));
+        level->states.food--;
     }
 }
 

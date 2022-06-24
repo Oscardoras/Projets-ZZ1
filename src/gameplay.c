@@ -20,6 +20,9 @@ void game_loop_iteration(Level* level) {
         case SOLDIER:
             compute_soldier(level, entity);
             break;
+        case QUEEN:
+            compute_queen(level, entity);
+            break;
         case MANTIS:
             compute_mantis(level, entity);
             break;
@@ -33,12 +36,12 @@ void game_loop_iteration(Level* level) {
             break;
         }
 
-        printf("Entity of type %d has state %d.\n", entity->type, entity->state);
-
+        printf("Entity of type %d had state %d", entity->type, entity->state);
         forward_state(&entity_types[entity->type]->markov, &entity->state);
+        printf(" then %d.\n", entity->state);
     }
 
-    int random = rand() % 10;
+    int random = rand() % 20;
     if (random == 0) {
         int x = level->d.min_x + rand() % (level->d.max_x - level->d.min_x);
         int y;
@@ -75,10 +78,10 @@ bool is_valid_position(Level* level, int x, int y) {
         if (*b == PATH) return true;
         else if (*b == AIR) {
             Block* bot = get_level_block(level, x, y-1);
-            Block* left = get_level_block(level, x, y-1);
-            Block* right = get_level_block(level, x, y-1);
+            Block* left = get_level_block(level, x-1, y);
+            Block* right = get_level_block(level, x+1, y);
             Block* bot_left = get_level_block(level, x-1, y-1);
-            Block* bot_right = get_level_block(level, x-1, y-1);
+            Block* bot_right = get_level_block(level, x+1, y-1);
 
             if (bot != NULL && (*bot == PATH || *bot == GRASS || *bot == DIRT)) return true;
             if (left != NULL && (*left == PATH || *left == GRASS || *left == DIRT)) return true;
