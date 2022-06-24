@@ -31,6 +31,17 @@ void compute_pheromone(Level* level, Entity* entity);
 
 void compute_food(Level* level, Entity* entity);
 
+
+typedef struct Vertex {
+    Position position;
+    int d;
+    struct Vertex* parent;
+    bool present;
+    bool listed;
+} Vertex;
+Vertex* get_vertex(Level* level, Vertex *vertices, int x, int y);
+void relachement(Vertex* u, Vertex* v);
+
 /**
  * @brief Finds the next step of a path.
  * 

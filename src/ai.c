@@ -193,15 +193,6 @@ void compute_food(__attribute__((unused)) Level* level, Entity* entity) {
 }
 
 
-typedef struct Vertex {
-    Position position;
-    int d;
-    struct Vertex* parent;
-    bool present;
-    bool listed;
-} Vertex;
-
-
 Vertex* get_vertex(Level* level, Vertex *vertices, int x, int y) {
     if (level->d.min_x <= x && x < level->d.max_x && level->d.min_y <= y && y < level->d.max_y)
         return &vertices[(y - level->d.min_y)*(level->d.max_x - level->d.min_x) + (x - level->d.min_x)];
