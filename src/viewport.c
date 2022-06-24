@@ -168,7 +168,7 @@ void draw(Viewport* viewport) {
             if(!(*get_world_cell(viewport->world, x, y)))
                 SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
             else
-                SDL_SetRenderDrawColor(viewport->renderer, 220, 220, 220, 255);
+                SDL_SetRenderDrawColor(viewport->renderer, 150, 150, 150, 255);
 
             SDL_Rect rect;
             rect.w = (float)viewport->width/(float)viewport->world->width+1;
