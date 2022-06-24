@@ -8,6 +8,7 @@
 #define TILE_SIZE 16
 #define CAMERA_WIDTH 80*TILE_SIZE
 #define CAMERA_HEIGHT 60*TILE_SIZE
+
 char* TEXTURES_NAME[] = {"sprites/FourmiGuerriere.png", "sprites/misc/Textures-16.png", "sprites/SpriteSheet.png"};
 
 
@@ -74,7 +75,8 @@ Viewport* init_viewport(int width, int height, Level* level) {
             close_viewport(viewport);
             viewport = NULL;
         }
-    } else {
+    }
+    else {
         SDL_Log("Error Viewport alloc");
     }
   	
@@ -233,16 +235,16 @@ void event_loop(Viewport* viewport) {
                     int w, h;
                     SDL_GetWindowSize(viewport->window, &w, &h);
                     int printable_x = 0;
-                        int printable_y = 0;
+                    int printable_y = 0;
 
-                        for(int i = viewport->level->d.min_x; i < viewport->level->d.max_x; ++i)
-                            if(i * TILE_SIZE >= (viewport->camera.x * TILE_SIZE) && i * TILE_SIZE <= (viewport->camera.x*TILE_SIZE + viewport->camera.width))
+                    for(int i = viewport->level->d.min_x; i < viewport->level->d.max_x; ++i)
+                        if(i * TILE_SIZE >= (viewport->camera.x * TILE_SIZE) && i * TILE_SIZE <= (viewport->camera.x*TILE_SIZE + viewport->camera.width))
                                 ++printable_x;
-                        for(int j = viewport->level->d.min_y; j < viewport->level->d.max_y; ++j)
-                            if(j * TILE_SIZE >= (viewport->camera.y * TILE_SIZE) && j * TILE_SIZE <= (viewport->camera.y*TILE_SIZE + viewport->camera.height))
+                    for(int j = viewport->level->d.min_y; j < viewport->level->d.max_y; ++j)
+                        if(j * TILE_SIZE >= (viewport->camera.y * TILE_SIZE) && j * TILE_SIZE <= (viewport->camera.y*TILE_SIZE + viewport->camera.height))
                                 ++printable_y;
-                        printable_x*=TILE_SIZE;
-                        printable_y*=TILE_SIZE;
+                    printable_x*=TILE_SIZE;
+                    printable_y*=TILE_SIZE;
                     int x;
                     int y;
                     SDL_GetMouseState(&x, &y);
@@ -383,7 +385,7 @@ void draw_viewport(Viewport* viewport) {
                     animId = 1;
             }
         if(fourmi->type != (EntityTypeName)PHEROMONE)
-        SDL_RenderCopyEx(viewport->renderer, viewport->textures[viewport->animations[animId].spriteNumber],
+            SDL_RenderCopyEx(viewport->renderer, viewport->textures[viewport->animations[animId].spriteNumber],
                  &viewport->animations[animId].rects[time(0)%viewport->animations[animId].count],
                  &destination, fourmi->position.direction*90, &center, SDL_FLIP_NONE);
         
