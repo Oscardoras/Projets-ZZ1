@@ -237,13 +237,6 @@ bool path_finding(Level* level, Position* from, Position to) {
     
     Vertex* u = list[0];
     while (u != &inf) {
-        u = &inf;
-        for (unsigned int k = 0; k < list_size; k++) {
-            if (!list[k]->listed && list[k]->d < u->d)
-                u = list[k];
-        }
-        u->listed = true;
-        
         if (is_valid_position(level, u->position.x-1, u->position.y)) {
             Vertex* v = get_vertex(level, vertices, u->position.x-1, u->position.y);
             relachement(u, v);
@@ -283,6 +276,13 @@ bool path_finding(Level* level, Position* from, Position to) {
                 v->present = true;
             }
         }
+        
+        u = &inf;
+        for (unsigned int k = 0; k < list_size; k++) {
+            if (!list[k]->listed && list[k]->d < u->d)
+                u = list[k];
+        }
+        u->listed = true;
     }
     
     if (e->parent != NULL) {
