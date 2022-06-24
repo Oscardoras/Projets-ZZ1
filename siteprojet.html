@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-06-24 ven. 03:08 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Première partie du projet</title>
+<meta name="author" content="Mathieu E, Oscar B, Paul C" />
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/readtheorg.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Première partie du projet</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org0db2e5f">1. Jeu de la vie</a>
+<ul>
+<li><a href="#orgffe629f">1.1. Code</a></li>
+<li><a href="#org8674448">1.2. Fonctionnalités</a></li>
+</ul>
+</li>
+<li><a href="#org8c2f822">2. Chef-d'oeuvre</a>
+<ul>
+<li><a href="#orgd7d722a">2.1. Fonctionnement du jeu</a>
+<ul>
+<li><a href="#orgb01427c">2.1.1. Principe</a></li>
+<li><a href="#orgcbaa064">2.1.2. Chaînes de Markov</a></li>
+</ul>
+</li>
+<li><a href="#orgfc56630">2.2. Fonctionnement du code</a>
+<ul>
+<li><a href="#orgc448337">2.2.1. Graphismes</a></li>
+<li><a href="#org8c2fc06">2.2.2. Monde</a></li>
+<li><a href="#org5eade42">2.2.3. Entités</a></li>
+<li><a href="#orgd2608bc">2.2.4. Gameplay/IA</a></li>
+<li><a href="#org99a8095">2.2.5. Boucle d'événement</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org0db2e5f" class="outline-2">
+<h2 id="org0db2e5f"><span class="section-number-2">1.</span> Jeu de la vie</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-orgffe629f" class="outline-3">
+<h3 id="orgffe629f"><span class="section-number-3">1.1.</span> Code</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+L'entièreté du jeu se fait avec un viewport qui contient la fenêtre de jeu, le renderer, et la grille de jeu.
+La simulation se fait alors dans la boucle d'événement du viewport.
+</p>
+
+
+<div id="orgb9ef35a" class="figure">
+<p><img src="./img/gameoflife.png" alt="gameoflife.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8674448" class="outline-3">
+<h3 id="org8674448"><span class="section-number-3">1.2.</span> Fonctionnalités</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+En plus du fonctionnement normal du jeu de la vie, nous avons ajouté :
+</p>
+<ul class="org-ul">
+<li>sauvegarde/chargement de configuration (s/l)</li>
+<li>contrôle de la vitesse de la simulation (flèches gauche/droite)</li>
+<li>une pause de la simulation pour mettre des perturbations (p)</li>
+<li>sélection entre mode torique ou non (b)</li>
+<li>zoom de la fenêtre (molette ou +/- sur le pavé numérique)</li>
+<li>redémarrage de la simulation (r)</li>
+</ul>
+<p>
+Toutes ces fonctionnalités se font par des appuis de touches
+</p>
+</div>
+</div>
+</div>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<div id="outline-container-org8c2f822" class="outline-2">
+<h2 id="org8c2f822"><span class="section-number-2">2.</span> Chef-d'oeuvre</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-orgd7d722a" class="outline-3">
+<h3 id="orgd7d722a"><span class="section-number-3">2.1.</span> Fonctionnement du jeu</h3>
+<div class="outline-text-3" id="text-2-1">
+</div>
+<div id="outline-container-orgb01427c" class="outline-4">
+<h4 id="orgb01427c"><span class="section-number-4">2.1.1.</span> Principe</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<p>
+Vous contrôlez une reine fourmi qui doit développer sa fourmilière en faisant naître de nouvelles fourmis.
+Les ouvrières vous permettent de récolter de la nourriture et les soldates de combattre les ennemis qui veulent
+vous nuire.
+</p>
+
+<p>
+Vous ne pouvez que déplacer la reine et gérer le ratio de fourmis soldates/ouvrières que vous ferez naître,
+vous ne pourrez interagir avec vos sujets qu'en leur suggérant un endroit ou une action, mais elles décideront
+elles-même de leurs déplacements et actions.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcbaa064" class="outline-4">
+<h4 id="orgcbaa064"><span class="section-number-4">2.1.2.</span> Chaînes de Markov</h4>
+<div class="outline-text-4" id="text-2-1-2">
+<p>
+Les actions des entités dans le jeu sont gérées par des chaînes de Markov :
+</p>
+
+<p>
+Exemple :
+</p>
+
+
+<div id="org59c50dd" class="figure">
+<p><img src="./img/markovant.png" alt="markovant.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-orgfc56630" class="outline-3">
+<h3 id="orgfc56630"><span class="section-number-3">2.2.</span> Fonctionnement du code</h3>
+<div class="outline-text-3" id="text-2-2">
+</div>
+<div id="outline-container-orgc448337" class="outline-4">
+<h4 id="orgc448337"><span class="section-number-4">2.2.1.</span> Graphismes</h4>
+<div class="outline-text-4" id="text-2-2-1">
+<p>
+L'ensemble des graphismes est gérée par un "viewport", qui contient les éléments de SDL et les structures du jeu.
+</p>
+
+<p>
+Les fonctions du viewport englobe l'entièreté du code car presque toutes les autres fonctions sont dans
+celles du viewport.
+</p>
+
+
+<div id="org51100e2" class="figure">
+<p><img src="./img/viewport.png" alt="viewport.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org8c2fc06" class="outline-4">
+<h4 id="org8c2fc06"><span class="section-number-4">2.2.2.</span> Monde</h4>
+<div class="outline-text-4" id="text-2-2-2">
+<p>
+Le monde est contenu dans une variable de type "Level", qui contient sa taille et sa seed, les blocs qui le composent,
+et les entités qui y vivent.
+</p>
+
+
+<div id="org7c5621b" class="figure">
+<p><img src="./img/level.png" alt="level.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org5eade42" class="outline-4">
+<h4 id="org5eade42"><span class="section-number-4">2.2.3.</span> Entités</h4>
+<div class="outline-text-4" id="text-2-2-3">
+<p>
+Chaque entité est défini par ses PV, son type d'entité, son état, et sa cible.
+</p>
+
+<p>
+Chaque type a une matrice associée pour les chaînes de Markov.
+</p>
+
+
+<div id="org60dcc97" class="figure">
+<p><img src="./img/entity.png" alt="entity.png" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgd2608bc" class="outline-4">
+<h4 id="orgd2608bc"><span class="section-number-4">2.2.4.</span> Gameplay/IA</h4>
+<div class="outline-text-4" id="text-2-2-4">
+<p>
+L'IA de chaque type d'ennemi est géré à l'aide des chaînes de Markov et on met à jour l'état d'une entité quand
+elle a fini sa tâche.
+</p>
+
+
+<div id="orgb6bc4e8" class="figure">
+<p><img src="./img/gameplayAI.png" alt="gameplayAI.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org99a8095" class="outline-4">
+<h4 id="org99a8095"><span class="section-number-4">2.2.5.</span> Boucle d'événement</h4>
+<div class="outline-text-4" id="text-2-2-5">
+
+<div id="org065a436" class="figure">
+<p><img src="./img/eventLoop.png" alt="eventLoop.png" /></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Mathieu E, Oscar B, Paul C</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
