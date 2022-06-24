@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "matrix.h"
+#include "markov.h"
 
 #define READ_BUFFER_SIZE 1000
 
@@ -45,18 +45,27 @@ Matrix load_matrix(FILE* file) {
 }
 
 void free_matrix(Matrix* matrix) {
-    free(matrix->data);
+    if (matrix != NULL) {
+        if (matrix->data != NULL) {
+            free(matrix->data);
+            matrix->data = NULL;
+        }
+        
+        matrix->size = 0;
+        free(matrix);
+    }
 }
 
-float* get_matrix_element(Matrix* matrix, unsigned int i, unsigned int j) {   
+float* get_matrix_element(Matrix* matrix, unsigned int i, unsigned int j) {
     return &matrix->data[i*matrix->size + j];
 }
 
 void forward_state(Matrix* matrix, State* state) {
-    float random = (rand() % 1000) / 1000.;
+    float random = rand() / (float) RAND_MAX;
 
     float sum = 0.;
-    for (unsigned int j = 0; j <= matrix->size; j++) {
+    unsigned int j;
+    for (j = 0; j < matrix->size; j++) {
         sum += *get_matrix_element(matrix, *state, j);
         if (random <= sum) {
             *state = j;
@@ -64,7 +73,7 @@ void forward_state(Matrix* matrix, State* state) {
         }
     }
     
-    *state = matrix->size-1;
+    *state = j;
 }
 
 float* parse(char *string, unsigned int count) {
