@@ -1,5 +1,5 @@
 all: src/main.c bin/ai.o bin/entity.o bin/gameplay.o bin/level.o bin/matrix.o bin/viewport.o
-	gcc -g -Wall -Wextra src/main.c bin/ai.o bin/entity.o bin/level.o bin/matrix.o bin/viewport.o bin/gameplay.o -o game -lSDL2 -lSDL2_image -lm
+	gcc -g -Wall -Wextra src/main.c bin/ai.o bin/entity.o bin/level.o bin/matrix.o bin/viewport.o bin/gameplay.o -o bin/program -lSDL2 -lSDL2_image -lm
 
 bin/ai.o: src/ai.h src/ai.c
 	gcc -g -Wall -Wextra -c src/ai.c -o bin/ai.o
@@ -16,4 +16,3 @@ bin/viewport.o: src/viewport.h src/viewport.c
 
 clean:
 	rm -r bin/*
-	rm game
