@@ -297,6 +297,11 @@ bool path_finding(Level* level, Position* from, Position to) {
 
         *from = e->position;
         from->direction = direction;
+
+        free(vertices);
         return true;
-    } return false;
+    } else {
+        free(vertices);
+        return false;
+    }
 }
