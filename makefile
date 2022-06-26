@@ -18,4 +18,4 @@ release:
 	gcc -O3 src/main.c src/ai.c src/entity.c src/level.c src/markov.c src/viewport.c src/gameplay.c -o bin/program -lSDL2 -lSDL2_image -lm
 
 clean:
-	rm -r bin/*
+	rm -r bin/*.o bin/program
