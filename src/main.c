@@ -1,143 +1,155 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+
+#include <stdbool.h>
 #include <stdio.h>
+
+#define LEVELS 2
 
 
 typedef struct {
-    int x;
-    int y;
-} Vec2;
+    int velocity;
+    struct {
+        SDL_Rect rectangle;
+        SDL_Texture* texture;
+    } objects[10];
+    int objects_size;
+} Level;
 
-void compute_position(Vec2 window_size, Vec2 logo_size, Vec2* logo_position, Vec2* logo_velocity) {
-    if (logo_position->x <= 0) logo_velocity->x *=-1;
-    if (logo_position->y <= 0) logo_velocity->y *=-1;
-    if (logo_position->x + logo_size.x >= window_size.x-1) logo_velocity->x *= -1;
-    if (logo_position->y + logo_size.y >= window_size.y-1) logo_velocity->y *= -1;
-    
-    logo_position->x += logo_velocity->x;
-    logo_position->y += logo_velocity->y;
+
+void compute_position(Level *levels, int width) {
+    for (int i = 0; i < LEVELS; i++) {
+        for (int j = 0; j < levels[i].objects_size; j++) {
+            levels[i].objects[j].rectangle.x += levels[i].velocity;
+
+            if (levels[i].objects[j].rectangle.x > width)
+                levels[i].objects[j].rectangle.x = - levels[i].objects[j].rectangle.w;
+        }
+    }
 }
 
-void draw(SDL_Renderer* renderer, SDL_Texture* texture, Vec2 logo_size, Vec2 logo_position) {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+void draw(SDL_Renderer* renderer, Level *levels) {
+    SDL_SetRenderDrawColor(renderer, 64, 255, 255, 128);
     SDL_RenderClear(renderer);
-    
-    SDL_Rect rectangle;
-    rectangle.x = logo_position.x;
-    rectangle.y = logo_position.y;
-    rectangle.w = logo_size.x;
-    rectangle.h = logo_size.y;
-    SDL_RenderCopy(renderer, texture, NULL, &rectangle);
+
+    for (int i = 0; i < LEVELS; i++) {
+        for (int j = 0; j < levels[i].objects_size; j++) {
+            SDL_RenderCopy(renderer, levels[i].objects[j].texture, NULL, &levels[i].objects[j].rectangle);
+        }
+    }
+
+    SDL_RenderPresent(renderer);
 }
 
-void quit_sdl(int code, SDL_Window* window, SDL_Renderer* renderer, SDL_Texture* texture) {
-    if (texture != NULL) SDL_DestroyTexture(texture); 
+void quit_sdl(SDL_Window* window, SDL_Renderer* renderer, Level *levels) {
+    for (int i = 0; i < LEVELS; i++)
+        for (int j = 0; j < levels[i].objects_size; j++)
+            SDL_DestroyTexture(levels[i].objects[j].texture);
     IMG_Quit();
+
     if (renderer != NULL) SDL_DestroyRenderer(renderer);
     if (window != NULL) SDL_DestroyWindow(window);
     SDL_Quit();
-    
-    if (code != EXIT_SUCCESS)
-        exit(code);
 }
 
 int main() {
     SDL_Window* window = NULL;
     SDL_Renderer* renderer = NULL;
-    SDL_Texture* texture = NULL;
-    
-    Vec2 window_size;
-    window_size.x = 1080;
-    window_size.y = 720;
-    Vec2 logo_size;
-    logo_size.x = 512;
-    logo_size.y = 261;
-    Vec2 logo_position;
-    logo_position.x = 2;
-    logo_position.y = 2;
-    Vec2 logo_velocity;
-    logo_velocity.x = 2;
-    logo_velocity.y = 2;
+    Level levels[LEVELS];
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         SDL_Log("Error : SDL initialisation - %s\n", SDL_GetError());
-        quit_sdl(EXIT_FAILURE, window, renderer, texture);
+        quit_sdl(window, renderer, levels);
+        return EXIT_FAILURE;
     }
     
     window = SDL_CreateWindow(
-        "Test de fenêtre",
+        "Animation",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        window_size.x, window_size.y,
-        SDL_WINDOW_RESIZABLE
+        1280, 720,
+        0
     );
     
     if (window == NULL) {
         SDL_Log("Error : SDL window creation - %s\n", SDL_GetError());
-        quit_sdl(EXIT_FAILURE, window, renderer, texture);
+        quit_sdl(window, renderer, levels);
+        return EXIT_FAILURE;
     }
     
     renderer = SDL_CreateRenderer(
-        window,
-        -1,
+        window, -1,
         SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
     );
     
     if (renderer == NULL) {
         SDL_Log("Error : SDL renderer creation - %s\n", SDL_GetError());
-        quit_sdl(EXIT_FAILURE, window, renderer, texture);
-    }
-    
-    int flags = IMG_INIT_PNG;
-    if ((IMG_Init(flags) & flags) != flags) {
-        SDL_Log("Error : SDL image loader\n");
-        quit_sdl(EXIT_FAILURE, window, renderer, texture);
-    }
-    
-    SDL_Surface* surface = IMG_Load("DVD_logo.png");
-    if (surface == NULL) {
-        SDL_Log("Error : image loading failed - %s\n", IMG_GetError());
-        quit_sdl(EXIT_FAILURE, window, renderer, texture);
+        quit_sdl(window, renderer, levels);
+        return EXIT_FAILURE;
     }
     
     
-    texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
-    if (texture == NULL) {
-        SDL_Log("Error : texture loading failed\n");
-        quit_sdl(EXIT_FAILURE, window, renderer, texture);
-    }
+    levels[0].velocity = 1;
+    levels[0].objects_size = 2;
+    levels[0].objects[0].rectangle.x = -300;
+    levels[0].objects[0].rectangle.y = 400;
+    levels[0].objects[0].rectangle.w = 960;
+    levels[0].objects[0].rectangle.h = 480;
+    levels[0].objects[0].texture = IMG_LoadTexture(renderer, "textures/hill2.png");
+    levels[0].objects[1].rectangle.x = 700;
+    levels[0].objects[1].rectangle.y = 410;
+    levels[0].objects[1].rectangle.w = 960;
+    levels[0].objects[1].rectangle.h = 480;
+    levels[0].objects[1].texture = IMG_LoadTexture(renderer, "textures/hill2.png");
+
+    levels[1].velocity = 5;
+    levels[1].objects_size = 4;
+    levels[1].objects[0].rectangle.x = -350;
+    levels[1].objects[0].rectangle.y = 510;
+    levels[1].objects[0].rectangle.w = 1400;
+    levels[1].objects[0].rectangle.h = 300;
+    levels[1].objects[0].texture = IMG_LoadTexture(renderer, "textures/hill1.png");
+    levels[1].objects[1].rectangle.x = 1000;
+    levels[1].objects[1].rectangle.y = 500;
+    levels[1].objects[1].rectangle.w = 1400;
+    levels[1].objects[1].rectangle.h = 300;
+    levels[1].objects[1].texture = IMG_LoadTexture(renderer, "textures/hill1.png");
+    levels[1].objects[2].rectangle.x = 300;
+    levels[1].objects[2].rectangle.y = 110;
+    levels[1].objects[2].rectangle.w = 600;
+    levels[1].objects[2].rectangle.h = 600;
+    levels[1].objects[2].texture = IMG_LoadTexture(renderer, "textures/tree1.png");
+    levels[1].objects[3].rectangle.x = 1000;
+    levels[1].objects[3].rectangle.y = 130;
+    levels[1].objects[3].rectangle.w = 600;
+    levels[1].objects[3].rectangle.h = 600;
+    levels[1].objects[3].texture = IMG_LoadTexture(renderer, "textures/tree2.png");
     
-    
-    SDL_bool running = SDL_TRUE;
+    bool quit = false;
     SDL_Event event;
-    while (running) {
+    while (!quit) {
         if (SDL_PollEvent(&event)) {
             switch (event.type) {
             case SDL_QUIT:
-                running = SDL_FALSE;
+                quit = true;
                 break;
             case SDL_KEYDOWN:
                 if (event.key.keysym.sym == SDLK_ESCAPE)
-                    running = SDL_FALSE;
-                break;
-            case SDL_WINDOWEVENT:
-                if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-                    window_size.x = event.window.data1;
-                    window_size.y = event.window.data2;
-                }
+                    quit = true;
                 break;
             default:
                 break;
             }
         }
         
-        compute_position(window_size, logo_size, &logo_position, &logo_velocity);
-        draw(renderer, texture, logo_size, logo_position);
-        SDL_RenderPresent(renderer);
+        int w, h;
+        SDL_GetWindowSize(window, &w, &h);
+        compute_position(levels, w);
+
+        draw(renderer, levels);
         SDL_Delay(10);
     }
     
     
-    quit_sdl(EXIT_SUCCESS, window, renderer, texture);
+    quit_sdl(window, renderer, levels);
     return EXIT_SUCCESS;
 }
