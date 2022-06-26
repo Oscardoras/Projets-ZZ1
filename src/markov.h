@@ -4,9 +4,16 @@
 #include <stdio.h>
 
 
+/**
+ * @brief Represents a Markov state.
+ * 
+ */
 typedef unsigned int State;
 
-
+/**
+ * @brief Represents a Markov matrix.
+ * 
+ */
 typedef struct {
     float *data;
     unsigned int size;

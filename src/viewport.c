@@ -5,191 +5,136 @@
 
 #include "gameplay.h"
 #include "viewport.h"
+
 #define TILE_SIZE 16
-#define CAMERA_WIDTH 80*TILE_SIZE
-#define CAMERA_HEIGHT 60*TILE_SIZE
-
-char* TEXTURES_NAME[] = {"sprites/FourmiGuerriere.png", "sprites/misc/Textures-16.png", "sprites/SpriteSheet.png"};
 
 
-void initEnvRect(SDL_Rect* environment_rect, int i, int j) {
-    environment_rect->x = i;
-    environment_rect->y = j;
-    environment_rect->w = TILE_SIZE;
-    environment_rect->h = TILE_SIZE;
+void init_block_rect(Viewport* viewport, unsigned int id, int i, int j) {
+    viewport->animations.blocks[id].tileset = viewport->tilesets.blocks;
+    viewport->animations.blocks[id].rectangles[0].x = i;
+    viewport->animations.blocks[id].rectangles[0].y = j;
+    viewport->animations.blocks[id].rectangles[0].w = TILE_SIZE;
+    viewport->animations.blocks[id].rectangles[0].h = TILE_SIZE;
+    viewport->animations.blocks[id].frames = 1;
 }
 
-Viewport* init_viewport(int width, int height, Level* level) {
-    if (SDL_Init(SDL_INIT_VIDEO)) {
-        SDL_Log("Error SDL init - %s", SDL_GetError());
-        exit(EXIT_FAILURE);
+void init_entity_rect(Viewport* viewport, EntityTypeName type, State state, int frames, int i, int j, int w, int h) {
+    if (state == 1)
+        viewport->animations.entities[type] = malloc(sizeof(Animation) * (entity_types[type]->markov->size -1));
+
+    Animation* animation = &viewport->animations.entities[type][state-1];
+    animation->tileset = viewport->tilesets.entities;
+    animation->frames = frames;
+    for (int k = 0; k < frames; k++) {
+        animation->rectangles[k].x = i;
+        animation->rectangles[k].y = j + k*h;
+        animation->rectangles[k].w = w;
+        animation->rectangles[k].h = h;
+    }
+}
+
+Viewport* create_viewport(int width, int height, Level* level) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_WINDOW_MAXIMIZED)) {
+        SDL_Log("Error SDL - %s", SDL_GetError());
+        return NULL;
     }
     
     Viewport* viewport = malloc(sizeof(Viewport));
-    if (viewport) {
-        initEnvRect(&viewport->environment_rect[0], 144, 192); // AIR
-        initEnvRect(&viewport->environment_rect[1], 32, 17); // DIRT
-        initEnvRect(&viewport->environment_rect[2], 17, 17); // PATH
-        initEnvRect(&viewport->environment_rect[3], 17, 0); // GRASS
-        initEnvRect(&viewport->environment_rect[4], 160, 17); // ROCK
-        initEnvRect(&viewport->environment_rect[5], 0, 19); // FRUIT
-        initEnvRect(&viewport->environment_rect[6], 11, 18); // LEAVES
-        viewport->width = width;
-        viewport->height = height;
-        viewport->level = level;
-        viewport->window = NULL;
-        viewport->renderer = NULL;
-        
-        viewport->window = SDL_CreateWindow("MarkovAnt",
-            SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            width, height,
-            SDL_WINDOW_RESIZABLE
-        );
-        
-        if (viewport->window) {
-            viewport->renderer = SDL_CreateRenderer(
-                viewport->window,
-                -1,
-                SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
-            );
-            
-            if (viewport->renderer) {
-                for(unsigned int it = 0; it < 3; ++it)
-                {
-                    viewport->textures[it] = IMG_LoadTexture(viewport->renderer,TEXTURES_NAME[it]);
-  	                if (viewport->textures[it] == NULL) {
-		                SDL_Log("Erreur creation texture - %s", SDL_GetError());
-                        close_viewport(viewport);
-		                exit(EXIT_FAILURE);
-	                }
-                }
-            }
-            else {
-                SDL_Log("Error SDL Renderer init - %s", SDL_GetError());
-                close_viewport(viewport);
-                viewport = NULL;
-            }
-        }
-        else {
-            SDL_Log("Error SDL Window init - %s", SDL_GetError());
-            close_viewport(viewport);
-            viewport = NULL;
-        }
+    if (viewport == NULL) {
+        SDL_Quit();
+        return NULL;
     }
-    else {
-        SDL_Log("Error Viewport alloc");
+
+    viewport->width = width;
+    viewport->height = height;
+    viewport->level = level;
+    viewport->camera.x = viewport->level->d.min_x;
+    viewport->camera.y = viewport->level->d.max_y-1;
+    viewport->camera.zoom = TILE_SIZE;
+    viewport->window = NULL;
+    viewport->renderer = NULL;
+    viewport->tilesets.blocks = NULL;
+    viewport->tilesets.entities = NULL;
+    
+    viewport->window = SDL_CreateWindow("MarkovAnt",
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        width, height,
+        SDL_WINDOW_RESIZABLE
+    );
+    if (viewport->window == NULL) {
+        SDL_Log("Error SDL - %s", SDL_GetError());
+        close_viewport(viewport);
+        return NULL;
     }
-  	
-    viewport->animations[0].count = 3; // guerriere walk
-    viewport->animations[0].rects[0].x = 0;
-	viewport->animations[0].rects[0].y = 0;
-	viewport->animations[0].rects[0].w = 37;
-	viewport->animations[0].rects[0].h = 12;
-	viewport->animations[0].rects[1].x = 0;
-	viewport->animations[0].rects[1].y = 12*3;
-	viewport->animations[0].rects[1].w = 37;
-	viewport->animations[0].rects[1].h = 12;
-	viewport->animations[0].rects[2].x = 0;
-	viewport->animations[0].rects[2].y = 12*4;
-	viewport->animations[0].rects[2].w = 37;
-	viewport->animations[0].rects[2].h = 12;
-    viewport->animations[0].spriteNumber = 0;
+    
+    viewport->renderer = SDL_CreateRenderer(
+        viewport->window,
+        -1,
+        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+    );
+    if (viewport->renderer == NULL) {
+        SDL_Log("Error SDL - %s", SDL_GetError());
+        close_viewport(viewport);
+        return NULL;
+    }
+    
+    viewport->tilesets.blocks = IMG_LoadTexture(viewport->renderer, "textures/blocks.png");
+    if (viewport->tilesets.blocks == NULL) {
+        SDL_Log("Error IMG");
+        close_viewport(viewport);
+        return NULL;
+    }
+    viewport->tilesets.entities = IMG_LoadTexture(viewport->renderer, "textures/entities.png");
+    if (viewport->tilesets.entities == NULL) {
+        SDL_Log("Error IMG");
+        close_viewport(viewport);
+        return NULL;
+    }
 
-    viewport->animations[1].count = 3; // guerriere attack
-    viewport->animations[1].rects[0].x = 0;
-	viewport->animations[1].rects[0].y = 12;
-	viewport->animations[1].rects[0].w = 37;
-	viewport->animations[1].rects[0].h = 12;
-	viewport->animations[1].rects[1].x = 0;
-	viewport->animations[1].rects[1].y = 12*2;
-	viewport->animations[1].rects[1].w = 37;
-	viewport->animations[1].rects[1].h = 12;
-	viewport->animations[1].rects[2].x = 0;
-	viewport->animations[1].rects[2].y = 12*5;
-	viewport->animations[1].rects[2].w = 37;
-	viewport->animations[1].rects[2].h = 12;
-    viewport->animations[1].spriteNumber = 0;
+    init_block_rect(viewport, BLOCK_AIR, 144, 192);
+    init_block_rect(viewport, BLOCK_DIRT, 32, 17);
+    init_block_rect(viewport, BLOCK_PATH, 17, 17);
+    init_block_rect(viewport, BLOCK_GRASS, 17, 0);
+    init_block_rect(viewport, BLOCK_ROCK, 160, 17);
+    init_block_rect(viewport, BLOCK_LEAVES, 11, 18);
 
-    viewport->animations[2].count = 3;
-    viewport->animations[2].rects[0].x = 92; // queen walk
-	viewport->animations[2].rects[0].y = 0;
-	viewport->animations[2].rects[0].w = 74;
-	viewport->animations[2].rects[0].h = 24;
-	viewport->animations[2].rects[1].x = 91;
-	viewport->animations[2].rects[1].y = 48;
-	viewport->animations[2].rects[1].w = 74;
-	viewport->animations[2].rects[1].h = 24;
-	viewport->animations[2].rects[2].x = 92;
-	viewport->animations[2].rects[2].y = 73;
-	viewport->animations[2].rects[2].w = 74;
-	viewport->animations[2].rects[2].h = 24;
-    viewport->animations[2].spriteNumber = 2;
+    init_entity_rect(viewport, ENTITY_WORKER, WORKER_WAITING, 1, 56, 0, 32, 12);
+    init_entity_rect(viewport, ENTITY_WORKER, WORKER_DEAD, 1, 56, 12, 32, 12);
+    init_entity_rect(viewport, ENTITY_WORKER, WORKER_SEEKING_FOOD_OUT, 2, 56, 24, 32, 12);
+    init_entity_rect(viewport, ENTITY_WORKER, WORKER_SEEKING_FOOD_IN, 2, 56, 24, 32, 12);
+    init_entity_rect(viewport, ENTITY_WORKER, WORKER_TAKING_FOOD, 2, 55, 48, 32, 12);
+    init_entity_rect(viewport, ENTITY_WORKER, WORKER_BUILDING, 2, 56, 24, 32, 12);
 
-    viewport->animations[3].count = 3;
-    viewport->animations[3].rects[0].x = 56; // SOLDIER walk
-	viewport->animations[3].rects[0].y = 0;
-	viewport->animations[3].rects[0].w = 37;
-	viewport->animations[3].rects[0].h = 12;
-	viewport->animations[3].rects[1].x = 56;
-	viewport->animations[3].rects[1].y = 24;
-	viewport->animations[3].rects[1].w = 37;
-	viewport->animations[3].rects[1].h = 12;
-	viewport->animations[3].rects[2].x = 56;
-	viewport->animations[3].rects[2].y = 35;
-	viewport->animations[3].rects[2].w = 37;
-	viewport->animations[3].rects[2].h = 12;
-    viewport->animations[3].spriteNumber = 2;
+    init_entity_rect(viewport, ENTITY_SOLDIER, SOLDIER_WAITING, 1, 0, 0, 55, 16);
 
-    viewport->animations[4].count = 4;
-    viewport->animations[4].rects[0].x = 167; // mantis walk
-	viewport->animations[4].rects[0].y = 0;
-	viewport->animations[4].rects[0].w = 100;
-	viewport->animations[4].rects[0].h = 37;
-	viewport->animations[4].rects[1].x = 166;
-	viewport->animations[4].rects[1].y = 74;
-	viewport->animations[4].rects[1].w = 100;
-	viewport->animations[4].rects[1].h = 37;
-	viewport->animations[4].rects[2].x = 168;
-	viewport->animations[4].rects[2].y = 111;
-	viewport->animations[4].rects[2].w = 100;
-	viewport->animations[4].rects[2].h = 37;
-    viewport->animations[4].rects[3].x = 170;
-	viewport->animations[4].rects[3].y = 148;
-	viewport->animations[4].rects[3].w = 100;
-	viewport->animations[4].rects[3].h = 37;
-    viewport->animations[4].spriteNumber = 2;
+    init_entity_rect(viewport, ENTITY_QUEEN, QUEEN_WAITING, 1, 94, 0, 72, 24);
+    init_entity_rect(viewport, ENTITY_QUEEN, QUEEN_WALKING, 2, 94, 48, 72, 24);
+    init_entity_rect(viewport, ENTITY_QUEEN, QUEEN_READY_LAY, 1, 94, 0, 72, 24);
+    init_entity_rect(viewport, ENTITY_QUEEN, QUENN_LAYING, 1, 94, 0, 72, 24);
 
-    viewport->animations[5].count = 1;
-    viewport->animations[5].rects[0].x = 266; // cherry
-	viewport->animations[5].rects[0].y = 0;
-	viewport->animations[5].rects[0].w = 32;
-    viewport->animations[5].rects[0].h = 32;
-    viewport->animations[5].spriteNumber = 2;
+    init_entity_rect(viewport, ENTITY_MANTIS, SOLDIER_WAITING, 1, 166, 0, 91, 37);
 
-    viewport->animations[6].count = 4;
-    viewport->animations[6].rects[0].x = 56; // SOLDIER standing walk
-	viewport->animations[6].rects[0].y = 86;
-	viewport->animations[6].rects[0].w = 37;
-	viewport->animations[6].rects[0].h = 12;
-    viewport->animations[6].rects[1].x = 56;
-	viewport->animations[6].rects[1].y = 100;
-	viewport->animations[6].rects[1].w = 37;
-	viewport->animations[6].rects[1].h = 10;
-	viewport->animations[6].rects[2].x = 56;
-	viewport->animations[6].rects[2].y = 111;
-	viewport->animations[6].rects[2].w = 37;
-	viewport->animations[6].rects[2].h = 11;
-	viewport->animations[6].rects[3].x = 56;
-	viewport->animations[6].rects[3].y = 123;
-	viewport->animations[6].rects[3].w = 37;
-	viewport->animations[6].rects[3].h = 10;
-    viewport->animations[6].spriteNumber = 2;
+    init_entity_rect(viewport, ENTITY_PHEROMONE, 1, 1, 282, 208, 16, 16);
 
-    viewport->camera.x= viewport->level->d.min_x;
-    viewport->camera.y= viewport->level->d.min_y;
-    viewport->camera.width = CAMERA_WIDTH;
-    viewport->camera.height = CAMERA_HEIGHT;
+    init_entity_rect(viewport, ENTITY_FOOD, 1, 1, 266, 0, 32, 32);
+
     return viewport;
+}
+
+void close_viewport(Viewport* viewport) {
+    if (viewport != NULL) {
+        if (viewport->tilesets.entities != NULL) {
+            SDL_DestroyTexture(viewport->tilesets.entities);
+            for (int k = 0; k < ENTITY_TYPES; k++)
+                free(viewport->animations.entities[k]);
+        }
+        if (viewport->tilesets.blocks != NULL) SDL_DestroyTexture(viewport->tilesets.blocks);
+
+        if (viewport->renderer != NULL) SDL_DestroyRenderer(viewport->renderer);
+        if (viewport->window != NULL) SDL_DestroyWindow(viewport->window);
+        free(viewport);
+        SDL_Quit();
+    }
 }
 
 void event_loop(Viewport* viewport) {
@@ -206,32 +151,37 @@ void event_loop(Viewport* viewport) {
                     if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
                         viewport->width = event.window.data1;
                         viewport->height = event.window.data2;
+
+                        if (viewport->camera.x + viewport->width/viewport->camera.zoom > viewport->level->d.max_x-1)
+                            viewport->camera.zoom = viewport->width / (viewport->level->d.max_x-1 - viewport->camera.x);
+                        
+                        if (viewport->camera.y - viewport->height/viewport->camera.zoom < viewport->level->d.min_y)
+                            viewport->camera.zoom = viewport->height / (viewport->camera.y - viewport->level->d.min_y);
                     }
                     break;
-                case SDL_KEYDOWN:
-                {
+                case SDL_KEYDOWN: {
                     switch(event.key.keysym.sym) {
                         case SDLK_LEFT:
-                            if(viewport->camera.x > viewport->level->d.min_x)
-                                --viewport->camera.x;
+                            if (viewport->camera.x > viewport->level->d.min_x)
+                                viewport->camera.x--;
                         break;
                         case SDLK_RIGHT:
-                            if(viewport->camera.x+1 < viewport->level->d.max_x-(viewport->camera.width/TILE_SIZE))
-                                ++viewport->camera.x;
+                            if (viewport->camera.x + viewport->width/viewport->camera.zoom < viewport->level->d.max_x-1)
+                                viewport->camera.x++;
                         break;
                         case SDLK_UP:
-                            if(viewport->camera.y > viewport->level->d.min_y)
-                                --viewport->camera.y;
+                            if (viewport->camera.y < viewport->level->d.max_y-1)
+                                viewport->camera.y++;
                         break;
                         case SDLK_DOWN:
-                            if(viewport->camera.y+1 < viewport->level->d.max_y-(viewport->camera.height/TILE_SIZE))
-                                ++viewport->camera.y;
+                            if (viewport->camera.y - viewport->height/viewport->camera.zoom > viewport->level->d.min_y)
+                                viewport->camera.y--;
                         break;
                     }
+                    break;
                 }
-                break;
-                case SDL_MOUSEBUTTONDOWN:
-                {
+                /*
+                case SDL_MOUSEBUTTONDOWN: {
                     int w, h;
                     SDL_GetWindowSize(viewport->window, &w, &h);
                     int printable_x = 0;
@@ -256,11 +206,9 @@ void event_loop(Viewport* viewport) {
                         add_pheromone(viewport->level, targetX, targetY, (PheromoneType)PHEROMONE_DIG);
                     else if(SDL_BUTTON(SDL_BUTTON_RIGHT))
                         add_pheromone(viewport->level, targetX, targetY, (PheromoneType)PHEROMONE_FILL);
+                    break;
                 }
-                break;
-
-                case SDL_MOUSEWHEEL:
-                {
+                case SDL_MOUSEWHEEL: {
                     if(event.wheel.y > 0 && viewport->camera.width/TILE_SIZE < viewport->level->d.max_x - viewport->level->d.min_x) // scroll up
                     {
                         viewport->camera.width *= 1.1;
@@ -285,111 +233,60 @@ void event_loop(Viewport* viewport) {
                         else
                             viewport->camera.y = viewport->level->d.max_y-(viewport->camera.height/TILE_SIZE);
                     }
+                    break;
                 }
-                break;
+                */
             }
         }
         draw_viewport(viewport);
+        viewport->animation_loop++;
 
-        game_loop_iteration(viewport->level);
-        SDL_Delay(100);
+        if (viewport->animation_loop >= 10) {
+            viewport->animation_loop = 0;
+            game_loop_iteration(viewport->level);
+        }
+        SDL_Delay(10);
     }
 }
 
-void close_viewport(Viewport* viewport) {
-    if (viewport != NULL) {
-        for(unsigned int it = 0; it < 3; ++it)
-        {
-            if(viewport->textures[it])
-                SDL_DestroyTexture(viewport->textures[it]);
-        }
-        free(viewport);
-        SDL_Quit();
-    }
+void copy_texture(Viewport* viewport, Animation* animation, SDL_Rect* rect, Direction direction) {
+    SDL_RenderCopyEx(viewport->renderer,
+        animation->tileset,
+        &animation->rectangles[viewport->animation_loop % animation->frames],
+        rect,
+        direction == DIRECTION_TOP ? 90. : (direction == DIRECTION_BOT ? -90. : 0.),
+        NULL,
+        direction == DIRECTION_RIGHT ?  SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE
+    );
 }
 
 void draw_viewport(Viewport* viewport) {
-    SDL_SetRenderDrawColor(viewport->renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(viewport->renderer, 0, 0, 0, 255);
 	SDL_RenderClear(viewport->renderer);
-    int printable_x = 0;
-    int printable_y = 0;
 
-    for(int i = viewport->level->d.min_x; i < viewport->level->d.max_x; ++i)
-        if(i * TILE_SIZE >= (viewport->camera.x * TILE_SIZE) && i * TILE_SIZE <= (viewport->camera.x*TILE_SIZE + viewport->camera.width))
-            ++printable_x;
-    for(int j = viewport->level->d.min_y; j < viewport->level->d.max_y; ++j)
-        if(j * TILE_SIZE >= (viewport->camera.y * TILE_SIZE) && j * TILE_SIZE <= (viewport->camera.y*TILE_SIZE + viewport->camera.height))
-            ++printable_y;
-    printable_x*=TILE_SIZE;
-    printable_y*=TILE_SIZE;
-    for(int i = viewport->level->d.min_x; i < viewport->level->d.max_x; ++i)
-    {
-        for(int j = viewport->level->d.min_y; j < viewport->level->d.max_y; ++j)
-        {
-            
-            int w, h;
-            SDL_GetWindowSize(viewport->window, &w, &h);
+    //Draw level.
+    for (int x = viewport->level->d.min_x; x < viewport->level->d.max_x; x++) {
+        for (int y = viewport->level->d.min_y; y < viewport->level->d.max_y; y++) {
             SDL_Rect destination;
-            destination.x = ((i-viewport->camera.x)*((float)w/((float)printable_x/(float)TILE_SIZE)));
-            destination.y = ((viewport->level->d.max_y-1+viewport->level->d.min_y-j-viewport->camera.y)*((float)h/((float)printable_y/(float)TILE_SIZE)));
-            destination.w = w/((printable_x/TILE_SIZE))+1;
-            destination.h = h/((printable_y/TILE_SIZE))+1;
-            SDL_RenderCopy(viewport->renderer, viewport->textures[1],
-                 &viewport->environment_rect[viewport->level->blocks[(i-viewport->level->d.min_x) + (viewport->level->d.max_x - viewport->level->d.min_x)*(j-viewport->level->d.min_y)]],
-                 &destination);
+            destination.x = (int) ((x - viewport->camera.x) * viewport->camera.zoom);
+            destination.y = (int) (-(y - viewport->camera.y) * viewport->camera.zoom);
+            destination.w = viewport->camera.zoom;
+            destination.h = viewport->camera.zoom;
+            copy_texture(viewport, &viewport->animations.blocks[*get_level_block(viewport->level, x, y)], &destination, 0);
         }
     }
 
-    for(struct ListCell* iterator = viewport->level->entities; iterator; iterator = iterator->next) {
-        int w, h;
-        SDL_GetWindowSize(viewport->window, &w, &h);
-        Entity *fourmi = iterator->entity;
-        SDL_Rect destination;
-        destination.x = ((fourmi->position.x-viewport->camera.x)*((float)w/((float)printable_x/(float)TILE_SIZE)));
-        destination.y = ((viewport->level->d.max_y-1+viewport->level->d.min_y-fourmi->position.y-viewport->camera.y)*((float)h/((float)printable_y/(float)TILE_SIZE)));
-        if(viewport->animations[1].rects[time(0)%viewport->animations[1].count].w > viewport->animations[1].rects[time(0)%viewport->animations[1].count].h)
-            {
-                 destination.h = (h/((printable_y/TILE_SIZE))+1 * ((float)destination.h/(float)destination.w));
-                 destination.w = (w/((printable_x/TILE_SIZE))+1);
-            }
-        else
-            {
-                 destination.w = (w/((printable_x/TILE_SIZE))+1 * ((float)destination.w/(float)destination.h));
-                 destination.h = (h/((printable_y/TILE_SIZE))+1);
-            }
-       
-        SDL_Point center;
-        center.x = destination.w/2;
-        center.y = destination.h/2;
-        unsigned int animId = 0;
-        switch(fourmi->type)
-            {
-                case (EntityTypeName)QUEEN :
-                    animId = 2;
-                break;
-                case (EntityTypeName)SOLDIER :
-                    animId = 1;
-                break;
-                case (EntityTypeName)WORKER :
-                    animId = 6;
-                    if(viewport->level->blocks[fourmi->position.y*(viewport->level->d.max_x - viewport->level->d.min_x)  + fourmi->position.x] != (Block)AIR)
-                        animId = 3;
-                break;
-                case (EntityTypeName)MANTIS :
-                    animId = 4;
-                break;
-                case (EntityTypeName)FOOD :
-                animId = 5;
-                break;
-                default : 
-                    animId = 1;
-            }
-        if(fourmi->type != (EntityTypeName)PHEROMONE)
-            SDL_RenderCopyEx(viewport->renderer, viewport->textures[viewport->animations[animId].spriteNumber],
-                 &viewport->animations[animId].rects[time(0)%viewport->animations[animId].count],
-                 &destination, fourmi->position.direction*90, &center, SDL_FLIP_NONE);
-        
-    }
+    //Draw entities.
+    for (struct EntityListCell* it = viewport->level->entities; it != NULL; it = it->next)
+        if (it->entity->state > 0) {
+            Animation* animation = &viewport->animations.entities[it->entity->type][it->entity->state-1];
+            SDL_Rect destination;
+            destination.x = (int) ((it->entity->location.x - viewport->camera.x) * viewport->camera.zoom);
+            destination.y = (int) (-(it->entity->location.y - viewport->camera.y) * viewport->camera.zoom);
+            destination.w = viewport->camera.zoom * animation->rectangles->w/TILE_SIZE;
+            destination.h = viewport->camera.zoom * animation->rectangles->h/TILE_SIZE;
+            copy_texture(viewport, animation, &destination, it->entity->location.direction);
+        }
     
     SDL_RenderPresent(viewport->renderer);
 }

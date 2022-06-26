@@ -4,24 +4,34 @@
 #include <SDL2/SDL.h>
 
 #include "level.h"
-#include "viewport.h"
 
-#define ANIMATION_COUNT 7
 #define ANIMATION_SIZE_MAX 10
 
-typedef struct  {
-    SDL_Rect rects[ANIMATION_SIZE_MAX];
-    unsigned int count;
-    unsigned int spriteNumber;
+
+/**
+ * @brief A texture animation.
+ * 
+ */
+typedef struct {
+    SDL_Texture* tileset;
+    SDL_Rect rectangles[ANIMATION_SIZE_MAX];
+    unsigned int frames;
 } Animation;
 
+/**
+ * @brief Represents a camera.
+ * 
+ */
 typedef struct {
-    int x;
-    int y;
-    int width;
-    int height;
+    float x;
+    float y;
+    int zoom;
 } Camera;
 
+/**
+ * @brief A viewport.
+ * 
+ */
 typedef struct {
     int width;
     int height;
@@ -29,25 +39,27 @@ typedef struct {
     SDL_Renderer* renderer;
     Camera camera;
     Level* level;
-    SDL_Texture* texture_fourmi;
-    SDL_Texture* texture_background;
-    SDL_Texture* texture_spritesheet;
-    SDL_Texture* textures[3];
-    Animation animations[ANIMATION_COUNT];
-    SDL_Rect environment_rect[7];
-    unsigned int loop_iteration_count;
+    struct {
+        SDL_Texture* blocks;
+        SDL_Texture* entities;
+    } tilesets;
+    struct {
+        Animation blocks[BLOCK_TYPES];
+        Animation *entities[ENTITY_TYPES];
+    } animations;
+    unsigned int animation_loop;
 } Viewport;
 
 
 /**
- * @brief Creates a viewport and its components.
+ * @brief Creates a new viewport and its components.
  * 
  * @param width the width of the window.
  * @param height the height of the window.
  * @param level the level displayed in the window.
  * @return the created viewport.
  */
-Viewport* init_viewport(int width, int height, Level* level);
+Viewport* create_viewport(int width, int height, Level* level);
 
 /**
  * @brief Frees a viewport.
@@ -62,6 +74,15 @@ void close_viewport(Viewport* viewport);
  * @param viewport the viewport to loop.
  */
 void event_loop(Viewport* viewport);
+
+/**
+ * @brief Copies a texture from an animation to a rectangle.
+ * 
+ * @param viewport the viewport.
+ * @param animation the animation.
+ * @param rect the rectangle.
+ */
+void copy_texture(Viewport* viewport, Animation* animation, SDL_Rect* rect, Direction direction);
 
 /**
  * @brief Draws a viewport.

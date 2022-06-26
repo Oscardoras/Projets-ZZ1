@@ -3,49 +3,64 @@
 
 #include <stdbool.h>
 
-#include "matrix.h"
+#include "markov.h"
 
 
 typedef enum {
-    TOP,
-    RIGHT,
-    BOT,
-    LEFT
+    DIRECTION_LEFT,
+    DIRECTION_TOP,
+    DIRECTION_RIGHT,
+    DIRECTION_BOT
 } Direction;
 
+/**
+ * @brief Represents the location of an entity.
+ * 
+ */
 typedef struct {
     int x;
     int y;
     Direction direction;
-} Position;
+} Location;
 
+/**
+ * @brief Stores data about an entity type.
+ * 
+ */
 typedef struct {
     struct {
         int hp;
         int atk;
-        int atk_speed;
-        int speed;
     } stats;
-    Matrix markov;
+    Matrix* markov;
 } EntityType;
 
-#define ENTITY_TYPES 10
 typedef enum {
-    WORKER,
-    SOLDIER,
-    QUEEN,
-    MANTIS,
-    PHEROMONE,
-    FOOD,
+    ENTITY_WORKER,
+    ENTITY_SOLDIER,
+    ENTITY_QUEEN,
+    ENTITY_MANTIS,
+    ENTITY_PHEROMONE,
+    ENTITY_FOOD,
 } EntityTypeName;
+#define ENTITY_TYPES 6
+
+/**
+ * @brief The list of entity types.
+ * 
+ */
 extern EntityType* entity_types[ENTITY_TYPES];
 
+/**
+ * @brief Represents an entity.
+ * 
+ */
 typedef struct Entity {
     EntityTypeName type;
-    Position position;
-    int hp;
+    Location location;
     State state;
     struct Entity* target;
+    int hp;
 } Entity;
 
 
@@ -54,12 +69,11 @@ typedef struct Entity {
  * @brief Creates a new entity.
  * 
  * @param type the type of the new entity.
- * @param position the position in the level.
- * @param hp health point of the new entity. If negative then takes the value of the type instead.
+ * @param location the location in the level.
  * @param state the state of the entity.
  * @return the new entity.
  */
-Entity* new_entity(EntityTypeName type, Position position, int hp, State state);
+Entity* new_entity(EntityTypeName type, Location location, State state);
 
 /**
  * @brief Saves an entity in a save file.
@@ -93,9 +107,9 @@ void free_entity(Entity* entity);
 EntityType* load_type(FILE* file);
 
 /**
- * @brief Frees a type
+ * @brief Frees a type.
  * 
- * @param type a pointer to a type.
+ * @param type the type.
  */
 void free_type(EntityType* type);
 
@@ -108,6 +122,7 @@ void load_types(FILE* file);
 
 /**
  * @brief Frees types.
+ * 
  */
 void free_types();
 

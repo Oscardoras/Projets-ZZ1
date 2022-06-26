@@ -3,44 +3,65 @@
 
 #include "markov.h"
 
-#define READ_BUFFER_SIZE 1000
 
+Matrix* load_matrix(FILE* file) {
+    Matrix* matrix = malloc(sizeof(Matrix));
 
-Matrix load_matrix(FILE* file) {
-    Matrix matrix;
-    matrix.size = 0;
-    char buffer[READ_BUFFER_SIZE];
-    fgets(buffer, 1000, file); // compter le nombre de colonnes
-    char * cour = buffer;
-    bool prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? false : true );
-    while(*cour != '\0')
-    {
-        bool blank = ( (*cour >= '0' && *cour <='9') || *cour == '.'  ? false : true );
-        if(prec_blank && !blank)
-        {
-            ++matrix.size;
+    if (matrix != NULL) { //If the allocationhas succeed.
+        char buffer[1024];
+        fgets(buffer, 1024, file);
+
+        float values[512]; //The values on the first line of the matrix.
+        matrix->size = 0;
+
+        char value[1024];
+        char* c = buffer;
+        char* v = value;
+        while (*c != '\0') {
+            if (*c == ' ' || *c == '\n') {
+                *v = '\0';
+                values[matrix->size] = atof(value);
+                matrix->size++;
+
+                v = value;
+            } else {
+                *v = *c;
+                v++;
+            }
+            c++;
         }
-        ++cour;
-        prec_blank = blank;
+        //Now the size of the matrix is known.
+
+        matrix->data = malloc(sizeof(float) * matrix->size*matrix->size);
+        for (unsigned int j = 0; j < matrix->size; j++)
+            matrix->data[j] = values[j];
+        
+        for (unsigned int i = 1; i < matrix->size; i++) { //Read the following lines.
+            if (fgets(buffer, 1024, file)) {
+                unsigned int j = 0;
+                c = buffer+4;
+                v = value;
+                while (*c != '\0') {
+                    if (*c == ' ' || *c == '\n') {
+                        *v = '\0';
+                        matrix->data[i*matrix->size + j] = atof(value);
+
+                        v = value;
+                        j++;
+                    } else {
+                        *v = *c;
+                        v++;
+                    }
+                    c++;
+                }
+            } else {
+                free(matrix->data);
+                free(matrix);
+                return NULL;
+            }
+        }
     }
-    matrix.data = (float*)malloc((sizeof(float)*matrix.size*matrix.size));
-    if(!matrix.data)
-    {
-        printf("Erreur allocation\n");
-        exit(EXIT_FAILURE);
-    }
-    float * floats = parse(buffer, matrix.size);
-    for(unsigned int j = 0; j < matrix.size; ++j)
-        *get_matrix_element(&matrix, 0, j) = floats[j];
-    free(floats);
-    for(unsigned int i = 1; i < matrix.size; ++i)
-    {
-        fgets(buffer, 1000, file);
-        float * floats = parse(buffer, matrix.size);
-        for(unsigned int j = 0; j < matrix.size; ++j)
-            *get_matrix_element(&matrix, i, j) = floats[j];
-        free(floats);
-    }
+
     return matrix;
 }
 
@@ -73,39 +94,5 @@ void forward_state(Matrix* matrix, State* state) {
         }
     }
     
-    *state = j;
-}
-
-float* parse(char *string, unsigned int count) {
-    float * floats = (float*)malloc(sizeof(float) * count);
-    if(!floats)
-    {
-        printf("Erreur allocation\n");
-        exit(EXIT_FAILURE);
-    }
-    char* cour = string;
-    bool prec_blank = ((*cour >= '0' && *cour <='9') || *cour == '.'  ? false : true );
-    char* begin = NULL;
-    char* end = NULL;
-    unsigned int current = 0;
-    while(*cour != '\0')
-    {
-        bool blank = ( (*cour >= '0' && *cour <='9') || *cour == '.'  ? false : true );
-        if(prec_blank && !blank)
-        {
-            //begin
-            begin = cour;
-        }
-        else if(blank && !prec_blank)
-        {
-            end = cour;
-            *end = '\0';
-            floats[current] = atof(begin);
-            ++current;
-            //end
-        }
-        ++cour;
-        prec_blank = blank;
-    }
-    return floats;
+    *state = j-1;
 }

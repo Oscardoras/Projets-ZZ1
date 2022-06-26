@@ -6,9 +6,11 @@
 
 Level* new_level(int min_x, int max_x, int min_y, int max_y, int seed) {
     Level* level = malloc(sizeof(Level));
+
     if (level != NULL) {
-        int size = (max_x - min_x) * (max_y - min_y);
+        unsigned int size = (max_x - min_x) * (max_y - min_y);
         level->blocks = malloc(sizeof(Block) * size);
+
         if (level->blocks != NULL) {
             level->d.min_x = min_x;
             level->d.max_x = max_x;
@@ -16,9 +18,10 @@ Level* new_level(int min_x, int max_x, int min_y, int max_y, int seed) {
             level->d.max_y = max_y;
             level->seed = seed;
             level->states.score = 0;
-            level->states.food = 10;
-            level->states.weather = SUN;
-            level->states.behavior = DEFAULT;
+            level->states.weather = WEATHER_SUN;
+            level->states.behavior = BEHAVIOR_DEFAULT;
+            level->states.spawn_speed = 0;
+            level->states.food = 0;
             level->entities = NULL;
             
             generate_level(level, min_x, max_x, min_y, max_y, seed);
@@ -36,10 +39,9 @@ void free_level(Level* level) {
         if (level->blocks != NULL)
             free(level->blocks);
         
-        struct ListCell* cell = level->entities;
-        while (cell != NULL) {
-            struct ListCell* tmp = cell;
-            cell = cell->next;
+        for (struct EntityListCell* it = level->entities; it != NULL;) {
+            struct EntityListCell* tmp = it;
+            it = it->next;
             free_entity(tmp->entity);
             free(tmp);
         }
@@ -49,106 +51,51 @@ void free_level(Level* level) {
 }
 
 void save_level(Level* level, FILE* file) {
-    fprintf(file, "%d %d %d %d %d %d %d\n",
+    fprintf(file, "%d %d %d %d %d %d %d %d %d %d\n",
         level->d.min_x, level->d.max_x, level->d.min_y, level->d.max_y,
         level->seed,
-        level->states.weather, level->states.behavior
+        level->states.score, level->states.weather, level->states.behavior, level->states.spawn_speed, level->states.food
     );
     
-    int size = (level->d.max_x - level->d.min_x) * (level->d.max_y - level->d.min_y);
-    for (int k = 0; k < size; k++)
-        fprintf(file, "%d\n", (int) level->blocks[k]);
+    unsigned int size = (level->d.max_x - level->d.min_x) * (level->d.max_y - level->d.min_y);
+    for (unsigned int k = 0; k < size; k++)
+        fprintf(file, "%d\n", level->blocks[k]);
     
-    struct ListCell* cell = level->entities;
-    while (cell != NULL) {
-        save_entity(cell->entity, file);
-        cell = cell->next;
-    }
+    for (struct EntityListCell* it = level->entities; it != NULL; it = it->next)
+        save_entity(it->entity, file);
 }
 
 Level* load_level(FILE* file) {
     Level* level = malloc(sizeof(Level));
     
     if (level != NULL) {
-        char buffer[256];
-        fgets(buffer, 256, file);
-        char* b = buffer;
-        char value[256];
-        char* v;
-        
-        for (v = value; *b != ' '; b++) {
-            *v = *b;
-            v++;
-        }
-        b++;
-        *v = '\0';
-        level->d.min_x = atoi(value);
-        
-        for (v = value; *b != ' '; b++) {
-            *v = *b;
-            v++;
-        }
-        b++;
-        *v = '\0';
-        level->d.max_x = atoi(value);
-        
-        for (v = value; *b != ' '; b++) {
-            *v = *b;
-            v++;
-        }
-        b++;
-        *v = '\0';
-        level->d.min_y = atoi(value);
-        
-        for (v = value; *b != ' '; b++) {
-            *v = *b;
-            v++;
-        }
-        b++;
-        *v = '\0';
-        level->d.max_y = atoi(value);
-        
-        for (v = value; *b != ' '; b++) {
-            *v = *b;
-            v++;
-        }
-        b++;
-        *v = '\0';
-        level->seed = atoi(value);
-        
-        for (v = value; *b != ' '; b++) {
-            *v = *b;
-            v++;
-        }
-        b++;
-        *v = '\0';
-        level->states.weather = atoi(value);
-        
-        for (v = value; *b != '\n'; b++) {
-            *v = *b;
-            v++;
-        }
-        b++;
-        *v = '\0';
-        level->states.behavior = atoi(value);
-        
-        int size = (level->d.max_x - level->d.min_x) * (level->d.max_y - level->d.min_y);
-        level->blocks = malloc(sizeof(Level) * size);
-        if (level->blocks != NULL) {
-            for (int i = 0; i < size; i++) {
-                fgets(buffer, 256, file);
-                b = buffer;
-                for (v = value; *b != '\n'; b++) {
-                    *v = *b;
-                    v++;
+        int n = fscanf(file, "%d %d %d %d %d %d %d %d %d %d",
+            &level->d.min_x, &level->d.max_x, &level->d.min_y, &level->d.max_y,
+            &level->seed,
+            &level->states.score, &level->states.weather, &level->states.behavior, &level->states.spawn_speed, &level->states.food
+        );
+
+        if (n == 10) {
+            unsigned int size = (level->d.max_x - level->d.min_x) * (level->d.max_y - level->d.min_y);
+            level->blocks = malloc(sizeof(Level) * size);
+
+            if (level->blocks != NULL) {
+                for (unsigned int i = 0; i < size; i++) {
+                    n = fscanf(file, "%d", &level->blocks[i]);
+                    if (n != 1) {
+                        free(level->blocks);
+                        free(level);
+                        return NULL;
+                    }
                 }
-                *v = '\0';
-                level->blocks[i] = atoi(value);
+            
+                Entity* entity;
+                while ((entity = load_entity(file)) != NULL)
+                    add_level_entity(level, entity);
+            } else {
+                free(level);
+                level = NULL;
             }
-        
-            Entity* entity = load_entity(file);
-            while (entity != NULL && add_level_entity(level, entity))
-                entity = load_entity(file);
         } else {
             free(level);
             level = NULL;
@@ -160,6 +107,7 @@ Level* load_level(FILE* file) {
 
 bool resize_level(Level* level, int min_x, int max_x, int min_y, int max_y) {
     Level* level2 = new_level(min_x, max_x, min_y, max_y, 0);
+
     if (level2 != NULL) {
         for (int x = level2->d.min_x; x < level2->d.max_x; x++) {
             for (int y = level2->d.min_y; y < level2->d.max_y; y++) {
@@ -189,28 +137,27 @@ bool resize_level(Level* level, int min_x, int max_x, int min_y, int max_y) {
 Block* get_level_block(Level* level, int x, int y) {
     if (level->d.min_x <= x && x < level->d.max_x && level->d.min_y <= y && y < level->d.max_y)
         return &level->blocks[(y - level->d.min_y)*(level->d.max_x - level->d.min_x) + (x - level->d.min_x)];
-    else
-        return NULL;
+    else return NULL;
 }
 
 bool add_level_entity(Level* level, Entity* entity) {
-    struct ListCell* cell = malloc(sizeof(struct ListCell));
-    if (cell != NULL) {
-        cell->entity = entity;
-        cell->next = level->entities;
-        level->entities = cell;
+    struct EntityListCell* it = malloc(sizeof(struct EntityListCell));
+    if (it != NULL) {
+        it->entity = entity;
+        it->next = level->entities;
+        level->entities = it;
         return true;
     } else return false;
 }
 
 void clean_level_entities(Level* level) {
-    for (struct ListCell* cell = level->entities; cell != NULL; cell = cell->next)
-        if (cell->entity->target != NULL && cell->entity->target->state == 0)
-            cell->entity->target = NULL;
+    for (struct EntityListCell* it = level->entities; it != NULL; it = it->next)
+        if (it->entity->target != NULL && it->entity->target->state == 0)
+            it->entity->target = NULL;
     
-    for (struct ListCell** ptr = &level->entities; *ptr != NULL;) {
+    for (struct EntityListCell** ptr = &level->entities; *ptr != NULL;) {
         if ((*ptr)->entity->state == 0) {
-            struct ListCell* tmp = *ptr;
+            struct EntityListCell* tmp = *ptr;
             *ptr = (*ptr)->next;
             free(tmp);
         } else ptr = &(*ptr)->next;
@@ -232,9 +179,9 @@ void generate_level(Level* level, int min_x, int max_x, int min_y, int max_y, in
         if (min_x <= x) {
             for (int y = min_y; y < max_y; y++) {
                 Block* b = get_level_block(level, x, y);
-                if (y < height) *b = DIRT;
-                else if (y > height) *b = AIR;
-                else *b = GRASS;
+                if (y < height) *b = BLOCK_DIRT;
+                else if (y > height) *b = BLOCK_AIR;
+                else *b = BLOCK_GRASS;
             }
         }
     }
@@ -251,9 +198,9 @@ void generate_level(Level* level, int min_x, int max_x, int min_y, int max_y, in
         if (x < max_x) {
             for (int y = min_y; y < max_y; y++) {
                 Block* b = get_level_block(level, x, y);
-                if (y < height) *b = DIRT;
-                else if (y > height) *b = AIR;
-                else *b = GRASS;
+                if (y < height) *b = BLOCK_DIRT;
+                else if (y > height) *b = BLOCK_AIR;
+                else *b = BLOCK_GRASS;
             }
         }
     }
@@ -261,9 +208,9 @@ void generate_level(Level* level, int min_x, int max_x, int min_y, int max_y, in
     if (min_x <= 0 && 0 < max_x) {
         for (int y = min_y; y < max_y; y++) {
             Block* b = get_level_block(level, 0, y);
-            if (y < 0) *b = DIRT;
-            else if (y > 0) *b = AIR;
-            else *b = GRASS;
+            if (y < 0) *b = BLOCK_DIRT;
+            else if (y > 0) *b = BLOCK_AIR;
+            else *b = BLOCK_GRASS;
         }
     }
     

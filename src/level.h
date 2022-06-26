@@ -5,50 +5,55 @@
 
 
 typedef enum {
-    SUN = 0,
-    RAIN,
-    WARM,
-    COLD
+    WEATHER_SUN,
+    WEATHER_RAIN,
+    WEATHER_WARM,
+    WEATHER_COLD
 } Weather;
 
 typedef enum {
-    DEFAULT = 0,
-    AGGRESSIVE,
-    DEFESIVE,
-    NOT_GOING_OUT,
-    GOING_OUT,
-    TARGET_FOOD,
-    TARGET_BUILD
+    BEHAVIOR_DEFAULT,
+    BEHAVIOR_AGGRESSIVE,
+    BEHAVIOR_DEFESIVE,
+    BEHAVIOR_NOT_GOING_OUT,
+    BEHAVIOR_GOING_OUT,
+    BEHAVIOR_TARGET_FOOD,
+    BEHAVIOR_TARGET_BUILD
 } GlobalBehavior;
 
 typedef enum {
-    AIR = 0,
-    DIRT,
-    PATH,
-    GRASS,
-    ROCK,
-    LEAVES
+    BLOCK_AIR,
+    BLOCK_DIRT,
+    BLOCK_PATH,
+    BLOCK_GRASS,
+    BLOCK_ROCK,
+    BLOCK_LEAVES
 } Block;
+#define BLOCK_TYPES 6
 
+/**
+ * @brief Represents a level.
+ * 
+ */
 typedef struct {
     struct {
         int min_x; //included
         int max_x; //excluded
         int min_y; //included
         int max_y; //excluded
-    } d;
+    } d; //The dimensions of the level.
     int seed;
     struct {
-        int score;
-        int food;
+        unsigned int score;
         Weather weather;
         GlobalBehavior behavior;
         int spawn_speed;
+        unsigned int food;
     } states;
     Block *blocks;
-    struct ListCell {
+    struct EntityListCell {
         Entity* entity;
-        struct ListCell* next;
+        struct EntityListCell* next;
     }* entities;
 } Level;
 
@@ -73,7 +78,7 @@ Level* new_level(int min_x, int max_x, int min_y, int max_y, int seed);
 void free_level(Level* level);
 
 /**
- * @brief Saves a level into a file.
+ * @brief Saves a level in a save file.
  * 
  * @param level the level to save.
  * @param file the save file.
@@ -110,16 +115,16 @@ bool resize_level(Level* level, int min_x, int max_x, int min_y, int max_y);
 Block* get_level_block(Level* level, int x, int y);
 
 /**
- * @brief Adds an entity in a level.
+ * @brief Adds an entity into a level.
  * 
- * @param level a level.
- * @param entity an entity.
- * @return if the entity has correctly been added.
+ * @param level the level.
+ * @param entity the entity to add.
+ * @return if the entity has been added correctly.
  */
 bool add_level_entity(Level* level, Entity* entity);
 
 /**
- * @brief Remove deleted entities from a level.
+ * @brief Removes deleted entities from a level.
  * 
  * @param level the level.
  */
@@ -133,7 +138,7 @@ void clean_level_entities(Level* level);
  * @param max_x 
  * @param min_y
  * @param max_y
- * @param seed the seed used to generate.
+ * @param seed the seed used for generation.
  */
 void generate_level(Level* level, int min_x, int max_x, int min_y, int max_y, int seed);
 

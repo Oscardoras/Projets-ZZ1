@@ -5,6 +5,33 @@
 
 
 typedef enum {
+    WORKER_VOID,
+    WORKER_WAITING,
+    WORKER_DEAD,
+    WORKER_SEEKING_FOOD_OUT,
+    WORKER_SEEKING_FOOD_IN,
+    WORKER_TAKING_FOOD,
+    WORKER_BUILDING,
+} WorkerStates;
+
+
+typedef enum {
+    SOLDIER_VOID,
+    SOLDIER_WAITING,
+    SOLDIER_DEAD,
+    SOLDIER_SEEKING_ENNEMI,
+    SOLDIER_FIGHTING,
+} SoldierStates;
+
+typedef enum {
+    QUEEN_VOID,
+    QUEEN_WAITING,
+    QUEEN_WALKING,
+    QUEEN_READY_LAY,
+    QUENN_LAYING
+} QueenStates;
+
+typedef enum {
     PHEROMONE_FOOD,
     PHEROMONE_ENNEMI,
     PHEROMONE_DIG,

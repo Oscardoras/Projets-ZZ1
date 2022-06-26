@@ -3,7 +3,7 @@
 #include "gameplay.h"
 #include "entity.h"
 #include "level.h"
-#include "matrix.h"
+#include "markov.h"
 #include "viewport.h"
 
 #define WIDTH 800
@@ -13,7 +13,6 @@
 #define WORLD_X_MAX 40
 #define WORLD_Y_MAX 30
 #define SEED 0
-#define TEST_CREATION_FOURMI 1
 
 
 int main(/*int argc, char** argv*/) {
@@ -22,10 +21,17 @@ int main(/*int argc, char** argv*/) {
     if (file) {
         load_types(file);
         fclose(file);
+    } else {
+        exit(EXIT_FAILURE);
     }
 
 
     Level* level = new_level(WORLD_X_MIN, WORLD_X_MAX, WORLD_Y_MIN, WORLD_Y_MAX, SEED);
+    if (level == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    /*
     Position queen_position;
     queen_position.x = 0;
     queen_position.y = 1;
@@ -34,19 +40,21 @@ int main(/*int argc, char** argv*/) {
 
 
     //add_pheromone(level, 1, 2, PHEROMONE_DIG);
+    */
     
-    if(TEST_CREATION_FOURMI)
-        for(unsigned int it = 0; it < 1; ++it) {
-            Position pos;
-            pos.x = 3;//rand()%10;
-            pos.y = 0;//rand()%10;
-            pos.direction = rand()%360;
-            add_level_entity(level, new_entity(WORKER, pos, 100, 1));
-        }
+    Location location;
+    location.x = 3;
+    location.y = 0;
+    location.direction = DIRECTION_LEFT;
+    add_level_entity(level, new_entity(ENTITY_WORKER, location, 1));
 
     
-    Viewport* viewport = init_viewport(WIDTH, HEIGHT, level);
-
+    Viewport* viewport = create_viewport(WIDTH, HEIGHT, level);
+    if (viewport == NULL) {
+        free_level(level);
+        exit(EXIT_FAILURE);
+    }
+    
     event_loop(viewport);
 
     close_viewport(viewport);
