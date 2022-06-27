@@ -106,11 +106,11 @@ int main() {
 
         SDL_RenderCopy(renderer, textureMontagne, &source_m, &destination_m);
         SDL_RenderCopy(renderer, textureArbre, &source_a, &destination_a);
-        SDL_RenderCopy(renderer, textureFourmi, &fourmiAnim[frame/25], &destination_f);
+        SDL_RenderCopy(renderer, textureFourmi, &fourmiAnim[frame/10], &destination_f);
 
         SDL_RenderPresent(renderer);
 
-        frame = (frame+1) % 100;
+        frame = (frame+1) % 40;
 
         eps_a = destination_a.x + DECAL_A;
         destination_a.x = (eps_a > 0) ?
